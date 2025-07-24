@@ -10,6 +10,7 @@ public class PlayerMovement : MonoBehaviour
     public Node CurrentNode { get; private set; } // 当前所在节点
     public bool IsMoving { get; private set; } // 是否正在移动
 
+
     // 初始化玩家位置
     public void InitAtNode(Node node)
     {
@@ -25,13 +26,19 @@ public class PlayerMovement : MonoBehaviour
         Vector3 startPos = transform.position;
         Vector3 endPos = targetNode.transform.position + Vector3.up * playerHeight;
         float elapsed = 0f;
+        float duration = moveSpeed; // 将 moveSpeed 视为移动持续时间
 
-        while (elapsed < moveSpeed)
+        // 这里的循环条件应该基于持续时间
+        while (elapsed < duration)
         {
-            transform.position = Vector3.Lerp(startPos, endPos, elapsed / moveSpeed);
+            // 使用 Lerp 的第三个参数 t，其值应该在 0 到 1 之间
+            transform.position = Vector3.Lerp(startPos, endPos, elapsed / duration);
             elapsed += Time.deltaTime;
             yield return null;
         }
+
+        // 确保最终位置精确
+        transform.position = endPos;
 
         CurrentNode = targetNode;
         IsMoving = false;
