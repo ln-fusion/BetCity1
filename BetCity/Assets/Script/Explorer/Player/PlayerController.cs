@@ -125,11 +125,20 @@ public class PlayerController : MonoBehaviour
         playerEventSystem.CheckForNodeEvent(targetNodeForEvent);
     }
 
-    //切换到事件场景 (由外部调用，例如节点事件触发)
-     public void LoadEventScene(int sceneIndex)
+
+
+
+    public void LoadEventScene(int sceneIndex)
     {
-         playerStateSaver.SaveState(); // 保存当前状态
-       playerEventSystem.LoadEventScene(sceneIndex);
+        // 在切换场景前，先保存玩家状态
+        playerStateSaver.SaveState();
+
+        // 【新增】告诉场景状态管理器，记录下我们当前的场景
+        SceneStateManager.Instance.RecordCurrentScene();
+
+        // 然后再加载事件场景
+        // 注意：这里我们假设 PlayerEventSystem 会处理加载逻辑
+        playerEventSystem.LoadEventScene(sceneIndex);
     }
 
     // 离开事件，返回探索场景 (由外部调用，例如事件结束按钮)
