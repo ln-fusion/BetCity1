@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -75,4 +74,46 @@ public class CardStore : MonoBehaviour
         Card card = cardList[Random.Range(0, cardList.Count)];
         return card;
     }
+
+    public Card CopyCard(int _id)
+    {
+        // 首先通过ID查找原始卡片
+        Card originalCard = cardList.Find(card => card.id == _id);
+        if (originalCard == null)
+        {
+            Debug.LogError($"未找到ID为{_id}的卡片");
+            return null;
+        }
+
+        // 根据原始卡片类型创建对应的副本
+        if (originalCard is MonsterCard originalMonster)
+        {
+            // 复制怪兽卡的所有属性
+            return new MonsterCard(
+                originalMonster.id,
+                originalMonster.cardName,
+                originalMonster.description,
+                originalMonster.cardArtworkid,
+                originalMonster.score,  
+                originalMonster.owner,
+                originalMonster.series
+            );
+        }
+        else if (originalCard is SpellCard originalSpell)
+        {
+            // 复制魔法卡的所有属性
+            return new SpellCard(
+                originalSpell.id,
+                originalSpell.cardName,
+                originalSpell.description,
+                originalSpell.cardArtworkid,
+                originalSpell.owner,
+                originalSpell.series
+            );
+        }
+
+        Debug.LogError($"不支持的卡片类型: {originalCard.GetType()}");
+        return null;
+    }
+
 }
