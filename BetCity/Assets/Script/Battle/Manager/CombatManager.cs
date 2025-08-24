@@ -25,6 +25,13 @@ public class CombatManager : MonoBehaviour
     [Header("游戏区域")]
     public GameObject[] Blocks;
 
+    [Header("骰子系统")]
+    public D4DiceManager d4DiceManager;      
+
+    private int d4DiceResult;               
+    private bool isRollingD4Dice = false;    
+    private CardOwner currentTurnPlayer;   
+
     [Header("状态")]
     public GamePhase GamePhase = GamePhase.begin;
 
@@ -39,8 +46,6 @@ public class CombatManager : MonoBehaviour
     void Start()
     {
         Debug.Log("游戏初始化开始");
-
-        // 确保UI组件已设置
         if (playerHand == null) Debug.LogError("未设置玩家手牌区域");
         if (enemyHand == null) Debug.LogError("未设置敌人手牌区域");
         if (cardPrefab == null) Debug.LogError("未设置卡牌预制体");
@@ -50,7 +55,6 @@ public class CombatManager : MonoBehaviour
 
     void OnDestroy()
     {
-        // 清理所有资源
         ClearAllHands();
         Resources.UnloadUnusedAssets();
     }
@@ -77,13 +81,190 @@ public class CombatManager : MonoBehaviour
         // 洗牌
         ShuffleDeck();
 
-        // 双方抽初始卡 - 使用不会触发重置的版本
+        // 双方抽初始卡
         int playerDrawCount = DrawCardsWithoutReset(CardOwner.PlayerA, 5);
         int enemyDrawCount = DrawCardsWithoutReset(CardOwner.PlayerB, 5);
 
         Debug.Log($"游戏初始化完成: 玩家A抽{playerDrawCount}张, 玩家B抽{enemyDrawCount}张");
+
+        // 设置初始回合玩家
+        currentTurnPlayer = CardOwner.PlayerA; // 玩家先手
+        GamePhase = GamePhase.playerDraw;
     }
 
+    // 更新方法，处理AI自动行动
+    void Update()
+    {
+        // 处理敌人抽卡阶段
+        if (GamePhase == GamePhase.enemyDraw && !isRollingD4Dice)
+        {
+            StartCoroutine(EnemyDrawPhase());
+        }
+    }
+
+    // 敌人抽卡阶段
+    private IEnumerator EnemyDrawPhase()
+    {
+        isRollingD4Dice = true;
+        Debug.Log("敌人开始抽卡阶段");
+
+        // 自动投掷四面骰子
+        d4DiceManager.OnD4DiceRollFinished += HandleEnemyD4DiceRollFinished;
+        d4DiceManager.RollD4Dice();
+
+        // 等待骰子投掷完成
+        while (isRollingD4Dice)
+        {
+            yield return null;
+        }
+    }
+
+    // 处理敌人骰子投掷完成
+    private void HandleEnemyD4DiceRollFinished(int result)
+    {
+        d4DiceManager.OnD4DiceRollFinished -= HandleEnemyD4DiceRollFinished;
+
+        d4DiceResult = result;
+        isRollingD4Dice = false;
+
+        Debug.Log($"敌人骰子投掷完成，点数: {result}");
+
+        // 敌人抽卡
+        StartCoroutine(ExecuteEnemyDrawPhase());
+    }
+
+    // 执行敌人抽卡阶段
+    private IEnumerator ExecuteEnemyDrawPhase()
+    {
+        Debug.Log($"敌人开始抽卡，需要抽{d4DiceResult}张卡");
+
+        // 检查牌库是否为空
+        if (publicDeck.Count == 0)
+        {
+            Debug.Log("牌库为空，触发重置");
+            ResetDeck(true);
+        }
+        else
+        {
+            // 实际抽卡数量（不能超过牌库数量）
+            int actualDraw = Mathf.Min(d4DiceResult, publicDeck.Count);
+            DrawCards(CardOwner.PlayerB, actualDraw);
+        }
+
+        // 等待一小段时间让抽卡完成
+        yield return new WaitForSeconds(0.5f);
+
+        // 测试：跳过后续阶段，直接结束敌人回合********************************************************
+        Debug.Log("敌人抽卡完成，跳过后续阶段");
+        EndEnemyTurn();
+    }
+
+    // 结束敌人回合
+    private void EndEnemyTurn()
+    {
+        Debug.Log("敌人回合结束");
+
+        // 检查手牌上限
+        CheckHandLimit(CardOwner.PlayerB);
+
+        // 检查失败条件
+        CheckLoseCondition(CardOwner.PlayerB);
+
+        // 切换到玩家回合
+        currentTurnPlayer = CardOwner.PlayerA;
+        GamePhase = GamePhase.playerDraw;
+    }
+
+    // 点击四面骰子开始投掷（玩家）
+    public void OnD4DiceClicked()
+    {
+        if (isRollingD4Dice || GamePhase != GamePhase.playerDraw) return;
+
+        Debug.Log("玩家开始投掷四面骰子");
+        isRollingD4Dice = true;
+
+        // 注册四面骰子完成事件
+        d4DiceManager.OnD4DiceRollFinished += HandlePlayerD4DiceRollFinished;
+
+        // 投掷四面骰子
+        d4DiceManager.RollD4Dice();
+    }
+
+    // 处理玩家骰子投掷完成
+    private void HandlePlayerD4DiceRollFinished(int result)
+    {
+        d4DiceManager.OnD4DiceRollFinished -= HandlePlayerD4DiceRollFinished;
+
+        d4DiceResult = result;
+        isRollingD4Dice = false;
+
+        Debug.Log($"玩家骰子投掷完成，点数: {result}");
+
+        // 玩家抽卡
+        StartCoroutine(ExecutePlayerDrawPhase());
+    }
+
+    // 执行玩家抽卡阶段
+    private IEnumerator ExecutePlayerDrawPhase()
+    {
+        Debug.Log($"玩家开始抽卡，需要抽{d4DiceResult}张卡");
+
+        // 检查牌库是否为空
+        if (publicDeck.Count == 0)
+        {
+            Debug.Log("牌库为空，触发重置");
+            ResetDeck(true);
+        }
+        else
+        {
+            // 实际抽卡数量（不能超过牌库数量）
+            int actualDraw = Mathf.Min(d4DiceResult, publicDeck.Count);
+            DrawCards(CardOwner.PlayerA, actualDraw);
+        }
+
+        // 等待一小段时间让抽卡完成
+        yield return new WaitForSeconds(0.5f);
+
+        // 测试：跳过后续阶段，直接结束玩家回合********************************************************
+        Debug.Log("玩家抽卡完成，跳过后续阶段");
+        EndPlayerTurn();
+    }
+
+    // 结束玩家回合
+    private void EndPlayerTurn()
+    {
+        Debug.Log("玩家回合结束");
+
+        // 检查手牌上限
+        CheckHandLimit(CardOwner.PlayerA);
+
+        // 检查失败条件
+        CheckLoseCondition(CardOwner.PlayerA);
+
+        // 切换到敌人回合
+        currentTurnPlayer = CardOwner.PlayerB;
+        GamePhase = GamePhase.enemyDraw;
+    }
+
+    // 检查手牌上限
+    private void CheckHandLimit(CardOwner player)
+    {
+        List<Card> handList = player == CardOwner.PlayerA ? playerHandList : enemyHandList;
+        if (handList.Count > 8)
+        {
+            int discardCount = handList.Count - 8;
+            Debug.Log($"{player}手牌超过8张，需要弃置{discardCount}张");
+            // 这里需要实现弃牌逻辑
+        }
+    }
+
+    // 检查失败条件
+    private void CheckLoseCondition(CardOwner player)
+    {
+        // 这里需要实现检查场上卡牌数量的逻辑
+    }
+
+    // 以下为原有方法，保持不变
     private void ClearHand(Transform hand)
     {
         if (hand == null) return;
@@ -348,7 +529,9 @@ public class CombatManager : MonoBehaviour
         ClearHand(enemyHand);
         Debug.Log($"玩家B弃置{enemyHandCount}张手牌");
     }
-    public List<Card> DrawFromOpponent(CardOwner currentPlayer, out bool punishmentTriggered)
+
+    // 修改DrawFromOpponent方法，添加抽卡数量参数
+    public List<Card> DrawFromOpponent(CardOwner currentPlayer, out bool punishmentTriggered, int y = -1)
     {
         punishmentTriggered = false;
         List<Card> drawnCards = new List<Card>();
@@ -359,8 +542,11 @@ public class CombatManager : MonoBehaviour
         // 获取对手手牌列表
         List<Card> opponentHand = (opponentOwner == CardOwner.PlayerA) ? playerHandList : enemyHandList;
 
-        // 抛硬币决定抽卡数量
-        int y = UnityEngine.Random.Range(0, 2) == 0 ? 2 : 1; // 0:正面(抽2), 1:反面(抽1)
+        // 如果未指定y值，随机决定
+        if (y < 0)
+        {
+            y = UnityEngine.Random.Range(0, 2) == 0 ? 2 : 1;
+        }
 
         if (opponentHand.Count >= y)
         {
@@ -390,15 +576,9 @@ public class CombatManager : MonoBehaviour
         return drawnCards;
     }
 
-    public void EndPhase() // 回合结束
+    // 回合结束方法 - 保留但不使用
+    public void EndPhase()
     {
-        if (GamePhase == GamePhase.playerDecide)
-        {
-            GamePhase = GamePhase.enemyDraw;
-        }
-        else if (GamePhase == GamePhase.enemyDecide)
-        {
-            GamePhase = GamePhase.playerDraw;
-        }
+        Debug.Log("EndPhase called, but not used in test mode");
     }
 }
