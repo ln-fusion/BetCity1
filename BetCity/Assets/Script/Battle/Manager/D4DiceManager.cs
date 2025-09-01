@@ -24,12 +24,6 @@ public class D4DiceManager : MonoBehaviour
     // 四面骰子投掷完成事件
     public System.Action<int> OnD4DiceRollFinished;
 
-    private void Awake()
-    {
-        // 初始隐藏四面骰子
-        if (d4DiceObject != null)
-            d4DiceObject.SetActive(false);
-    }
 
     // 投掷四面骰子
     public void RollD4Dice()
@@ -103,10 +97,4 @@ public class D4DiceManager : MonoBehaviour
         return d4DiceState == D4DiceState.Rolling;
     }
 
-    // 隐藏四面骰子
-    public void HideD4Dice()
-    {
-        if (d4DiceObject != null)
-            d4DiceObject.SetActive(false);
-    }
 }

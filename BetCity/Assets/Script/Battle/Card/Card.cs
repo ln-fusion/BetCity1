@@ -20,7 +20,7 @@ public class Card
                 CardOwner oldOwner = _owner;
                 _owner = value;
                 OnOwnerChanged?.Invoke(this, oldOwner, value);
-                GameEvent.TriggerCardOwnershipChanged(this, oldOwner, value);
+                //GameEvent.TriggerCardOwnershipChanged(this, oldOwner, value);
             }
         }
     }

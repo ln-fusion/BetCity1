@@ -14,7 +14,7 @@ public class CombatManager : MonoBehaviour
     [Header("数据配置")]
     public PlayerData playerData;
     public PlayerData enemyData;
-    public GameObject cardPrefab;
+    public GameObject cardPrefab; 
 
     [Header("UI 组件")]
     public Transform playerHand;
@@ -92,13 +92,25 @@ public class CombatManager : MonoBehaviour
         GamePhase = GamePhase.playerDraw;
     }
 
-    // 更新方法，处理AI自动行动
+    private bool isProcessingEnemyTurn = false;
+
     void Update()
     {
-        // 处理敌人抽卡阶段
-        if (GamePhase == GamePhase.enemyDraw && !isRollingD4Dice)
+        // 处理敌人抽卡阶段 - 添加状态保护
+        if (GamePhase == GamePhase.enemyDraw && !isRollingD4Dice && !isProcessingEnemyTurn)
         {
+            isProcessingEnemyTurn = true;
             StartCoroutine(EnemyDrawPhase());
+        }
+
+        // 控制骰子的可点击性
+        if (d4DiceManager != null && d4DiceManager.d4DiceObject != null)
+        {
+            Button diceButton = d4DiceManager.d4DiceObject.GetComponent<Button>();
+            if (diceButton != null)
+            {
+                diceButton.interactable = (GamePhase == GamePhase.playerDraw && !isRollingD4Dice);
+            }
         }
     }
 
@@ -173,6 +185,7 @@ public class CombatManager : MonoBehaviour
         // 切换到玩家回合
         currentTurnPlayer = CardOwner.PlayerA;
         GamePhase = GamePhase.playerDraw;
+        isProcessingEnemyTurn = false;
     }
 
     // 点击四面骰子开始投掷（玩家）
