@@ -46,9 +46,8 @@ public class PlayerController : MonoBehaviour
 
         if (startNode != null)
         {
-            // 由于 Awake 中已经获取了正确的引用，这里的调用会作用于正确的游戏对象。
-            playerMovement.InitAtNode(startNode);
-            Debug.Log($"玩家已初始化到节点: {startNode.name}");
+            // 调用 RestoreState，它会智能判断是恢复数据还是进行初始设置
+            playerStateSaver.RestoreState(startNode);
         }
         else
         {
@@ -126,25 +125,24 @@ public class PlayerController : MonoBehaviour
     }
 
 
-
-
-    public void LoadEventScene(int sceneIndex)
+    // 【新增】一个清晰的公共方法，供 PlayerEventSystem 调用
+    public void SaveStateBeforeLoadingScene()
     {
-        // 在切换场景前，先保存玩家状态
+        // 1. 保存玩家状态 (行动点，位置)
         playerStateSaver.SaveState();
 
-        // 【新增】告诉场景状态管理器，记录下我们当前的场景
+        // 2. 记录当前场景，以便之后可以返回
         SceneStateManager.Instance.RecordCurrentScene();
 
-        // 然后再加载事件场景
-        // 注意：这里我们假设 PlayerEventSystem 会处理加载逻辑
-        playerEventSystem.LoadEventScene(sceneIndex);
+        Debug.Log("[PlayerController] 状态已保存，场景已记录。准备切换...");
     }
+
+
 
     // 离开事件，返回探索场景 (由外部调用，例如事件结束按钮)
     public void EndEvent()
     {
         playerEventSystem.EndEvent();
-        playerStateSaver.RestoreState(); // 恢复玩家状态
+
     }
 }
