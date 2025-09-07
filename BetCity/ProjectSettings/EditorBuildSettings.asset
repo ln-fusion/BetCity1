@@ -6,21 +6,21 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Resources/Image/Scenes/ExplorerMap.unity
+    path: Assets/Scenes/ExplorerMap.unity
     guid: 2cda990e2423bbf4892e6590ba056729
   - enabled: 1
-    path: Assets/Resources/Image/Scenes/MainCityEvent1.unity
+    path: Assets/Scenes/MainCityEvent1.unity
     guid: 3b113079b17e10d4fb5c880a245d94c3
   - enabled: 1
     path: Assets/Resources/Image/Scenes/BattleScene.unity
     guid: 5cebec71511e7b94394b786b42e22a54
   - enabled: 1
-    path: Assets/Resources/Image/Scenes/Event1.unity
+    path: Assets/Scenes/Event1.unity
     guid: 9da3199fa786ae74594991700db776de
   - enabled: 1
-    path: Assets/Resources/Image/Scenes/Event2.unity
+    path: Assets/Scenes/Event2.unity
     guid: 906194d49a085134d83c3f1a523d30fb
   - enabled: 1
-    path: Assets/Resources/Image/Scenes/Event3.unity
+    path: Assets/Scenes/Event3.unity
     guid: a455cd528c94efc49bf92b07ce0e940b
   m_configObjects: {}
