@@ -477,8 +477,8 @@ MonoBehaviour:
   cardNameText: {fileID: 1435388531128105152}
   scoreText: {fileID: 6381584992724693859}
   descriptionText: {fileID: 4094748135281752017}
-  playerABackground: {fileID: 7482667652216324306, guid: b14f4b270d29c594ea7d5038d6c80add, type: 3}
-  playerBBackground: {fileID: 7482667652216324306, guid: 1942978629332c242bea2828b9baf91f, type: 3}
+  playerABackground: {fileID: 21300000, guid: 7bb956d10f416aa4fbfb98b7ee5ef4e9, type: 3}
+  playerBBackground: {fileID: 21300000, guid: 9e0f10f5e59e3f1499278f08786767c2, type: 3}
 --- !u!114 &8801004832241892593
 MonoBehaviour:
   m_ObjectHideFlags: 0
