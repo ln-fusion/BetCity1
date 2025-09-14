@@ -14,7 +14,7 @@ public class CombatManager : MonoBehaviour
     [Header("数据配置")]
     public PlayerData playerData;
     public PlayerData enemyData;
-    public GameObject cardPrefab; 
+    public GameObject cardPrefab;
 
     [Header("UI 组件")]
     public Transform playerHand;
@@ -26,11 +26,19 @@ public class CombatManager : MonoBehaviour
     public GameObject[] Blocks;
 
     [Header("骰子系统")]
-    public D4DiceManager d4DiceManager;      
+    public D4DiceManager d4DiceManager;
 
-    private int d4DiceResult;               
-    private bool isRollingD4Dice = false;    
-    private CardOwner currentTurnPlayer;   
+    [Header("硬币系统")]
+    public CoinManager coinManager;            // 硬币管理器
+
+    [Header("抽出区")]
+    public Transform temporaryBlock;           // 临时区域（用于存放抽到的牌）
+
+    private int d4DiceResult;
+    private bool isRollingD4Dice = false;
+    private bool isFlippingCoin = false;       // 标记是否正在投掷硬币
+    private CardOwner currentTurnPlayer;
+    private List<Card> tempCards = new List<Card>(); // 临时存储抽到的牌
 
     [Header("状态")]
     public GamePhase GamePhase = GamePhase.begin;
@@ -42,6 +50,8 @@ public class CombatManager : MonoBehaviour
     private List<Card> playerHandList = new List<Card>();
     private List<Card> enemyHandList = new List<Card>();
     private List<Card> discardPile = new List<Card>();
+
+    private bool isProcessing = false; // 通用处理标志
 
     void Start()
     {
@@ -92,15 +102,19 @@ public class CombatManager : MonoBehaviour
         GamePhase = GamePhase.playerDraw;
     }
 
-    private bool isProcessingEnemyTurn = false;
-
     void Update()
     {
-        // 处理敌人抽卡阶段 - 添加状态保护
-        if (GamePhase == GamePhase.enemyDraw && !isRollingD4Dice && !isProcessingEnemyTurn)
+        // 处理敌人抽卡阶段
+        if (GamePhase == GamePhase.enemyDraw && !isRollingD4Dice && !isProcessing)
         {
-            isProcessingEnemyTurn = true;
+            isProcessing = true;
             StartCoroutine(EnemyDrawPhase());
+        }
+        // 处理敌人行动阶段（硬币投掷）
+        else if (GamePhase == GamePhase.enemyAction && !isFlippingCoin && !isProcessing)
+        {
+            isProcessing = true;
+            StartCoroutine(EnemyActionPhase());
         }
 
         // 控制骰子的可点击性
@@ -112,6 +126,19 @@ public class CombatManager : MonoBehaviour
                 diceButton.interactable = (GamePhase == GamePhase.playerDraw && !isRollingD4Dice);
             }
         }
+
+        // 控制硬币的可点击性
+        if (coinManager != null)
+        {
+            coinManager.SetInteractable(GamePhase == GamePhase.playerAction && !isFlippingCoin);
+        }
+    }
+
+    // 设置游戏阶段的方法
+    private void SetGamePhase(GamePhase newPhase)
+    {
+        GamePhase = newPhase;
+        Debug.Log($"游戏阶段切换到: {newPhase}");
     }
 
     // 敌人抽卡阶段
@@ -166,26 +193,42 @@ public class CombatManager : MonoBehaviour
         // 等待一小段时间让抽卡完成
         yield return new WaitForSeconds(0.5f);
 
-        // 测试：跳过后续阶段，直接结束敌人回合********************************************************
-        Debug.Log("敌人抽卡完成，跳过后续阶段");
-        EndEnemyTurn();
+        // 切换到敌人行动阶段
+        SetGamePhase(GamePhase.enemyAction);
+
+        isProcessing = false;
     }
 
-    // 结束敌人回合
-    private void EndEnemyTurn()
+    // 敌人行动阶段
+    private IEnumerator EnemyActionPhase()
     {
-        Debug.Log("敌人回合结束");
+        Debug.Log("敌人开始行动阶段（投掷硬币）");
+        isFlippingCoin = true;
 
-        // 检查手牌上限
-        CheckHandLimit(CardOwner.PlayerB);
+        // 注册硬币完成事件
+        coinManager.OnCoinFlipFinished += HandleEnemyCoinFlipFinished;
 
-        // 检查失败条件
-        CheckLoseCondition(CardOwner.PlayerB);
+        // 投掷硬币
+        coinManager.FlipCoin();
 
-        // 切换到玩家回合
-        currentTurnPlayer = CardOwner.PlayerA;
-        GamePhase = GamePhase.playerDraw;
-        isProcessingEnemyTurn = false;
+        // 等待硬币投掷完成
+        while (isFlippingCoin)
+        {
+            yield return null;
+        }
+    }
+
+    // 处理敌人硬币投掷完成
+    private void HandleEnemyCoinFlipFinished(CoinResult result)
+    {
+        coinManager.OnCoinFlipFinished -= HandleEnemyCoinFlipFinished;
+
+        isFlippingCoin = false;
+        Debug.Log($"敌人硬币投掷完成，结果: {result}");
+
+        // 根据硬币结果从对手抽卡
+        int cardsToDraw = (result == CoinResult.Heads) ? 2 : 1;
+        StartCoroutine(DrawFromOpponentAndStore(CardOwner.PlayerB, cardsToDraw));
     }
 
     // 点击四面骰子开始投掷（玩家）
@@ -238,9 +281,127 @@ public class CombatManager : MonoBehaviour
         // 等待一小段时间让抽卡完成
         yield return new WaitForSeconds(0.5f);
 
-        // 测试：跳过后续阶段，直接结束玩家回合********************************************************
-        Debug.Log("玩家抽卡完成，跳过后续阶段");
-        EndPlayerTurn();
+        // 切换到玩家行动阶段
+        SetGamePhase(GamePhase.playerAction);
+
+        isProcessing = false;
+    }
+
+    // 玩家行动阶段（硬币投掷）
+    public void OnCoinClicked()
+    {
+        if (isFlippingCoin || GamePhase != GamePhase.playerAction) return;
+
+        Debug.Log("玩家开始投掷硬币");
+        isFlippingCoin = true;
+
+        // 注册硬币完成事件
+        coinManager.OnCoinFlipFinished += HandlePlayerCoinFlipFinished;
+
+        // 投掷硬币
+        coinManager.FlipCoin();
+    }
+
+    // 处理玩家硬币投掷完成
+    private void HandlePlayerCoinFlipFinished(CoinResult result)
+    {
+        coinManager.OnCoinFlipFinished -= HandlePlayerCoinFlipFinished;
+
+        isFlippingCoin = false;
+        Debug.Log($"玩家硬币投掷完成，结果: {result}");
+
+        // 根据硬币结果从对手抽卡
+        int cardsToDraw = (result == CoinResult.Heads) ? 2 : 1;
+        StartCoroutine(DrawFromOpponentAndStore(CardOwner.PlayerA, cardsToDraw));
+    }
+
+    // 从对手抽卡并存储到临时区域
+    private IEnumerator DrawFromOpponentAndStore(CardOwner currentPlayer, int count)
+    {
+        Debug.Log($"从对手抽{count}张卡到临时区域");
+
+        // 确定对手
+        CardOwner opponent = (currentPlayer == CardOwner.PlayerA) ? CardOwner.PlayerB : CardOwner.PlayerA;
+
+        // 获取对手手牌列表
+        List<Card> opponentHand = (opponent == CardOwner.PlayerA) ? playerHandList : enemyHandList;
+
+        // 清空临时卡片列表
+        tempCards.Clear();
+
+        // 清空临时区域
+        ClearTemporaryBlock();
+
+        // 抽卡
+        for (int i = 0; i < count; i++)
+        {
+            if (opponentHand.Count == 0)
+            {
+                Debug.Log("对手手牌为空，无法继续抽卡");
+                break;
+            }
+
+            // 随机选择一张卡
+            int randomIndex = Random.Range(0, opponentHand.Count);
+            Card drawnCard = opponentHand[randomIndex];
+            opponentHand.RemoveAt(randomIndex);
+
+            // 添加到临时卡片列表
+            tempCards.Add(drawnCard);
+
+            // 实例化卡牌UI到临时区域
+            InstantiateCardUI(drawnCard, temporaryBlock);
+
+            Debug.Log($"抽到卡牌: {drawnCard.cardName}");
+
+            // 等待一小段时间
+            yield return new WaitForSeconds(0.3f);
+        }
+
+        // 切换到下一个阶段
+        if (currentPlayer == CardOwner.PlayerA)
+        {
+            SetGamePhase(GamePhase.playerPlay);
+        }
+        else
+        {
+            SetGamePhase(GamePhase.enemyPlay);
+        }
+
+        isProcessing = false;
+    }
+
+    // 清空临时区域
+    private void ClearTemporaryBlock()
+    {
+        if (temporaryBlock == null) return;
+
+        int childCount = temporaryBlock.childCount;
+        for (int i = childCount - 1; i >= 0; i--)
+        {
+            Destroy(temporaryBlock.GetChild(i).gameObject);
+        }
+
+        // 清理后强制刷新布局
+        if (temporaryBlock.GetComponent<RectTransform>() != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(temporaryBlock.GetComponent<RectTransform>());
+        }
+    }
+    // 结束敌人回合
+    private void EndEnemyTurn()
+    {
+        Debug.Log("敌人回合结束");
+
+        // 检查手牌上限
+        CheckHandLimit(CardOwner.PlayerB);
+
+        // 检查失败条件
+        CheckLoseCondition(CardOwner.PlayerB);
+
+        // 切换到玩家回合
+        currentTurnPlayer = CardOwner.PlayerA;
+        SetGamePhase(GamePhase.playerDraw);
     }
 
     // 结束玩家回合
@@ -256,7 +417,7 @@ public class CombatManager : MonoBehaviour
 
         // 切换到敌人回合
         currentTurnPlayer = CardOwner.PlayerB;
-        GamePhase = GamePhase.enemyDraw;
+        SetGamePhase(GamePhase.enemyDraw);
     }
 
     // 检查手牌上限
@@ -473,11 +634,11 @@ public class CombatManager : MonoBehaviour
     }
 
     // 卡牌UI实例化方法
-    private void InstantiateCardUI(Card drawnCard, Transform handTransform)
+    private void InstantiateCardUI(Card drawnCard, Transform parentTransform)
     {
         try
         {
-            GameObject cardObj = Instantiate(cardPrefab, handTransform);
+            GameObject cardObj = Instantiate(cardPrefab, parentTransform);
 
             CardDisplay display = cardObj.GetComponent<CardDisplay>();
             if (display != null)
@@ -491,9 +652,17 @@ public class CombatManager : MonoBehaviour
             }
 
             // 强制刷新布局
-            if (handTransform.GetComponent<RectTransform>() != null)
+            if (parentTransform.GetComponent<RectTransform>() != null)
             {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(handTransform.GetComponent<RectTransform>());
+                LayoutRebuilder.ForceRebuildLayoutImmediate(parentTransform.GetComponent<RectTransform>());
+
+                // 如果有Grid Layout Group，也需要刷新
+                GridLayoutGroup gridLayout = parentTransform.GetComponent<GridLayoutGroup>();
+                if (gridLayout != null)
+                {
+                    // 强制网格布局重新计算
+                    Canvas.ForceUpdateCanvases();
+                }
             }
         }
         catch (System.Exception e)
@@ -522,7 +691,7 @@ public class CombatManager : MonoBehaviour
         {
             int playerDrawCount = DrawCardsWithoutReset(CardOwner.PlayerA, 5);
             int enemyDrawCount = DrawCardsWithoutReset(CardOwner.PlayerB, 5);
-            Debug.Log($"牌库重置完成：玩家A抽{playerDrawCount}张，玩家B抽{enemyDrawCount}张");
+            Debug.Log($"牌库重置完成: 玩家A抽{playerDrawCount}张, 玩家B抽{enemyDrawCount}张");
         }
     }
 
