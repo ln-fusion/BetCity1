@@ -108,7 +108,7 @@ public class PlayerController : MonoBehaviour
             targetNodeForEvent = targetNode;
 
             // 2. 使用 Invoke 来延迟调用一个新的方法，比如延迟 0.7 秒
-            Invoke("CheckEventAfterDelay", 0.7f);
+            Invoke("CheckEventAfterDelay", 5.5f);
         }
         else
         {
