@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Events;
 
 public enum GamePhase
 {
@@ -9,7 +10,7 @@ public enum GamePhase
     enemyDraw, enemyAction, enemyPlay, enemyDecide, endPhase
 }
 
-public class CombatManager : MonoBehaviour
+public class CombatManager : MonoSingleton<CombatManager>
 {
     [Header("数据配置")]
     public PlayerData playerData;
@@ -41,7 +42,9 @@ public class CombatManager : MonoBehaviour
     private List<Card> tempCards = new List<Card>(); // 临时存储抽到的牌
 
     [Header("状态")]
+    public static CombatManager Instance;
     public GamePhase GamePhase = GamePhase.begin;
+    public UnityEvent phaseChangeEvent = new UnityEvent();
 
     // 卡牌列表
     private List<Card> playerDeckList = new List<Card>();
@@ -53,6 +56,7 @@ public class CombatManager : MonoBehaviour
 
     private bool isProcessing = false; // 通用处理标志
 
+
     void Start()
     {
         Debug.Log("游戏初始化开始");
@@ -61,6 +65,11 @@ public class CombatManager : MonoBehaviour
         if (cardPrefab == null) Debug.LogError("未设置卡牌预制体");
 
         GameStart();
+    }
+
+    private void Awake()
+    {
+        Instance = this;
     }
 
     void OnDestroy()

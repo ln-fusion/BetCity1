@@ -24,9 +24,18 @@ public class D4DiceManager : MonoBehaviour
     // 四面骰子投掷完成事件
     public System.Action<int> OnD4DiceRollFinished;
 
+    private void Awake()
+    {
+        // 初始化骰子状态
+        if (d4DiceRenderer != null && d4DiceFaces != null && d4DiceFaces.Length > 0)
+        {
+            // 默认显示第一面（1点）
+            d4DiceRenderer.sprite = d4DiceFaces[0];
+        }
 
-    // 投掷四面骰子
-    public void RollD4Dice()
+    }
+        // 投掷四面骰子
+        public void RollD4Dice()
     {
         if (d4DiceState != D4DiceState.Idle) return;
 
@@ -90,7 +99,6 @@ public class D4DiceManager : MonoBehaviour
         d4DiceState = D4DiceState.Idle;
         d4RollCoroutine = null;
     }
-
     // 检查四面骰子是否正在滚动
     public bool IsD4Rolling()
     {
