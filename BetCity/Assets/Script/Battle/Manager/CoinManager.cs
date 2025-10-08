@@ -19,7 +19,7 @@ public class CoinManager : MonoBehaviour
 {
     [Header("硬币设置")]
     public GameObject coinObject;          // 硬币UI对象
-    public SpriteRenderer coinImage;       // 硬币渲染组件
+    public Image coinImage;                // 改为UI Image组件
     public Sprite headsSprite;
     public Sprite tailsSprite;
     public Sprite flippingSprite;
@@ -28,6 +28,10 @@ public class CoinManager : MonoBehaviour
 
     [Header("交互设置")]
     public Button coinButton;
+
+    [Header("UI大小控制")]
+    [Range(50, 300)]
+    public float coinSize = 100f; // UI 大小，单位像素
 
     private CoinState coinState = CoinState.Idle;
     private CoinResult coinResult;
@@ -44,9 +48,25 @@ public class CoinManager : MonoBehaviour
             coinImage.sprite = headsSprite;
         }
 
+        // 设置初始大小
+        SetCoinSize(coinSize);
     }
 
-    // 投掷硬币（公开方法，玩家和敌人都调用这个）
+    // 设置硬币UI大小
+    public void SetCoinSize(float size)
+    {
+        coinSize = size;
+        if (coinImage != null)
+        {
+            RectTransform rectTransform = coinImage.GetComponent<RectTransform>();
+            if (rectTransform != null)
+            {
+                rectTransform.sizeDelta = new Vector2(size, size);
+            }
+        }
+    }
+
+    // 投掷硬币
     public void FlipCoin()
     {
         if (coinState != CoinState.Idle) return;
@@ -126,7 +146,7 @@ public class CoinManager : MonoBehaviour
         flipCoroutine = null;
     }
 
-    // 设置硬币交互性（只在玩家行动阶段可点击）
+    // 设置硬币交互性
     public void SetInteractable(bool interactable)
     {
         if (coinButton != null)
@@ -135,7 +155,7 @@ public class CoinManager : MonoBehaviour
         }
     }
 
-    // 设置硬币可见性（可以根据需要显示或隐藏）
+    // 设置硬币可见性
     public void SetCoinActive(bool active)
     {
         if (coinObject != null)
