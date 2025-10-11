@@ -733,7 +733,7 @@ public class CombatManager : MonoSingleton<CombatManager>
         // 获取对手手牌列表
         List<Card> opponentHand = (opponentOwner == CardOwner.PlayerA) ? playerHandList : enemyHandList;
 
-        // 如果未指定y值，随机决定
+        // 如果未指定y值，随机决定(要删去)
         if (y < 0)
         {
             y = UnityEngine.Random.Range(0, 2) == 0 ? 2 : 1;
@@ -767,9 +767,18 @@ public class CombatManager : MonoSingleton<CombatManager>
         return drawnCards;
     }
 
-    // 回合结束方法 - 保留但不使用
-    public void EndPhase()
+    public void SummonRequest(string _player,GameObject _monster)
     {
-        Debug.Log("EndPhase called, but not used in test mode");
+
+    }
+
+    public void SummonConfirm(Transform _block)
+    {
+    
+    }
+
+    public void Summon(string _player,GameObject _monster,Transform _block)
+    {
+
     }
 }
