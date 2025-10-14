@@ -32,4 +32,10 @@ public class DiceManager : MonoBehaviour
 
         return result;
     }
+
+    // 更新骰子的显示
+    public void UpdateDiceDisplay(int points)
+    {
+        diceCounter.DiceDisplay(points);
+    }
 }
