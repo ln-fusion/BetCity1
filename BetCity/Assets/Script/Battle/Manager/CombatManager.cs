@@ -25,6 +25,10 @@ public class CombatManager : MonoSingleton<CombatManager>
 
     [Header("游戏区域")]
     public GameObject[] Blocks;
+    public int[] SummonCountMax = new int[2];//0为玩家（玩家A)，1为敌人(玩家B)
+    private int[] SummonCounter = new int[2];
+    private GameObject waitingMonster;
+    private int waitingPlayer;
 
     [Header("骰子系统")]
     public D4DiceManager d4DiceManager;
@@ -55,6 +59,8 @@ public class CombatManager : MonoSingleton<CombatManager>
     private List<Card> discardPile = new List<Card>();
 
     private bool isProcessing = false; // 通用处理标志
+
+
 
 
     void Start()
@@ -767,18 +773,42 @@ public class CombatManager : MonoSingleton<CombatManager>
         return drawnCards;
     }
 
-    public void SummonRequest(string _player,GameObject _monster)
+    public void SummonRequest(int _player,GameObject _monster)
     {
-
+        GameObject[] blocks;
+        bool hasEmptyBlock=false;
+        blocks = Blocks;
+        if (SummonCounter[_player]>0) 
+        {
+            foreach(var block in blocks)
+            {
+                if (block.GetComponent<Block>().card ==null)
+                {
+                    block.GetComponent<Block>().SummonBlock.SetActive(true);//等待召唤显示
+                    hasEmptyBlock = true;
+                    //waitingMonster = _monster; 
+                }
+            }
+        }
+        if (hasEmptyBlock)
+        {
+            waitingMonster = _monster;
+            waitingPlayer = _player;
+        }
     }
 
     public void SummonConfirm(Transform _block)
     {
+        Summon(waitingPlayer, waitingMonster, _block);
     
     }
 
-    public void Summon(string _player,GameObject _monster,Transform _block)
+    public void Summon(int _player,GameObject _monster,Transform _block)
     {
-
+        _monster.transform.SetParent(_block);
+        _monster.transform.localPosition = Vector3.zero;
+        _monster.GetComponent<BattleCard>().state = BattleCardState.inBlock;
+        _block.GetComponent<Block>().card = _monster;
+        SummonCounter[_player]--;
     }
 }
