@@ -93,4 +93,18 @@ public class DiceCounter : MonoBehaviour
     {
         return currentRollCoroutine != null;
     }
+
+
+    // 更新骰子的显示
+    public void DiceDisplay(int points)
+    {
+        if (points >= 0 && points <= 6)
+        {
+            Render.sprite = AllNumbers[points];    // 显示相应点数的骰子图片
+        }
+        else
+        {
+            Debug.LogError("无效的点数！请确保点数在 0 到 6 之间。");
+        }
+    }
 }

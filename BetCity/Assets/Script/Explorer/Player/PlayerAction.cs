@@ -10,7 +10,22 @@ public class PlayerAction : MonoBehaviour
     [Header("理智消耗设置")]
     [SerializeField] private int dailySanityCost = 5; // 每次行动消耗的理智值
 
-    public int ActionPoints { get; private set; } // 剩余行动点数
+
+    private int _actionPoints;  // 私有字段用于保存行动点数
+
+    public int ActionPoints
+    {
+        get { return _actionPoints; }  // 获取私有字段的值
+        set
+        {
+            if (_actionPoints != value)  // 只有在值改变时才更新
+            {
+                _actionPoints = value;
+                diceManager.UpdateDiceDisplay(_actionPoints);  // 每次更新行动点数时，更新骰子的显示
+            }
+        }
+    }
+
 
     // 投掷骰子
     public void RollDice()
