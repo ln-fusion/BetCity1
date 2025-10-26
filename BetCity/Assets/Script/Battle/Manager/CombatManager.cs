@@ -26,17 +26,6 @@ public class CombatManager : MonoSingleton<CombatManager>
     [Header("游戏区域")]
     public GameObject[] Blocks;
 
-    public Dictionary<CardOwner, int> SummonCountMax = new Dictionary<CardOwner, int>()
-    {
-        { CardOwner.PlayerA, 0 }, // 玩家
-        { CardOwner.PlayerB, 0 }  // 敌人
-    };
-
-    private Dictionary<CardOwner, int> SummonCounter = new Dictionary<CardOwner, int>()
-    {
-        { CardOwner.PlayerA, 0 },
-        { CardOwner.PlayerB, 0 }
-    };
 
     private GameObject waitingMonster;
     private CardOwner waitingPlayer; 
@@ -198,7 +187,7 @@ public class CombatManager : MonoSingleton<CombatManager>
         StartCoroutine(ExecuteEnemyDrawPhase());
     }
 
-    // 执行敌人抽卡阶段
+    // 执行敌人抽卡阶段c 
     private IEnumerator ExecuteEnemyDrawPhase()
     {
         Debug.Log($"敌人开始抽卡，需要抽{d4DiceResult}张卡");
@@ -836,10 +825,7 @@ public class CombatManager : MonoSingleton<CombatManager>
         GameObject[] blocks;
         bool hasEmptyBlock = false;
         blocks = Blocks;
-
-        if (SummonCounter[player] > 0)
-        {
-            foreach (var block in blocks)
+        foreach (var block in blocks)
             {
                 if (block.GetComponent<Block>().card == null)
                 {
@@ -847,7 +833,7 @@ public class CombatManager : MonoSingleton<CombatManager>
                     hasEmptyBlock = true;
                 }
             }
-        }
+    
 
         if (hasEmptyBlock)
         {
@@ -877,7 +863,6 @@ public class CombatManager : MonoSingleton<CombatManager>
         }
 
         block.GetComponent<Block>().card = monster;
-        SummonCounter[player]--;
 
         // 隐藏所有召唤提示
         foreach (var b in Blocks)
