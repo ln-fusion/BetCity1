@@ -1,9 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI; // 引用 UI 命名空间以访问 Image 组件
 using UnityEngine.Events;
-using UnityEngine.SceneManagement;
-using System.IO; // 添加文件操作支持
+using System.IO;
 
 [System.Serializable]
 public class SanityEvent : UnityEvent<int> { }
@@ -12,6 +10,8 @@ public class SanityManager : MonoBehaviour
 {
     [SerializeField] private int maxSanity = 100;    // 最大理智值
     [SerializeField] private int currentSanity = 80; // 当前理智值
+    [SerializeField] private Image sanityBarImage;   // 用于显示理智条的 Image 组件
+
     private string csvFilePath; // CSV文件路径
 
     public int MaxSanity => maxSanity;
@@ -25,9 +25,7 @@ public class SanityManager : MonoBehaviour
     private void Awake()
     {
         // 设置CSV文件路径
-        // 获取项目Assets文件夹的路径
         string assetsPath = Application.dataPath;
-        // 组合成Assets/Data/Assets/Data/playerdata.csv路径
         csvFilePath = Path.Combine(assetsPath, "Data", "playernature.csv");
 
         // 初始化事件
@@ -45,6 +43,12 @@ public class SanityManager : MonoBehaviour
 
         // 从CSV加载数据
         LoadFromCSV();
+    }
+
+    private void Start()
+    {
+        // 初始化理智条显示
+        UpdateSanityBar();  // 初始设置理智条的显示
     }
 
     // 从CSV文件加载数据
@@ -65,7 +69,6 @@ public class SanityManager : MonoBehaviour
         }
         else
         {
-            // 文件不存在则创建并保存默认值
             SaveToCSV();
         }
     }
@@ -92,8 +95,8 @@ public class SanityManager : MonoBehaviour
         {
             onSanityIncreased?.Invoke(amount);
             onSanityChanged?.Invoke();
-            Debug.Log($"理智值增加了 {amount}点, 当前理智: {currentSanity}");
             SaveToCSV(); // 保存到CSV
+            UpdateSanityBar(); // 更新理智条显示
         }
     }
 
@@ -109,14 +112,12 @@ public class SanityManager : MonoBehaviour
         {
             onSanityDecreased?.Invoke(amount);
             onSanityChanged?.Invoke();
-            Debug.Log($"理智值减少了 {amount}点, 当前理智: {currentSanity}");
             SaveToCSV(); // 保存到CSV
-
             if (currentSanity <= 0)
             {
                 onSanityZero?.Invoke();
-                Debug.Log("理智值已归零，游戏结束!");
             }
+            UpdateSanityBar(); // 更新理智条显示
         }
     }
 
@@ -129,14 +130,22 @@ public class SanityManager : MonoBehaviour
         if (currentSanity != oldValue)
         {
             onSanityChanged?.Invoke();
-            Debug.Log($"理智值设置为 {newSanity}, 当前理智: {currentSanity}");
             SaveToCSV(); // 保存到CSV
             if (currentSanity <= 0)
             {
                 onSanityZero?.Invoke();
-                Debug.Log("理智值已归零，游戏结束!");
             }
+            UpdateSanityBar(); // 更新理智条显示
         }
     }
 
+    // 更新理智条显示
+    private void UpdateSanityBar()
+    {
+        if (sanityBarImage != null)
+        {
+            float fillAmount = (float)currentSanity / maxSanity;
+            sanityBarImage.fillAmount = fillAmount; // 更新理智条的显示（通过 fillAmount 控制填充）
+        }
+    }
 }
