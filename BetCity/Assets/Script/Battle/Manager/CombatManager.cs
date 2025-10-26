@@ -25,10 +25,21 @@ public class CombatManager : MonoSingleton<CombatManager>
 
     [Header("游戏区域")]
     public GameObject[] Blocks;
-    public int[] SummonCountMax = new int[2];//0为玩家（玩家A)，1为敌人(玩家B)
-    private int[] SummonCounter = new int[2];
+
+    public Dictionary<CardOwner, int> SummonCountMax = new Dictionary<CardOwner, int>()
+    {
+        { CardOwner.PlayerA, 0 }, // 玩家
+        { CardOwner.PlayerB, 0 }  // 敌人
+    };
+
+    private Dictionary<CardOwner, int> SummonCounter = new Dictionary<CardOwner, int>()
+    {
+        { CardOwner.PlayerA, 0 },
+        { CardOwner.PlayerB, 0 }
+    };
+
     private GameObject waitingMonster;
-    private int waitingPlayer;
+    private CardOwner waitingPlayer; 
 
     [Header("骰子系统")]
     public D4DiceManager d4DiceManager;
@@ -727,7 +738,6 @@ public class CombatManager : MonoSingleton<CombatManager>
         Debug.Log($"玩家B弃置{enemyHandCount}张手牌");
     }
 
-    // 修改DrawFromOpponent方法，添加抽卡数量参数
     public List<Card> DrawFromOpponent(CardOwner currentPlayer, out bool punishmentTriggered, int y = -1)
     {
         punishmentTriggered = false;
@@ -773,42 +783,64 @@ public class CombatManager : MonoSingleton<CombatManager>
         return drawnCards;
     }
 
-    public void SummonRequest(int _player,GameObject _monster)
+    public void SummonRequest(CardOwner player, GameObject monster)
     {
         GameObject[] blocks;
-        bool hasEmptyBlock=false;
+        bool hasEmptyBlock = false;
         blocks = Blocks;
-        if (SummonCounter[_player]>0) 
+
+        if (SummonCounter[player] > 0)
         {
-            foreach(var block in blocks)
+            foreach (var block in blocks)
             {
-                if (block.GetComponent<Block>().card ==null)
+                if (block.GetComponent<Block>().card == null)
                 {
-                    block.GetComponent<Block>().SummonBlock.SetActive(true);//等待召唤显示
+                    block.GetComponent<Block>().SummonBlock.SetActive(true); // 等待召唤显示
                     hasEmptyBlock = true;
-                    //waitingMonster = _monster; 
                 }
             }
         }
+
         if (hasEmptyBlock)
         {
-            waitingMonster = _monster;
-            waitingPlayer = _player;
+            waitingMonster = monster;
+            waitingPlayer = player; // 直接存储 CardOwner
+        }
+        else
+        {
+            Debug.LogWarning($"玩家{player}没有空位进行召唤");
         }
     }
 
-    public void SummonConfirm(Transform _block)
+    public void SummonConfirm(Transform block)
     {
-        Summon(waitingPlayer, waitingMonster, _block);
-    
+        Summon(waitingPlayer, waitingMonster, block);
     }
 
-    public void Summon(int _player,GameObject _monster,Transform _block)
+    public void Summon(CardOwner player, GameObject monster, Transform block)
     {
-        _monster.transform.SetParent(_block);
-        _monster.transform.localPosition = Vector3.zero;
-        _monster.GetComponent<BattleCard>().state = BattleCardState.inBlock;
-        _block.GetComponent<Block>().card = _monster;
-        SummonCounter[_player]--;
+        monster.transform.SetParent(block);
+        monster.transform.localPosition = Vector3.zero;
+
+        BattleCard battleCard = monster.GetComponent<BattleCard>();
+        if (battleCard != null)
+        {
+            battleCard.state = BattleCardState.inBlock;
+        }
+
+        block.GetComponent<Block>().card = monster;
+        SummonCounter[player]--;
+
+        // 隐藏所有召唤提示
+        foreach (var b in Blocks)
+        {
+            b.GetComponent<Block>().SummonBlock.SetActive(false);
+        }
+
+        // 重置等待状态
+        waitingMonster = null;
+       // waitingPlayer = none; // 无等待玩家
+
+        Debug.Log($"玩家{player}成功召唤卡牌到位置");
     }
 }

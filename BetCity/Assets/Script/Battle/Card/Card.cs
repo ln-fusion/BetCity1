@@ -74,7 +74,8 @@ public class SpellCard : Card
 public enum CardOwner
 {
     PlayerA,
-    PlayerB
+    PlayerB,
+    None
 }
 
 // 卡牌系列枚举

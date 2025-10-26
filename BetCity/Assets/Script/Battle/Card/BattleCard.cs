@@ -5,35 +5,37 @@ using UnityEngine.EventSystems;
 
 public enum BattleCardState
 {
-    inHand,inBlock,inTemp,inGrave
+    inHand, inBlock, inTemp, inGrave
 }
 
-public class BattleCard : MonoBehaviour,IPointerDownHandler
+public class BattleCard : MonoBehaviour, IPointerDownHandler
 {
-    public int playerID;
+    public CardOwner playerOwner; 
     public BattleCardState state = BattleCardState.inTemp;
+
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (GetComponent<CardDisplay>().card is MonsterCard)
+        // 检查是否是怪物卡且处于临时区域
+        if (GetComponent<CardDisplay>()?.card is MonsterCard)
         {
-            if (state==BattleCardState.inTemp)
+            if (state == BattleCardState.inTemp)
             {
-            CombatManager.Instance.SummonRequest(playerID, gameObject);
+                CombatManager.Instance.SummonRequest(playerOwner, gameObject);
             }
-
+            else
+            {
+                Debug.Log($"卡牌状态为{state}，无法召唤");
+            }
         }
-
     }
 
-    // Start is called before the first frame update
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // 初始化时设置玩家归属
+        CardDisplay display = GetComponent<CardDisplay>();
+        if (display != null && display.card != null)
+        {
+            playerOwner = display.card.owner;
+        }
     }
 }

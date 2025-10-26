@@ -12,7 +12,7 @@ public class Block : MonoBehaviour,IPointerDownHandler
     {
         if(SummonBlock.activeInHierarchy)
         {
-            CombatManager.Instance.SummonConfirm(transform);
+             CombatManager.Instance.SummonConfirm(transform);
         }
 
     }
