@@ -18,6 +18,10 @@ public class DiceCounter : MonoBehaviour
     // 可以在这里添加一个事件，通知外部骰子滚动结束，并传递结果
     public System.Action<int> OnDiceRollFinished;
 
+
+    private DiceManager diceManager;
+
+
     private void Awake() // 使用 Awake 确保 Render 引用在 Start 之前可用
     {
         if (Render == null)
@@ -85,6 +89,9 @@ public class DiceCounter : MonoBehaviour
         // 通知外部骰子滚动结束
         OnDiceRollFinished?.Invoke(finalResult);
 
+
+    //    diceManager.EndRoll();  // 设置 IsRolling 为 false，表示动画完成
+
         currentRollCoroutine = null; // 协程结束，清空引用
     }
 
@@ -107,4 +114,7 @@ public class DiceCounter : MonoBehaviour
             Debug.LogError("无效的点数！请确保点数在 0 到 6 之间。");
         }
     }
+
+
+
 }

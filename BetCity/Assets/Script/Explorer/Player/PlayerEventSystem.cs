@@ -6,9 +6,12 @@ public class PlayerEventSystem : MonoBehaviour
 {
     [Header("组件引用")]
     [SerializeField] private MySceneLoader mySceneLoader; // 场景加载器
+    [SerializeField] private SanityManager sanitymanager; // 场景加载器
 
     [Header("事件场景索引")]
     [SerializeField] private int[] eventSceneIndices = { 2, 3, 4, 5 }; // 事件场景的索引
+
+    
 
     public bool IsInEvent { get; private set; } = false; // 标记是否在事件场景中
 
@@ -102,7 +105,7 @@ public class PlayerEventSystem : MonoBehaviour
 
     private string GetSceneNameByIndex(int index)
     {
-        // 【修改】移除所有返回字符串中的 "Scenes/" 路径
+
         switch (index)
         {
             case 0:
@@ -126,7 +129,7 @@ public class PlayerEventSystem : MonoBehaviour
     // 触发随机事件
     public void TriggerRandomEvent()
     {
-        int randomIndex = Random.Range(0, eventSceneIndices.Length);
+        int randomIndex = Random.Range(3, eventSceneIndices.Length);
         int sceneToLoad = eventSceneIndices[randomIndex];
         LoadEventScene(sceneToLoad);
     }
@@ -163,7 +166,9 @@ public class PlayerEventSystem : MonoBehaviour
                 TriggerBattle();
                 break;
             case NodeType.Normal:
-                Debug.Log("当前节点是普通节点，无事件触发。");
+                Debug.Log("当前节点是普通节点，无事件触发，休息。");
+                sanitymanager.IncreaseSanity(10);
+                Debug.Log("理智+10");
                 break;
             default:
                 Debug.LogWarning($"未处理的节点类型: {node.nodeType}");

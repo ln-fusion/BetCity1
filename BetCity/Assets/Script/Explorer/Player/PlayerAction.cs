@@ -1,11 +1,16 @@
 
 using UnityEngine;
+using UnityEngine.UI; // 引用 UI 命名空间以访问 Image 组件
+
 
 public class PlayerAction : MonoBehaviour
 {
     [Header("组件引用")]
     [SerializeField] private DiceManager diceManager; // 投骰子管理器
     [SerializeField] private SanityManager sanityManager; // 理智管理器
+    //[SerializeField] private Button rollButton;  // 投骰子按钮
+
+
 
     [Header("理智消耗设置")]
     [SerializeField] private int dailySanityCost = 5; // 每次行动消耗的理智值
@@ -25,7 +30,17 @@ public class PlayerAction : MonoBehaviour
             }
         }
     }
+  /*  private void Start()
+    {
+        if (rollButton == null)
+        {
+            Debug.LogError("rollButton is not assigned in the Inspector!");
+            return; // 早早返回，避免后续代码执行
+        }
 
+   //     rollButton.onClick.AddListener(RollDice);
+  //      UpdateButtonState();  // 初始化时检查按钮状态
+    }*/
 
     // 投掷骰子
     public void RollDice()
@@ -44,7 +59,12 @@ public class PlayerAction : MonoBehaviour
             return;
         }
 
+
         ActionPoints = diceManager.RollDice();
+
+        // 锁定按钮，防止多次点击
+    //   UpdateButtonState();
+
         Debug.Log($"获得行动点数: {ActionPoints}");
     }
 
@@ -59,4 +79,11 @@ public class PlayerAction : MonoBehaviour
     {
         ActionPoints = amount;
     }
+
+
+    // 更新按钮的状态，防止点击
+  /*  private void UpdateButtonState()
+    {
+        rollButton.interactable = !diceManager.IsRolling;  // 当骰子正在滚动时禁用按钮
+    }*/
 }
