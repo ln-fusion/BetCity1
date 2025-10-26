@@ -341,61 +341,7 @@ public class CombatManager : MonoSingleton<CombatManager>
         StartCoroutine(DrawFromOpponentAndStore(CardOwner.PlayerA, cardsToDraw));
     }
 
-    // 从对手抽卡并存储到临时区域
-    private IEnumerator DrawFromOpponentAndStore(CardOwner currentPlayer, int count)
-    {
-        Debug.Log($"从对手抽{count}张卡到临时区域");
 
-        // 确定对手
-        CardOwner opponent = (currentPlayer == CardOwner.PlayerA) ? CardOwner.PlayerB : CardOwner.PlayerA;
-
-        // 获取对手手牌列表
-        List<Card> opponentHand = (opponent == CardOwner.PlayerA) ? playerHandList : enemyHandList;
-
-        // 清空临时卡片列表
-        tempCards.Clear();
-
-        // 清空临时区域
-        ClearTemporaryBlock();
-
-        // 抽卡
-        for (int i = 0; i < count; i++)
-        {
-            if (opponentHand.Count == 0)
-            {
-                Debug.Log("对手手牌为空，无法继续抽卡");
-                break;
-            }
-
-            // 随机选择一张卡
-            int randomIndex = Random.Range(0, opponentHand.Count);
-            Card drawnCard = opponentHand[randomIndex];
-            opponentHand.RemoveAt(randomIndex);
-
-            // 添加到临时卡片列表
-            tempCards.Add(drawnCard);
-
-            // 实例化卡牌UI到临时区域
-            InstantiateCardUI(drawnCard, temporaryBlock);
-
-            Debug.Log($"抽到卡牌: {drawnCard.cardName}");
-
-            // 等待一小段时间
-            yield return new WaitForSeconds(0.3f);
-        }
-
-        // 切换到下一个阶段
-        if (currentPlayer == CardOwner.PlayerA)
-        {
-            SetGamePhase(GamePhase.playerPlay);
-        }
-        else
-        {
-            SetGamePhase(GamePhase.enemyPlay);
-        }
-
-        isProcessing = false;
-    }
 
     // 清空临时区域
     private void ClearTemporaryBlock()
@@ -660,7 +606,7 @@ public class CombatManager : MonoSingleton<CombatManager>
     }
 
     // 卡牌UI实例化方法
-    private void InstantiateCardUI(Card drawnCard, Transform parentTransform)
+ private GameObject InstantiateCardUI(Card drawnCard, Transform parentTransform)
     {
         try
         {
@@ -677,23 +623,57 @@ public class CombatManager : MonoSingleton<CombatManager>
                 Debug.LogError("卡牌预制体缺少 CardDisplay 组件");
             }
 
+            // 统一设置BattleCard组件
+            BattleCard battleCard = cardObj.GetComponent<BattleCard>();
+            if (battleCard != null)
+            {
+                // 始终使用卡牌的原始所有者
+                battleCard.playerOwner = drawnCard.owner;
+                
+                // 根据父节点统一设置状态
+                if (parentTransform == temporaryBlock)
+                {
+                    battleCard.state = BattleCardState.inTemp;
+                    Debug.Log($"卡牌 {drawnCard.cardName} 状态设置为临时区");
+                }
+                else if (parentTransform == playerHand)
+                {
+                    battleCard.state = BattleCardState.inHand;
+                    Debug.Log($"卡牌 {drawnCard.cardName} 状态设置为玩家手牌");
+                }
+                else if (parentTransform == enemyHand)
+                {
+                    battleCard.state = BattleCardState.inHand;
+                    Debug.Log($"卡牌 {drawnCard.cardName} 状态设置为敌人手牌");
+                }
+                else
+                {
+                    battleCard.state = BattleCardState.inHand;
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"卡牌 {drawnCard.cardName} 缺少 BattleCard 组件");
+            }
+
             // 强制刷新布局
             if (parentTransform.GetComponent<RectTransform>() != null)
             {
                 LayoutRebuilder.ForceRebuildLayoutImmediate(parentTransform.GetComponent<RectTransform>());
 
-                // 如果有Grid Layout Group，也需要刷新
                 GridLayoutGroup gridLayout = parentTransform.GetComponent<GridLayoutGroup>();
                 if (gridLayout != null)
                 {
-                    // 强制网格布局重新计算
                     Canvas.ForceUpdateCanvases();
                 }
             }
+            
+            return cardObj;
         }
         catch (System.Exception e)
         {
             Debug.LogError($"实例化卡牌失败: {e.Message}");
+            return null;
         }
     }
 
@@ -738,49 +718,117 @@ public class CombatManager : MonoSingleton<CombatManager>
         Debug.Log($"玩家B弃置{enemyHandCount}张手牌");
     }
 
-    public List<Card> DrawFromOpponent(CardOwner currentPlayer, out bool punishmentTriggered, int y = -1)
+    // 从对手抽卡并存储到临时区域
+    private IEnumerator DrawFromOpponentAndStore(CardOwner currentPlayer, int count)
     {
-        punishmentTriggered = false;
-        List<Card> drawnCards = new List<Card>();
+        Debug.Log($"从对手抽{count}张卡到临时区域");
 
-        // 确定当前玩家和对手的归属
-        CardOwner opponentOwner = (currentPlayer == CardOwner.PlayerA) ? CardOwner.PlayerB : CardOwner.PlayerA;
+        // 确定对手
+        CardOwner opponent = (currentPlayer == CardOwner.PlayerA) ? CardOwner.PlayerB : CardOwner.PlayerA;
 
         // 获取对手手牌列表
-        List<Card> opponentHand = (opponentOwner == CardOwner.PlayerA) ? playerHandList : enemyHandList;
+        List<Card> opponentHand = (opponent == CardOwner.PlayerA) ? playerHandList : enemyHandList;
 
-        // 如果未指定y值，随机决定(要删去)
-        if (y < 0)
-        {
-            y = UnityEngine.Random.Range(0, 2) == 0 ? 2 : 1;
-        }
+        // 清空临时卡片列表
+        tempCards.Clear();
 
-        if (opponentHand.Count >= y)
+        // 清空临时区域
+        ClearTemporaryBlock();
+
+        // 检查对手手牌是否足够
+        if (opponentHand.Count < count)
         {
-            // 正常抽卡
-            for (int i = 0; i < y; i++)
+            Debug.Log($"对手手牌不足，需求{count}张，实际只有{opponentHand.Count}张，触发惩罚机制");
+
+            // 执行惩罚机制
+            yield return StartCoroutine(ExecutePunishmentMechanism(currentPlayer, opponent));
+
+            // 惩罚后，重新获取对手手牌列表（因为惩罚机制可能让对手抽了卡）
+            opponentHand = (opponent == CardOwner.PlayerA) ? playerHandList : enemyHandList;
+
+            // 惩罚后继续抽剩余可抽的卡牌
+            int remainingCardsToDraw = Mathf.Min(count, opponentHand.Count);
+            if (remainingCardsToDraw > 0)
             {
-                int randomIndex = UnityEngine.Random.Range(0, opponentHand.Count);
-                drawnCards.Add(opponentHand[randomIndex]);
-                opponentHand.RemoveAt(randomIndex);
+
+                // 直接抽卡到临时区域
+                for (int i = 0; i < remainingCardsToDraw; i++)
+                {
+
+                    // 随机选择一张卡
+                    int randomIndex = Random.Range(0, opponentHand.Count);
+                    Card drawnCard = opponentHand[randomIndex];
+                    opponentHand.RemoveAt(randomIndex);
+
+                    // 添加到临时卡片列表
+                    tempCards.Add(drawnCard);
+
+                    // 实例化卡牌UI到临时区域
+                    GameObject cardObj = InstantiateCardUI(drawnCard, temporaryBlock);
+
+                    Debug.Log($"抽到卡牌: {drawnCard.cardName}");
+
+                    // 等待一小段时间
+                    yield return new WaitForSeconds(0.3f);
+                }
             }
-            Debug.Log($"从对手抽到{y}张卡");
         }
         else
         {
-            // 触发惩罚机制
-            punishmentTriggered = true;
-            Debug.Log("触发惩罚机制");
+            // 正常抽卡到临时区域
+            for (int i = 0; i < count; i++)
+            {
+                // 随机选择一张卡
+                int randomIndex = Random.Range(0, opponentHand.Count);
+                Card drawnCard = opponentHand[randomIndex];
+                opponentHand.RemoveAt(randomIndex);
 
-            // 惩罚1：当前玩家从手牌打出一张卡
-            // 这里需要后续实现具体打出逻辑
+                // 添加到临时卡片列表
+                tempCards.Add(drawnCard);
 
-            // 惩罚2：对手抽5张卡
-            int actualDrawCount = DrawCards(opponentOwner, 5);
-            Debug.Log($"对手抽{actualDrawCount}张卡作为惩罚");
+                // 实例化卡牌UI到临时区域
+                GameObject cardObj = InstantiateCardUI(drawnCard, temporaryBlock);
+
+                Debug.Log($"抽到卡牌: {drawnCard.cardName}");
+
+                // 等待一小段时间
+                yield return new WaitForSeconds(0.3f);
+            }
         }
 
-        return drawnCards;
+        // 切换到下一个阶段
+        if (currentPlayer == CardOwner.PlayerA)
+        {
+            SetGamePhase(GamePhase.playerPlay);
+        }
+        else
+        {
+            SetGamePhase(GamePhase.enemyPlay);
+        }
+
+        isProcessing = false;
+    }
+
+    // 执行惩罚机制
+    private IEnumerator ExecutePunishmentMechanism(CardOwner currentPlayer, CardOwner opponent)
+    {
+        Debug.Log("执行惩罚机制");
+
+        // 惩罚1：当前玩家从手牌打出一张卡（并结算效果）
+        // TODO: 实现当前玩家从手牌打出一张卡的逻辑
+        // 示例代码（需要根据实际UI交互实现）：
+        // if (currentPlayer == CardOwner.PlayerA && playerHandList.Count > 0)
+        // {
+        //     // 等待玩家选择一张卡打出
+        //     yield return StartCoroutine(WaitForPlayerToPlayCard());
+        // }
+
+        // 惩罚2：对手抽5张卡
+        Debug.Log("惩罚2：对手抽5张卡");
+        int actualDrawCount = DrawCards(opponent, 5);
+        Debug.Log($"对手抽{actualDrawCount}张卡作为惩罚");
+
+        yield return new WaitForSeconds(0.5f);
     }
 
     public void SummonRequest(CardOwner player, GameObject monster)

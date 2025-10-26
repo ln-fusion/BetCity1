@@ -11,7 +11,7 @@ public enum BattleCardState
 public class BattleCard : MonoBehaviour, IPointerDownHandler
 {
     public CardOwner playerOwner; 
-    public BattleCardState state = BattleCardState.inTemp;
+    public BattleCardState state = BattleCardState.inHand;
 
     public void OnPointerDown(PointerEventData eventData)
     {
