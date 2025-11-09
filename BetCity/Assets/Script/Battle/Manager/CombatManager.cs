@@ -27,18 +27,22 @@ public class CombatManager : MonoSingleton<CombatManager>
     public GameObject[] Blocks;
 
 
-    private GameObject waitingMonster;
-    private CardOwner waitingPlayer; 
-
     [Header("骰子系统")]
     public D4DiceManager d4DiceManager;
 
     [Header("硬币系统")]
     public CoinManager coinManager;            // 硬币管理器
 
+
     [Header("抽出区")]
     public Transform temporaryBlock;           // 临时区域（用于存放抽到的牌）
 
+    [Header("事件系统")]
+    public UnityEvent<int> onDeckCountChanged = new UnityEvent<int>(); // 卡组数量变化事件
+
+    // 私有变量
+    private GameObject waitingMonster;
+    private CardOwner waitingPlayer;
     private int d4DiceResult;
     private bool isRollingD4Dice = false;
     private bool isFlippingCoin = false;       // 标记是否正在投掷硬币
@@ -50,6 +54,10 @@ public class CombatManager : MonoSingleton<CombatManager>
     public GamePhase GamePhase = GamePhase.begin;
     public UnityEvent phaseChangeEvent = new UnityEvent();
 
+    // 静态事件
+    /// 卡组数量变化事件
+    public static event System.Action<int> DeckCountChanged;
+
     // 卡牌列表
     private List<Card> playerDeckList = new List<Card>();
     private List<Card> enemyDeckList = new List<Card>();
@@ -60,7 +68,27 @@ public class CombatManager : MonoSingleton<CombatManager>
 
     private bool isProcessing = false; // 通用处理标志
 
+    // 公共方法
+    public int GetPublicDeckCount()
+    {
+        return publicDeck.Count;
+    }
 
+    /// <summary>
+    /// 刷新卡组显示，触发卡组数量变化事件
+    /// </summary>
+    public void RefreshDeckDisplay()
+    {
+        int currentDeckCount = publicDeck.Count;
+
+        // 触发 UnityEvent
+        onDeckCountChanged?.Invoke(currentDeckCount);
+
+        // 触发静态事件
+        DeckCountChanged?.Invoke(currentDeckCount);
+
+        Debug.Log($"卡组数量更新: {currentDeckCount}张");
+    }
 
 
     void Start()
@@ -409,6 +437,11 @@ public class CombatManager : MonoSingleton<CombatManager>
         {
             Destroy(hand.GetChild(i).gameObject);
         }
+
+        if (hand.GetComponent<RectTransform>() != null)
+        {
+            LayoutRebuilder.ForceRebuildLayoutImmediate(hand.GetComponent<RectTransform>());
+        }
     }
 
     private void ClearAllHands()
@@ -555,6 +588,7 @@ public class CombatManager : MonoSingleton<CombatManager>
 
             drawnCount++;
         }
+        RefreshDeckDisplay();
         return drawnCount;
     }
 
@@ -591,6 +625,7 @@ public class CombatManager : MonoSingleton<CombatManager>
 
             drawnCount++;
         }
+        RefreshDeckDisplay();
         return drawnCount;
     }
 
@@ -688,6 +723,7 @@ public class CombatManager : MonoSingleton<CombatManager>
             int enemyDrawCount = DrawCardsWithoutReset(CardOwner.PlayerB, 5);
             Debug.Log($"牌库重置完成: 玩家A抽{playerDrawCount}张, 玩家B抽{enemyDrawCount}张");
         }
+        RefreshDeckDisplay();
     }
 
     private void DiscardAllHands()
@@ -785,6 +821,8 @@ public class CombatManager : MonoSingleton<CombatManager>
             }
         }
 
+        UpdateHandDisplay(opponent);
+
         // 切换到下一个阶段
         if (currentPlayer == CardOwner.PlayerA)
         {
@@ -818,6 +856,24 @@ public class CombatManager : MonoSingleton<CombatManager>
         Debug.Log($"对手抽{actualDrawCount}张卡作为惩罚");
 
         yield return new WaitForSeconds(0.5f);
+    }
+
+    // 更新手牌显示
+    private void UpdateHandDisplay(CardOwner player)
+    {
+        Transform handTransform = (player == CardOwner.PlayerA) ? playerHand : enemyHand;
+        List<Card> handList = (player == CardOwner.PlayerA) ? playerHandList : enemyHandList;
+
+        // 清空手牌区域
+        ClearHand(handTransform);
+
+        // 重新实例化所有手牌
+        foreach (Card card in handList)
+        {
+            InstantiateCardUI(card, handTransform);
+        }
+
+        Debug.Log($"更新{player}手牌显示，当前手牌数: {handList.Count}");
     }
 
     public void SummonRequest(CardOwner player, GameObject monster)

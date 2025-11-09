@@ -12,19 +12,22 @@ public enum D4DiceState
 public class D4DiceManager : MonoBehaviour
 {
     [Header("四面骰子设置")]
-    public GameObject d4DiceObject;          // 四面骰子UI对象
-    public Image d4DiceImage;                // 改为UI Image组件
-    public Sprite[] d4DiceFaces;             // 四面骰子四个面的图片
-    public float d4RollDuration = 1.5f;      // 四面骰子滚动持续时间
-    public float d4FaceChangeInterval = 0.1f; // 四面骰子面切换间隔
+    public GameObject d4DiceObject;
+    public Image d4DiceImage;
+    public Sprite[] d4DiceFaces;
+    public float d4RollDuration = 1.5f;
+    public float d4FaceChangeInterval = 0.1f;
+
+    [Header("交互设置")]
+    public Button diceButton;
 
     [Header("UI大小控制")]
     [Range(50, 300)]
-    public float diceSize = 100f; // UI 大小，单位像素
+    public float diceSize = 100f;
 
     private D4DiceState d4DiceState = D4DiceState.Idle;
-    private int d4DiceResult;                // 四面骰子最终结果
-    private Coroutine d4RollCoroutine;       // 四面骰子滚动协程
+    private int d4DiceResult;
+    private Coroutine d4RollCoroutine;
 
     // 四面骰子投掷完成事件
     public System.Action<int> OnD4DiceRollFinished;
@@ -39,6 +42,12 @@ public class D4DiceManager : MonoBehaviour
 
         // 设置初始大小
         SetDiceSize(diceSize);
+
+        // 设置按钮交互
+        if (diceButton != null)
+        {
+            diceButton.onClick.AddListener(OnDiceClicked);
+        }
     }
 
     // 设置骰子UI大小
@@ -63,6 +72,9 @@ public class D4DiceManager : MonoBehaviour
         Debug.Log("开始投掷四面骰子");
         d4DiceState = D4DiceState.Rolling;
 
+        // 禁用按钮交互
+        SetInteractable(false);
+
         if (d4DiceObject != null)
             d4DiceObject.SetActive(true);
 
@@ -70,6 +82,12 @@ public class D4DiceManager : MonoBehaviour
             StopCoroutine(d4RollCoroutine);
 
         d4RollCoroutine = StartCoroutine(RollD4DiceCoroutine());
+    }
+
+    // 点击骰子
+    public void OnDiceClicked()
+    {
+        RollD4Dice();
     }
 
     // 四面骰子投掷动画协程
@@ -109,12 +127,28 @@ public class D4DiceManager : MonoBehaviour
         d4DiceState = D4DiceState.ShowResult;
         Debug.Log($"四面骰子投掷完成，点数: {d4DiceResult}");
 
+        // 等待1秒后通知结果
         yield return new WaitForSeconds(1f);
 
+        // 通知外部骰子滚动结束
         OnD4DiceRollFinished?.Invoke(d4DiceResult);
 
         d4DiceState = D4DiceState.Idle;
         d4RollCoroutine = null;
+
+        // 重新启用按钮交互（由外部阶段控制决定是否真正启用）
+        SetInteractable(true);
+    }
+
+    // 设置骰子交互性
+    public void SetInteractable(bool interactable)
+    {
+        if (diceButton != null)
+        {
+            // 只有在空闲状态或外部强制启用时才真正启用
+            bool shouldBeInteractable = interactable && d4DiceState == D4DiceState.Idle;
+            diceButton.interactable = shouldBeInteractable;
+        }
     }
 
     // 检查四面骰子是否正在滚动
