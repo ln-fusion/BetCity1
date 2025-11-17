@@ -988,7 +988,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 1
   fixedEventSceneIndex: -1
-  connectedNodes: []
+  connectedNodes:
+  - {fileID: 1219203093}
 --- !u!212 &295695760
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1050,7 +1051,7 @@ Transform:
   m_GameObject: {fileID: 295695757}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.34, y: -1.88, z: 0}
+  m_LocalPosition: {x: -6.38, y: -1.73, z: 0}
   m_LocalScale: {x: 0.5718, y: 0.5718, z: 0.5718}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1504,7 +1505,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   fixedEventSceneIndex: -1
-  connectedNodes: []
+  connectedNodes:
+  - {fileID: 1031003504}
 --- !u!135 &442907042
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -2330,7 +2332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28f680b470740f642bdaee350b972fbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeType: 0
+  nodeType: 3
   fixedEventSceneIndex: -1
   connectedNodes: []
 --- !u!212 &712897112
@@ -2528,7 +2530,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.82731545, b: 0.38679236, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -3066,7 +3068,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 3
   fixedEventSceneIndex: -1
-  connectedNodes: []
+  connectedNodes:
+  - {fileID: 1779096651}
 --- !u!212 &850461637
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3207,7 +3210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9302351965403494c99749e7fe5f34f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 2
   playerHeight: 0.5
 --- !u!95 &881946749
 Animator:
@@ -3346,7 +3349,7 @@ Transform:
   m_GameObject: {fileID: 1031003502}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.3, y: -1.68, z: 0}
+  m_LocalPosition: {x: -2.94, y: -1.91, z: 0}
   m_LocalScale: {x: 0.5718, y: 0.5718, z: 0.5718}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -3814,9 +3817,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28f680b470740f642bdaee350b972fbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nodeType: 0
+  nodeType: 1
   fixedEventSceneIndex: -1
-  connectedNodes: []
+  connectedNodes:
+  - {fileID: 2003161356}
 --- !u!212 &1170720037
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3878,7 +3882,7 @@ Transform:
   m_GameObject: {fileID: 1170720034}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -3.95, y: 0.78, z: 0}
+  m_LocalPosition: {x: -4.07, y: 0.7, z: 0}
   m_LocalScale: {x: 0.5718, y: 0.5718, z: 0.5718}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4182,7 +4186,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   fixedEventSceneIndex: -1
-  connectedNodes: []
+  connectedNodes:
+  - {fileID: 1031003504}
 --- !u!212 &1219203094
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4244,7 +4249,7 @@ Transform:
   m_GameObject: {fileID: 1219203091}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -4.92, y: -3.23, z: 0}
+  m_LocalPosition: {x: -4.43, y: -3.36, z: 0}
   m_LocalScale: {x: 0.5718, y: 0.5718, z: 0.5718}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4304,7 +4309,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   fixedEventSceneIndex: -1
-  connectedNodes: []
+  connectedNodes:
+  - {fileID: 442907041}
 --- !u!212 &1344241116
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4915,7 +4921,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0.82745105, b: 0.38823533, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -5481,7 +5487,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   fixedEventSceneIndex: -1
-  connectedNodes: []
+  connectedNodes:
+  - {fileID: 1344241115}
+  - {fileID: 1170720036}
 --- !u!212 &1779096652
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -5543,7 +5551,7 @@ Transform:
   m_GameObject: {fileID: 1779096649}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -5.24, y: 1.37, z: 0}
+  m_LocalPosition: {x: -4.94, y: 1.16, z: 0}
   m_LocalScale: {x: 0.5718, y: 0.5718, z: 0.5718}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6065,7 +6073,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   nodeType: 0
   fixedEventSceneIndex: -1
-  connectedNodes: []
+  connectedNodes:
+  - {fileID: 712897111}
 --- !u!212 &2003161357
 SpriteRenderer:
   m_ObjectHideFlags: 0

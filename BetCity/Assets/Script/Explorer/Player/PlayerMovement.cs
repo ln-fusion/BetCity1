@@ -4,7 +4,7 @@ using System.Collections;
 public class PlayerMovement : MonoBehaviour
 {
     [Header("移动设置")]
-    [SerializeField] private float moveSpeed = 0.5f; // 移动速度
+    [SerializeField] private float moveSpeed = 0.2f; // 移动速度
     [SerializeField] private float playerHeight = 0.5f; // 玩家高度
 
     public Node CurrentNode { get; private set; } // 当前所在节点
