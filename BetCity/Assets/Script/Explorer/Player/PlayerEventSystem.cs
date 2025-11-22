@@ -166,9 +166,16 @@ public class PlayerEventSystem : MonoBehaviour
                 TriggerBattle();
                 break;
             case NodeType.Normal:
-                Debug.Log("当前节点是普通节点，无事件触发，休息。");
-                sanitymanager.IncreaseSanity(10);
-                Debug.Log("理智+10");
+
+                Debug.Log("当前节点是普通节点，无事件触发。");
+                //  sanitymanager.IncreaseSanity(10);
+                //   Debug.Log("理智+10");
+                break;
+
+            case NodeType.Rest:
+                Debug.Log("当前节点是休息节点，休息。");
+                //  sanitymanager.IncreaseSanity(10);
+                //   Debug.Log("理智+10");
                 break;
             default:
                 Debug.LogWarning($"未处理的节点类型: {node.nodeType}");
