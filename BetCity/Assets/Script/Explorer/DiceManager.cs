@@ -4,7 +4,10 @@ using UnityEngine;
 public class DiceManager : MonoBehaviour
 {
       [SerializeField] private DiceCounter diceCounter; // 引用 DiceCounter
-  //  public bool IsRolling { get; private set; }  // 用来判断骰子是否正在滚动
+       public DiceCounter DiceCounter => diceCounter; // 添加这个属性
+
+
+
 
 
     private void Awake()

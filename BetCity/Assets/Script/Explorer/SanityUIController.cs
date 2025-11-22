@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -7,10 +5,13 @@ using TMPro;
 
 public class SanityUIController : MonoBehaviour
 {
+    [Header("UI 组件")]
     [SerializeField] private Button increaseButton;
     [SerializeField] private Button decreaseButton;
     [SerializeField] private Slider sanitySlider;
     [SerializeField] private TextMeshProUGUI sanityText;
+
+    [Header("调试设置")]
     [SerializeField] private int changeAmount = 10; // 理智变化量
     [SerializeField] private string sanityTextFormat = "Sanity: {0} / {1}";
 
@@ -18,41 +19,38 @@ public class SanityUIController : MonoBehaviour
 
     private void Awake()
     {
-        // 查找场景中的SanityManager实例
         sanityManager = FindObjectOfType<SanityManager>();
         if (sanityManager == null)
         {
-            Debug.LogError("场景中未找到SanityManager实例!");
+            Debug.LogError("SanityUIController: 未找到 SanityManager 实例！");
         }
 
-        // 验证UI引用
         ValidateReferences();
     }
 
     private void Start()
     {
         UpdateSanityUI();
-        SetupButtonEvents();
         SetupEventListeners();
 
-        // 场景加载事件
+#if UNITY_EDITOR
+        SetupButtonEvents(); // 仅在编辑器中激活测试按钮
+#endif
+
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDestroy()
     {
-        // 清理事件监听
         RemoveEventListeners();
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        // 重新查找SanityManager实例
         sanityManager = FindObjectOfType<SanityManager>();
         if (sanityManager != null)
         {
-            // 重新设置事件监听
             RemoveEventListeners();
             SetupEventListeners();
             UpdateSanityUI();
@@ -62,16 +60,13 @@ public class SanityUIController : MonoBehaviour
     private void ValidateReferences()
     {
         if (increaseButton == null)
-            Debug.LogError("increaseButton未分配!");
-
+            Debug.LogWarning("increaseButton 未分配");
         if (decreaseButton == null)
-            Debug.LogError("decreaseButton未分配!");
-
+            Debug.LogWarning("decreaseButton 未分配");
         if (sanitySlider == null)
-            Debug.LogError("sanitySlider未分配!");
-
+            Debug.LogError("sanitySlider 未分配");
         if (sanityText == null)
-            Debug.LogError("sanityText未分配!");
+            Debug.LogError("sanityText 未分配");
     }
 
     private void SetupButtonEvents()
@@ -99,7 +94,6 @@ public class SanityUIController : MonoBehaviour
         }
     }
 
-    // 更新UI显示
     public void UpdateSanityUI()
     {
         if (sanityManager == null) return;
@@ -118,5 +112,4 @@ public class SanityUIController : MonoBehaviour
             sanityText.text = string.Format(sanityTextFormat, current, max);
         }
     }
-
 }
