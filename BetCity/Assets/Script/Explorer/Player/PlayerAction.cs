@@ -68,16 +68,19 @@ public class PlayerAction : MonoBehaviour
         }
 
         // 🔒 锁定逻辑期间禁止其他地方调用 Sanity 减少
-        sanityManager.IsLocked = true;
+        //   sanityManager.IsLocked = true;
 
-        sanityManager.DecreaseSanity(dailySanityCost);
+        else
+        {
+            sanityManager.DecreaseSanity(dailySanityCost);
 
-        ActionPoints = diceManager.RollDice();
+            ActionPoints = diceManager.RollDice();
 
-        Debug.Log($"获得行动点数: {ActionPoints}");
+            Debug.Log($"获得行动点数: {ActionPoints}");
 
-        // 在骰子滚动结束后，解除锁定（你可以用事件做这事）
-        diceManager.DiceCounter.OnDiceRollFinished += OnRollFinished;
+            // 在骰子滚动结束后，解除锁定（你可以用事件做这事）
+            diceManager.DiceCounter.OnDiceRollFinished += OnRollFinished;
+        }
     }
 
     private void OnRollFinished(int result)

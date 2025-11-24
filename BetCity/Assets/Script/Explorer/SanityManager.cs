@@ -106,11 +106,11 @@ public class SanityManager : MonoBehaviour
     // 减少理智值
     public void DecreaseSanity(int amount)
     {
-        if (IsLocked)
+     /*   if (IsLocked)
         {
             Debug.Log("SanityManager: 当前锁定状态，理智无法减少！");
             return;
-        }
+        } */
 
         if (amount <= 0) return;
 
