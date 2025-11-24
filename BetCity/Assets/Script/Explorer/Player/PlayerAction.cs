@@ -8,7 +8,7 @@ public class PlayerAction : MonoBehaviour
     [Header("组件引用")]
     [SerializeField] private DiceManager diceManager; // 投骰子管理器
     [SerializeField] private SanityManager sanityManager; // 理智管理器
-    //[SerializeField] private Button rollButton;  // 投骰子按钮
+    [SerializeField] private PlayerMovement playerMovement;
 
 
 
@@ -37,20 +37,28 @@ public class PlayerAction : MonoBehaviour
     // 投掷骰子
     public void RollDice()
     {
-        if (diceManager == null || diceManager.DiceCounter == null) return;
-
+        Debug.Log($"RollDice: 检测 IsMoving = {playerMovement.IsMoving}");
+        // 🚫 玩家正在移动，禁止投掷
+        if (playerMovement != null && playerMovement.IsMoving)
+        {
+            Debug.Log("玩家正在移动中，不能投掷骰子！");
+            return;
+        }
+        // 🚫 骰子正在滚动中，禁止投掷
         if (diceManager.DiceCounter.IsRolling())
         {
             Debug.Log("骰子正在滚动，无法被点击。");
             return;
         }
 
+        // 🚫 当前行动点数大于 0，不能再投
         if (ActionPoints > 0)
         {
             Debug.Log("还有未使用的行动点，不能再次投掷。");
             return;
         }
 
+        // 🚫 理智不足，不能投掷
         if (sanityManager.CurrentSanity < dailySanityCost)
         {
             Debug.LogWarning("理智值不足，无法投掷骰子。");

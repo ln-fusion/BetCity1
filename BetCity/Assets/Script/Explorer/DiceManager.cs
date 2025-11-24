@@ -5,6 +5,8 @@ public class DiceManager : MonoBehaviour
 {
       [SerializeField] private DiceCounter diceCounter; // 引用 DiceCounter
        public DiceCounter DiceCounter => diceCounter; // 添加这个属性
+    public bool IsRolling => diceCounter != null && diceCounter.IsRolling();
+
 
 
 

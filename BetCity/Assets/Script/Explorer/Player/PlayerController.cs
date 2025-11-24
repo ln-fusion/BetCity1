@@ -84,8 +84,27 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        if (playerMovement != null && playerMovement.IsMoving)
+        {
+            Debug.Log("玩家正在移动，不能投掷骰子。");
+            return;
+        }
+
+        if (diceManager != null && diceManager.IsRolling) // 使用中转属性更简洁
+        {
+            Debug.Log("骰子正在滚动，不能投掷。");
+            return;
+        }
+
+        if (playerAction.ActionPoints > 0)
+        {
+            Debug.Log("当前还有剩余行动次数，不能再次投掷骰子！");
+            return;
+        }
+
         playerAction.RollDice();
     }
+
 
     // 公共方法：尝试移动到目标节点
 
