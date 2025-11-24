@@ -3371,6 +3371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sanityManager: {fileID: 505527677}
   startNode: {fileID: 802902958}
+  diceManager: {fileID: 7486350}
 --- !u!114 &881946744
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private SanityManager sanityManager;
     [Tooltip("玩家在游戏开始时所在的初始节点")]
     [SerializeField] private Node startNode;
+    [SerializeField] private DiceManager diceManager;
 
     // --- 内部组件引用 ---
     // 这些变量将由 Awake() 自动填充，无需在 Inspector 中手动拖拽。
@@ -90,13 +91,18 @@ public class PlayerController : MonoBehaviour
 
     public void TryMoveToNode(Node targetNode)
     {
-        // ... 前置的 if 判断保持不变 ...
 
+        // 🚫 禁止在骰子滚动时移动
+        if (diceManager.DiceCounter.IsRolling())
+        {
+            Debug.Log("骰子正在滚动，不能移动！");
+            return;
+        }
         // 检查是否可以移动到目标节点
         if (playerMovement.CanMoveTo(targetNode, playerAction.ActionPoints))
         {
             // 如果可以移动，则启动移动协程
-            Debug.Log("条件满足，开始移动...");
+            Debug.Log("可以移动到该节点");
             StartCoroutine(playerMovement.MoveToNode(targetNode));
 
             // 移动后消耗行动点
@@ -108,7 +114,7 @@ public class PlayerController : MonoBehaviour
             targetNodeForEvent = targetNode;
 
             // 2. 使用 Invoke 来延迟调用一个新的方法，比如延迟 0.7 秒
-            Invoke("CheckEventAfterDelay", 5.5f);
+            Invoke("CheckEventAfterDelay", 2.5f);
         }
         else
         {

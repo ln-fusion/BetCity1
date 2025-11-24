@@ -30,17 +30,7 @@ public class PlayerAction : MonoBehaviour
             }
         }
     }
-    /*  private void Start()
-      {
-          if (rollButton == null)
-          {
-              Debug.LogError("rollButton is not assigned in the Inspector!");
-              return; // 早早返回，避免后续代码执行
-          }
 
-     //     rollButton.onClick.AddListener(RollDice);
-    //      UpdateButtonState();  // 初始化时检查按钮状态
-      }*/
 
 
 
@@ -67,20 +57,15 @@ public class PlayerAction : MonoBehaviour
             return;
         }
 
-        // 🔒 锁定逻辑期间禁止其他地方调用 Sanity 减少
-        //   sanityManager.IsLocked = true;
 
-        else
-        {
-            sanityManager.DecreaseSanity(dailySanityCost);
+        sanityManager.DecreaseSanity(dailySanityCost);
 
-            ActionPoints = diceManager.RollDice();
+        ActionPoints = diceManager.RollDice(); 
 
-            Debug.Log($"获得行动点数: {ActionPoints}");
+        Debug.Log($"获得行动点数: {ActionPoints}");
 
-            // 在骰子滚动结束后，解除锁定（你可以用事件做这事）
-            diceManager.DiceCounter.OnDiceRollFinished += OnRollFinished;
-        }
+        // 在骰子滚动结束后，解除锁定（你可以用事件做这事）
+        diceManager.DiceCounter.OnDiceRollFinished += OnRollFinished;
     }
 
     private void OnRollFinished(int result)
@@ -105,9 +90,5 @@ public class PlayerAction : MonoBehaviour
     }
 
 
-    // 更新按钮的状态，防止点击
-  /*  private void UpdateButtonState()
-    {
-        rollButton.interactable = !diceManager.IsRolling;  // 当骰子正在滚动时禁用按钮
-    }*/
+
 }
