@@ -49,7 +49,7 @@ public class PlayerMovement : MonoBehaviour
     public IEnumerator MoveToNode(Node targetNode)
     {
         IsMoving = true;
-        Debug.Log("正在移动");
+        Debug.Log("MoveToNode: 开始移动 — 设置 IsMoving = true");
 
         if (animator != null)
             animator.SetBool("isMoving", true);

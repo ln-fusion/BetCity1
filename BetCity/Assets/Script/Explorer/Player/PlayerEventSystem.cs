@@ -14,6 +14,9 @@ public class PlayerEventSystem : MonoBehaviour
     
 
     public bool IsInEvent { get; private set; } = false; // 标记是否在事件场景中
+    public bool IsTransitioningToEvent { get; private set; } = false; //添加事件锁定延迟期标志
+
+
 
     private Vector3 savedCameraPosition; // 用于保存摄像机的初始位置
 
@@ -61,6 +64,10 @@ public class PlayerEventSystem : MonoBehaviour
     // 切换到事件场景
     public void LoadEventScene(int sceneIndex)
     {
+        SetTransitioningToEvent(true);
+        // ✅ 一开始就设为 true
+        Debug.Log("正在设置 IsTransitioningToEvent 为 true");
+
         // 【关键步骤】在加载场景前，调用 PlayerController 的保存方法
         if (playerController != null)
         {
@@ -88,8 +95,7 @@ public class PlayerEventSystem : MonoBehaviour
     // EndEvent 方法现在应该只负责返回主地图的逻辑
     public void EndEvent()
     {
-        // 【修改】直接调用场景管理器返回上一场景，而不是写死 "ExplorerMap"
-        // 这样更灵活，也符合我们之前的设计
+
         if (SceneStateManager.Instance != null)
         {
             SceneStateManager.Instance.ReturnToLastScene();
@@ -100,6 +106,8 @@ public class PlayerEventSystem : MonoBehaviour
             mySceneLoader.LoadScene("ExplorerMap"); // 作为后备方案
         }
         IsInEvent = false;
+        SetTransitioningToEvent(false);  // ✅ 场景返回后才允许操作
+
     }
 
 
@@ -129,6 +137,9 @@ public class PlayerEventSystem : MonoBehaviour
     // 触发随机事件
     public void TriggerRandomEvent()
     {
+        SetTransitioningToEvent(true);
+        Debug.Log("已经设定为正在加载场景");
+
         int randomIndex = Random.Range(3, eventSceneIndices.Length);
         int sceneToLoad = eventSceneIndices[randomIndex];
         LoadEventScene(sceneToLoad);
@@ -137,6 +148,7 @@ public class PlayerEventSystem : MonoBehaviour
     // 触发战斗
     public void TriggerBattle()
     {
+        SetTransitioningToEvent(true);
         int sceneToLoad = eventSceneIndices[0]; // 假设战斗场景在事件场景索引中
         LoadEventScene(sceneToLoad);
     }
@@ -147,6 +159,7 @@ public class PlayerEventSystem : MonoBehaviour
         switch (node.nodeType)
         {
             case NodeType.RandomEvent:
+                SetTransitioningToEvent(true);// ✅ 提前锁定
                 TriggerRandomEvent();
                 break;
             case NodeType.FixedEvent:
@@ -182,5 +195,11 @@ public class PlayerEventSystem : MonoBehaviour
                 break;
         }
     }
+    // 新增方法：用于外部控制切换状态
+    public void SetTransitioningToEvent(bool state)
+    {
+        IsTransitioningToEvent = state;
+    }
+
 }
 

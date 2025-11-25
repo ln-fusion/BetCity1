@@ -37,24 +37,24 @@ public class PlayerAction : MonoBehaviour
     // 投掷骰子
     public void RollDice()
     {
-        Debug.Log($"RollDice: 检测 IsMoving = {playerMovement.IsMoving}");
+      //  Debug.Log($"RollDice: 检测 IsMoving = {playerMovement.IsMoving}");
         // 🚫 玩家正在移动，禁止投掷
         if (playerMovement != null && playerMovement.IsMoving)
         {
-            Debug.Log("玩家正在移动中，不能投掷骰子！");
+       //     Debug.Log("玩家正在移动中，不能投掷骰子！");
             return;
         }
         // 🚫 骰子正在滚动中，禁止投掷
         if (diceManager.DiceCounter.IsRolling())
         {
-            Debug.Log("骰子正在滚动，无法被点击。");
+         //   Debug.Log("骰子正在滚动，无法被点击。");
             return;
         }
 
         // 🚫 当前行动点数大于 0，不能再投
         if (ActionPoints > 0)
         {
-            Debug.Log("还有未使用的行动点，不能再次投掷。");
+      //      Debug.Log("还有未使用的行动点，不能再次投掷。");
             return;
         }
 

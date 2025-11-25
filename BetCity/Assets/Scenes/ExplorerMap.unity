@@ -5816,7 +5816,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   diceManager: {fileID: 7486350}
   sanityManager: {fileID: 505527677}
-  playerMovement: {fileID: 0}
+  playerMovement: {fileID: 881946747}
   dailySanityCost: 5
 --- !u!4 &1795737009
 Transform:
@@ -5892,7 +5892,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   diceManager: {fileID: 7486350}
   sanityManager: {fileID: 505527677}
-  playerMovement: {fileID: 0}
+  playerMovement: {fileID: 785038625}
   dailySanityCost: 5
 --- !u!4 &1835233037
 Transform:
