@@ -8,7 +8,8 @@ public enum NodeType
     Normal,      // 普通节点
     RandomEvent, // 触发随机事件的节点
     FixedEvent,  // 触发固定事件的节点
-    Battle       // 触发战斗的节点
+    Battle,    // 触发战斗的节点
+    Rest        //休息的节点
     // ... 其他可能的节点类型可以在这里添加
 }
 

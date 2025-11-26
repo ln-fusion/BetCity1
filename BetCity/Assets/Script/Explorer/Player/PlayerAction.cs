@@ -8,7 +8,7 @@ public class PlayerAction : MonoBehaviour
     [Header("组件引用")]
     [SerializeField] private DiceManager diceManager; // 投骰子管理器
     [SerializeField] private SanityManager sanityManager; // 理智管理器
-    //[SerializeField] private Button rollButton;  // 投骰子按钮
+    [SerializeField] private PlayerMovement playerMovement;
 
 
 
@@ -30,43 +30,60 @@ public class PlayerAction : MonoBehaviour
             }
         }
     }
-  /*  private void Start()
-    {
-        if (rollButton == null)
-        {
-            Debug.LogError("rollButton is not assigned in the Inspector!");
-            return; // 早早返回，避免后续代码执行
-        }
 
-   //     rollButton.onClick.AddListener(RollDice);
-  //      UpdateButtonState();  // 初始化时检查按钮状态
-    }*/
+
+
 
     // 投掷骰子
     public void RollDice()
     {
-        if (sanityManager.CurrentSanity <= 0)
+      //  Debug.Log($"RollDice: 检测 IsMoving = {playerMovement.IsMoving}");
+        // 🚫 玩家正在移动，禁止投掷
+        if (playerMovement != null && playerMovement.IsMoving)
+        {
+       //     Debug.Log("玩家正在移动中，不能投掷骰子！");
+            return;
+        }
+        // 🚫 骰子正在滚动中，禁止投掷
+        if (diceManager.DiceCounter.IsRolling())
+        {
+         //   Debug.Log("骰子正在滚动，无法被点击。");
+            return;
+        }
+
+        // 🚫 当前行动点数大于 0，不能再投
+        if (ActionPoints > 0)
+        {
+      //      Debug.Log("还有未使用的行动点，不能再次投掷。");
+            return;
+        }
+
+        // 🚫 理智不足，不能投掷
+        if (sanityManager.CurrentSanity < dailySanityCost)
         {
             Debug.LogWarning("理智值不足，无法投掷骰子。");
             return;
         }
 
+
         sanityManager.DecreaseSanity(dailySanityCost);
 
-        if (sanityManager.CurrentSanity <= 0)
-        {
-            Debug.Log("理智值已归零，无法投掷骰子。");
-            return;
-        }
-
-
-        ActionPoints = diceManager.RollDice();
-
-        // 锁定按钮，防止多次点击
-    //   UpdateButtonState();
+        ActionPoints = diceManager.RollDice(); 
 
         Debug.Log($"获得行动点数: {ActionPoints}");
+
+        // 在骰子滚动结束后，解除锁定（你可以用事件做这事）
+        diceManager.DiceCounter.OnDiceRollFinished += OnRollFinished;
     }
+
+    private void OnRollFinished(int result)
+    {
+        sanityManager.IsLocked = false;
+        diceManager.DiceCounter.OnDiceRollFinished -= OnRollFinished; // 移除监听
+    }
+
+
+
 
     // 消耗行动点数
     public void DecreaseActionPoints(int amount = 1)
@@ -81,9 +98,5 @@ public class PlayerAction : MonoBehaviour
     }
 
 
-    // 更新按钮的状态，防止点击
-  /*  private void UpdateButtonState()
-    {
-        rollButton.interactable = !diceManager.IsRolling;  // 当骰子正在滚动时禁用按钮
-    }*/
+
 }

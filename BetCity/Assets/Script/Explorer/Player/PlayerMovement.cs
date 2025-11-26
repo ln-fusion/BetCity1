@@ -46,46 +46,38 @@ public class PlayerMovement : MonoBehaviour
         // --- 修复代码结束 ---
     }
 
-    // 尝试移动到目标节点
     public IEnumerator MoveToNode(Node targetNode)
     {
         IsMoving = true;
+        Debug.Log("MoveToNode: 开始移动 — 设置 IsMoving = true");
 
-        // --- 新增代码 ---
-        // 3. 开始移动时，通知 Animator 播放走路动画
-        animator.SetBool("isMoving", true);
-        // --- 新增代码结束 --
+        if (animator != null)
+            animator.SetBool("isMoving", true);
 
         Vector3 startPos = transform.position;
         Vector3 endPos = targetNode.transform.position + Vector3.up * playerHeight;
+
         float elapsed = 0f;
+        float duration = moveSpeed;  // ❗ 再次将 moveSpeed 当作“移动持续时间”
 
-        float duration = moveSpeed; // 将 moveSpeed 视为移动持续时间
-
-
-
-        // 这里的循环条件应该基于持续时间
         while (elapsed < duration)
         {
-            // 使用 Lerp 的第三个参数 t，其值应该在 0 到 1 之间
             transform.position = Vector3.Lerp(startPos, endPos, elapsed / duration);
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // 确保最终位置精确
         transform.position = endPos;
         CurrentNode = targetNode;
+
         IsMoving = false;
+        Debug.Log("移动结束");
 
-        Debug.Log($"移动完成，当前节点: {CurrentNode.name}");
-
-
-        // --- 新增代码 ---
-        // 4. 移动结束时，通知 Animator 切换回站立动画
-        animator.SetBool("isMoving", false);
-        // --- 新增代码结束 ---
+        if (animator != null)
+            animator.SetBool("isMoving", false);
     }
+
+
 
     // 检查是否可以移动到目标节点
     public bool CanMoveTo(Node targetNode, int actionPoints)

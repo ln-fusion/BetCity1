@@ -12,6 +12,9 @@ public class SanityManager : MonoBehaviour
     [SerializeField] private int currentSanity = 80; // 当前理智值
     [SerializeField] private Image sanityBarImage;   // 用于显示理智条的 Image 组件
 
+    [Header("逻辑状态锁")]
+    public bool IsLocked = false; // 外部可控制，防止误调用
+
     private string csvFilePath; // CSV文件路径
 
     public int MaxSanity => maxSanity;
@@ -103,6 +106,12 @@ public class SanityManager : MonoBehaviour
     // 减少理智值
     public void DecreaseSanity(int amount)
     {
+     /*   if (IsLocked)
+        {
+            Debug.Log("SanityManager: 当前锁定状态，理智无法减少！");
+            return;
+        } */
+
         if (amount <= 0) return;
 
         int oldValue = currentSanity;
@@ -112,12 +121,12 @@ public class SanityManager : MonoBehaviour
         {
             onSanityDecreased?.Invoke(amount);
             onSanityChanged?.Invoke();
-            SaveToCSV(); // 保存到CSV
+            SaveToCSV();
             if (currentSanity <= 0)
             {
                 onSanityZero?.Invoke();
             }
-            UpdateSanityBar(); // 更新理智条显示
+            UpdateSanityBar();
         }
     }
 
