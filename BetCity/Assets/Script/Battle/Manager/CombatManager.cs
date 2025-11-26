@@ -74,6 +74,8 @@ public class CombatManager : MonoSingleton<CombatManager>
         return publicDeck.Count;
     }
 
+
+
     /// <summary>
     /// 刷新卡组显示，触发卡组数量变化事件
     /// </summary>
@@ -97,7 +99,10 @@ public class CombatManager : MonoSingleton<CombatManager>
         if (playerHand == null) Debug.LogError("未设置玩家手牌区域");
         if (enemyHand == null) Debug.LogError("未设置敌人手牌区域");
         if (cardPrefab == null) Debug.LogError("未设置卡牌预制体");
-
+        if (GraveyardManager.Instance != null)
+        {
+            GraveyardManager.Instance.cardPrefab = cardPrefab;
+        }
         GameStart();
     }
 
@@ -931,5 +936,19 @@ public class CombatManager : MonoSingleton<CombatManager>
        // waitingPlayer = none; // 无等待玩家
 
         Debug.Log($"玩家{player}成功召唤卡牌到位置");
+    }
+
+    public void SendCardToGraveyard(Card card)
+    {
+        if (card == null) return;
+
+        if (GraveyardManager.Instance != null)
+        {
+            GraveyardManager.Instance.SendCardToGraveyard(card);
+        }
+        else
+        {
+            Debug.LogWarning("墓地管理器未找到，无法将卡牌送入墓地");
+        }
     }
 }
