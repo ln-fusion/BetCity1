@@ -750,8 +750,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InventoryStores: {fileID: 1604950471}
-  BagItemData: {fileID: 4900000, guid: 243c606cfb0382e48a3c235bfab7b71e, type: 3}
-  InventoryItemData: {fileID: 4900000, guid: 5f0f5b0e8a2ebfe49b99cee5da814b3f, type: 3}
+  BagItemData: {fileID: 4900000, guid: 60629cb0625ab8a4dab919ac58f08f0d, type: 3}
+  InventoryItemData: {fileID: 4900000, guid: 72981d51e6900194a84d234a11304ba4, type: 3}
   bagMaxTotal: 20
 --- !u!1 &630389860
 GameObject:
@@ -2889,7 +2889,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f54507fd6240f24893f49e8f851c8b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  btn: {fileID: 1864864800}
 --- !u!1 &1868733525
 GameObject:
   m_ObjectHideFlags: 0
