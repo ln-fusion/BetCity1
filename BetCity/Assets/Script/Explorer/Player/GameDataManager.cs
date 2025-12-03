@@ -4,9 +4,9 @@ public class GameDataManager : MonoBehaviour
 {
     public static GameDataManager Instance { get; private set; }
 
-    // ĞèÒª´¢´æµÄºËĞÄÊı¾İ
+    // éœ€è¦å‚¨å­˜çš„æ ¸å¿ƒæ•°æ®
     public int StoredActionPoints { get; private set; }
-    public string StoredNodeName { get; private set; } // ´¢´æ½ÚµãµÄÃû×Ö
+    public string StoredNodeName { get; private set; } // å‚¨å­˜èŠ‚ç‚¹çš„åå­—
 
     private void Awake()
     {
@@ -21,27 +21,27 @@ public class GameDataManager : MonoBehaviour
         }
     }
 
-    // ¹«¹²·½·¨£¬ÓÃÓÚ±£´æÍæ¼ÒÊı¾İ
+    /// å…¬å…±æ–¹æ³•ï¼Œç”¨äºä¿å­˜ç©å®¶æ•°æ®
     public void SavePlayerData(int actionPoints, Node currentNode)
     {
         StoredActionPoints = actionPoints;
         if (currentNode != null)
         {
             StoredNodeName = currentNode.name;
-            Debug.Log($"[GameDataManager] Êı¾İÒÑ±£´æ: ĞĞ¶¯µãÊı = {StoredActionPoints}, ËùÔÚ½Úµã = {StoredNodeName}");
+            Debug.Log($"[GameDataManager] æ•°æ®å·²ä¿å­˜: è¡ŒåŠ¨ç‚¹æ•° = {StoredActionPoints}, æ‰€åœ¨èŠ‚ç‚¹ = {StoredNodeName}");
         }
         else
         {
             StoredNodeName = null;
-            Debug.LogWarning("[GameDataManager] ³¢ÊÔ±£´æÊı¾İ£¬µ«µ±Ç°½ÚµãÎª¿Õ£¡");
+            Debug.LogWarning("[GameDataManager] å°è¯•ä¿å­˜æ•°æ®ï¼Œä½†å½“å‰èŠ‚ç‚¹ä¸ºç©ºï¼");
         }
     }
 
-    // ¹«¹²·½·¨£¬ÓÃÓÚÇå³ıÒÑ´¢´æµÄÊı¾İ
+    // å…¬å…±æ–¹æ³•ï¼Œç”¨äºæ¸…é™¤å·²å‚¨å­˜çš„æ•°æ®
     public void ClearStoredData()
     {
         StoredActionPoints = 0;
         StoredNodeName = null;
-        Debug.Log("[GameDataManager] ÒÑÇå³ı´¢´æµÄÍæ¼ÒÊı¾İ¡£");
+        Debug.Log("[GameDataManager] å·²æ¸…é™¤å‚¨å­˜çš„ç©å®¶æ•°æ®ã€‚");
     }
 }
