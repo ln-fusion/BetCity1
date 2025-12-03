@@ -7,7 +7,7 @@ using UnityEngine;
 public class BagData : MonoBehaviour
 {
     [Header("数据引用")]
-    public InventoryStores InventoryStores;
+    //public InventoryStores InventoryStores;
     public TextAsset BagItemData;
     public TextAsset InventoryItemData;
 
@@ -19,7 +19,7 @@ public class BagData : MonoBehaviour
 
     void Start()
     {
-        InventoryStores.LoadItemData();
+        //InventoryStores.LoadItemData();
         LoadInventoryData();
         LoadBagData();
     }
@@ -27,6 +27,7 @@ public class BagData : MonoBehaviour
     //读取背包数据
     public void LoadBagData()
     {
+        /*
         playerBag.Clear(); // 清空背包数据
 
         // 分割CSV行（按换行符拆分）
@@ -59,7 +60,7 @@ public class BagData : MonoBehaviour
                     Debug.LogWarning($"背包CSV行解析失败：ID或数量不是有效数字，行内容：{row}");
                 }
             }
-        }
+        }*/
     }
 
     public void SaveBagData()
@@ -91,6 +92,7 @@ public class BagData : MonoBehaviour
 
     public int GetRandomid()
     {
+        /*
         // 1. 收集所有道具的ID（从道具数据库）
         List<int> allItemIds = new List<int>();
         foreach (var item in InventoryStores.itemList)
@@ -118,7 +120,8 @@ public class BagData : MonoBehaviour
 
         // 4. 从有效ID中随机选择一个
         int randomIndex = Random.Range(0, missingIds.Count);
-        return missingIds[randomIndex];
+        return missingIds[randomIndex];*/
+        return 0;
     }
 
     public void GetSpecificitem(int id)
@@ -135,6 +138,7 @@ public class BagData : MonoBehaviour
     //读取仓库数据
     public void LoadInventoryData()
     {
+        /*
         playerInventory.Clear(); // 清空仓库数据
 
         // 分割CSV行（按换行符拆分）
@@ -167,7 +171,7 @@ public class BagData : MonoBehaviour
                     Debug.LogWarning($"仓库CSV行解析失败：ID或数量不是有效数字，行内容：{row}");
                 }
             }
-        }
+        }*/
     }
 
     public void SaveInventoryData()

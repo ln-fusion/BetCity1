@@ -4,13 +4,14 @@ public class ItemPopupManager : MonoBehaviour
 {
     [Header("必要引用")]
     public BagData bagData; // 背包数据（内含随机道具函数）
-    public InventoryStores inventoryStores; // 道具数据库（用于查找道具详情）
+    //public InventoryStores inventoryStores; // 道具数据库（用于查找道具详情）
     public GameObject popupPrefab; // 弹窗预制体
     public Transform canvasTransform; // 弹窗父级（Canvas）
 
     // 按钮点击触发：调用BagData的随机函数并显示弹窗
     public void ShowRandomItemPopup()
     {
+        /*
         // 校验引用
         if (bagData == null)
         {
@@ -37,7 +38,7 @@ public class ItemPopupManager : MonoBehaviour
         }
 
         // 根据ID从数据库中查找道具详情
-        InventoryItem targetItem = inventoryStores.itemList.Find(item => item.id == randomItemId);
+        Souvenir targetItem = inventoryStores.itemList.Find(item => item.id == randomItemId);
         if (targetItem == null)
         {
             Debug.LogError($"未找到ID为{randomItemId}的道具");
@@ -45,11 +46,11 @@ public class ItemPopupManager : MonoBehaviour
         }
 
         // 实例化弹窗并显示道具信息
-        ShowPopup(targetItem);
+        ShowPopup(targetItem);*/
     }
 
     // 实例化弹窗并绑定逻辑
-    private void ShowPopup(InventoryItem item)
+    private void ShowPopup(Souvenir item)
     {
         GameObject popup = Instantiate(popupPrefab, canvasTransform);
         PopupController controller = popup.GetComponent<PopupController>();

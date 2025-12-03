@@ -9,7 +9,7 @@ public class InventoryManager : MonoBehaviour
     public GameObject InventoryPrefab;
     public GameObject InventoryPool;
     public GameObject BagPool;
-    InventoryStores InventoryStores;
+    public SouvenirDataManager souvenirDataManager; //在Inspector绑定
     List <GameObject> items =new List<GameObject>();
 
     public BagData BagData;
@@ -20,7 +20,6 @@ public class InventoryManager : MonoBehaviour
 
     void Start()
     {
-        InventoryStores=GetComponent<InventoryStores>();
         LoadAllItems();
     }
 
@@ -46,6 +45,7 @@ public class InventoryManager : MonoBehaviour
     // 重载：加载道具UI并标记是否为仓库道具（修改原有LoadItemsFromDictionary）
     private void LoadItemsFromDictionary(Dictionary<int, int> itemDict, GameObject parent)
     {
+        /*
         foreach (var itemPair in itemDict)
         {
             int itemId = itemPair.Key;
@@ -54,8 +54,9 @@ public class InventoryManager : MonoBehaviour
             // 只实例化数量>0的道具
             if (itemCount > 0)
             {
+                SouvenirData itemData = souvenirDataManager.GetDataById(itemId);
                 // 从道具数据库中查找对应ID的道具信息
-                InventoryItem itemData = InventoryStores.itemList.Find(item => item.id == itemId);
+                Souvenir itemData = InventoryStores.itemList.Find(item => item.id == itemId);
                 if (itemData != null)
                 {
                     // 实例化对应数量的道具UI（如果需要显示多个相同道具）
@@ -70,17 +71,18 @@ public class InventoryManager : MonoBehaviour
                 }
             }
         }
+        */
     }
 
     /// 实例化单个道具UI
-    public void InstantiateItemUI(InventoryItem itemData, GameObject parent)
+    public void InstantiateItemUI(Souvenir itemData, GameObject parent)
     {
         GameObject newItem = Instantiate(InventoryPrefab, parent.transform);
         InventoryDisplay display = newItem.GetComponent<InventoryDisplay>();
 
         if (display != null)
         {
-            display.item = itemData; // 给道具UI赋值数据
+            display.souvenir = itemData; // 给道具UI赋值数据
             // 如果有数量显示组件，可在这里设置（例如：display.countText.text = "1";）
         }
 
@@ -119,9 +121,9 @@ public class InventoryManager : MonoBehaviour
         selectedItemDisplay.selectedHighlight.enabled = true;
 
         // 更新描述文本
-        if (descriptionDisplayText != null && clickedItem.item != null)
+        if (descriptionDisplayText != null && clickedItem.souvenir != null)
         {
-            descriptionDisplayText.text = clickedItem.item.itemInfo;
+            descriptionDisplayText.text = clickedItem.souvenir.info;
         }
     }
 
@@ -150,8 +152,8 @@ public class InventoryManager : MonoBehaviour
             return;
         }
 
-        int itemId = selectedItem.item.id;
-        InventoryItem itemData = selectedItem.item;
+        int itemId = selectedItem.souvenir.id;
+        Souvenir itemData = selectedItem.souvenir;
 
         // 校验背包容量是否已满
         if (IsBagFull())
@@ -188,8 +190,8 @@ public class InventoryManager : MonoBehaviour
             return;
         }
 
-        int itemId = selectedItem.item.id;
-        InventoryItem itemData = selectedItem.item;
+        int itemId = selectedItem.souvenir.id;
+        Souvenir itemData = selectedItem.souvenir;
 
         // 校验背包是否还有该道具（可按需添加仓库容量限制）
         if (!BagData.playerBag.ContainsKey(itemId) || BagData.playerBag[itemId] < 1)

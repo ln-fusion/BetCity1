@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class InventoryDisplay : MonoBehaviour
 {
     [Header("Data Reference")]
-    public InventoryItem item;
+    public Souvenir souvenir;
 
     [Header("Visual Components")]
     public Image itemArtworkImage; // 物品背景
@@ -41,26 +42,26 @@ public class InventoryDisplay : MonoBehaviour
 
     public void UpdateItemDisplay()
     {
-        if (item == null)
+        if (souvenir == null)
             return;
 
         // 更新物品名称
         if (itemNameText != null)
         {
-            itemNameText.text = item.itemName.ToString();
+            itemNameText.text = souvenir.name.ToString();
         }
 
         // 更新物品描述（）
         if (itemInfo != null)
         {
-            itemInfo.text = item.itemInfo.ToString();
+            itemInfo.text = souvenir.info.ToString();
         }
 
         // 更新物品艺术图
         if (itemArtworkImage != null)
         {
-            itemArtworkImage.sprite = item.itemImage; // Image通过sprite属性赋值
-            itemArtworkImage.enabled = item.itemImage != null; // 图片为空时隐藏
+            itemArtworkImage.sprite = souvenir.image; // Image通过sprite属性赋值
+            itemArtworkImage.enabled = souvenir.image != null; // 图片为空时隐藏
         }
         /**/
     }

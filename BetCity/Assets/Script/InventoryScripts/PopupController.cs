@@ -25,12 +25,12 @@ public class PopupController : MonoBehaviour
     /// <summary>
     /// 初始化弹窗内容
     /// </summary>
-    public void Init(InventoryItem item, System.Action takeCallback, System.Action cancelCallback)
+    public void Init(Souvenir item, System.Action takeCallback, System.Action cancelCallback)
     {
         // 显示道具信息
-        itemNameText.text = item.itemName;
-        itemDescText.text = item.itemInfo;
-        image.sprite = item.itemImage; // 假设item有itemImage字段
+        itemNameText.text = item.name;
+        itemDescText.text = item.info;
+        image.sprite = item.image; // 假设item有itemImage字段
 
         // 保存回调（点击按钮后执行外部逻辑）
         onTake = takeCallback;
