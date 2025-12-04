@@ -9,12 +9,12 @@ using UnityEngine;
 /// <summary>
 /// 纪念品管理器：仅缓存已拥有的藏品，未拥有的直接读取原型
 /// </summary>
-public class SouvenirManager : MonoSingleton<SouvenirManager>
+public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
 {
     public SouvenirDataManager souvenirDataManager; //在Inspector绑定
 
     // 所有藏品原型
-    private IReadOnlyList<SouvenirData> allSouvenirDatas;
+    private IReadOnlyList<SouvenirData> allSouvenirDatas => souvenirDataManager.Data;
     // 存档路径
     private string SavePath => Path.Combine(Application.persistentDataPath, "OwnedSouvenirs.json");
     //仅已拥有的藏品实例（Key=藏品ID）
@@ -23,11 +23,14 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>
     private Dictionary<int, Souvenir> allSouvenirs = new Dictionary<int, Souvenir>();
     // 存档数据（内存缓存）
     private OwnedSouvenirContainer saveData;
+    //提供只读字典
+    public Dictionary<int, Souvenir> OwnedSouvenirs => ownedSouvenirs;
+    //提供只读字典
+    public Dictionary<int, Souvenir> AllSouvenirs => allSouvenirs;
 
     protected override void Awake()
     {
         base.Awake();
-        allSouvenirDatas = souvenirDataManager.Data;
         LoadSaveData();
         CacheOwnedSouvenirInstances();
         LoadNotOwnedData();
@@ -42,15 +45,6 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>
     }
 
     #region 初始化/保存相关
-    /// <summary>
-    /// 增加要保存的内容（当对已拥有物品更新时一定要修改此！）此方法函数体内不设置任何检查！（外置检查）
-    /// </summary>
-    private void AddSaveData(int id, int customPrice)
-    {
-        OwnedSouvenirDTO ownedSouvenirDTO = new OwnedSouvenirDTO(id, customPrice);
-        saveData.OwnedSouvenirs.Add(ownedSouvenirDTO);
-    }
-
     /// <summary>
     /// 加载存档（无存档则初始化空数据）
     /// </summary>
@@ -87,6 +81,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>
     private void CacheOwnedSouvenirInstances()
     {
         ownedSouvenirs.Clear();
+        if (saveData == null) return;
 
         foreach (var dto in saveData.OwnedSouvenirs)
         {
@@ -107,12 +102,19 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>
     }
 
     /// <summary>
-    /// 保存存档到本地文件（内部逻辑）
+    /// 保存存档到本地文件（内部逻辑）重新改写savedata
     /// </summary>
     private void SaveData()
     {
         try
         {
+            saveData = new OwnedSouvenirContainer();
+            foreach(var kt in ownedSouvenirs)
+            {
+                Souvenir s = kt.Value;
+                OwnedSouvenirDTO ownedSouvenirDTO = new OwnedSouvenirDTO(kt.Key, s.Price);
+                saveData.OwnedSouvenirs.Add(ownedSouvenirDTO);
+            }
             // 序列化存档数据为JSON
             string json = JsonConvert.SerializeObject(saveData, Formatting.Indented);
             // 写入持久化路径
@@ -160,7 +162,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>
     /// <param name="id"></param>
     /// <param name="souvenir">返回纪念品</param>
     /// <param name="errorMsg">返回错误信息</param>
-    /// <returns></returns>
+    /// <returns>操作成功与否</returns>
     public bool OwnSouvenirById(int id, out Souvenir souvenir, out string errorMsg)
     {
         if (!allSouvenirs.ContainsKey(id))
@@ -177,8 +179,36 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>
         }
         souvenir = allSouvenirs[id];
         ownedSouvenirs[id] = souvenir;
+        souvenir.SetIsOwned(true, this);
         errorMsg = null;
-        AddSaveData(id, souvenir.Price);
+        return true;
+    }
+
+    /// <summary>
+    /// 根据纪念品的Id来失去对应的纪念品，如果是未拥有的纪念品会返回false但是会输出对应的纪念品
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="souvenir">返回纪念品</param>
+    /// <param name="errorMsg">返回错误信息</param>
+    /// <returns>操作成功与否</returns>
+    public bool LoseSouvenirById(int id, out Souvenir souvenir, out string errorMsg)
+    {
+        if (!allSouvenirs.ContainsKey(id))
+        {
+            errorMsg = "该id所对应的纪念品不存在";
+            souvenir = null;
+            return false;
+        }
+        else if (!ownedSouvenirs.ContainsKey(id))
+        {
+            errorMsg = "该id所对应的纪念品未拥有";
+            souvenir = ownedSouvenirs[id];
+            return false;
+        }
+        souvenir = allSouvenirs[id];
+        ownedSouvenirs.Remove(id);
+        souvenir.SetIsOwned(false, this);
+        errorMsg = null;
         return true;
     }
 
@@ -200,6 +230,20 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>
     public Souvenir GetSouvenirById(int id)
     {
         if (allSouvenirs.TryGetValue(id, out Souvenir result))
+        {
+            return result;
+        }
+        return null;
+    }
+
+    /// <summary>
+    /// 通过ID查询已拥有纪念品
+    /// </summary>
+    /// <param name="id">已拥有纪念品ID</param>
+    /// <returns>对应的Souvenir，不存在则返回null</returns>
+    public Souvenir GetOwnedSouvenirById(int id)
+    {
+        if (ownedSouvenirs.TryGetValue(id, out Souvenir result))
         {
             return result;
         }

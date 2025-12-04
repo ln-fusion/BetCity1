@@ -7,7 +7,7 @@ using UnityEngine;
 /// <summary>
 ///  负责管理所有的SouvernirData
 /// </summary>
-public class SouvenirDataManager : MonoSingleton<SouvenirDataManager>
+public partial class SouvenirDataManager : MonoSingleton<SouvenirDataManager>
 {
     // 所有纪念品数据列表（只读对外暴露）
     public IReadOnlyList<SouvenirData> Data => _data;

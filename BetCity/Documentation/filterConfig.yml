@@ -1,0 +1,7 @@
+apiRules:
+- include:
+    uidRegex: ^Global  # 匹配全局命名空间
+    type: Namespace
+- exclude:
+    uidRegex: .*
+    type: Namespace
