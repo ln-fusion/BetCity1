@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+ï»¿using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -7,25 +7,29 @@ using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// ¼ÍÄîÆ·¹ÜÀíÆ÷£º½ö»º´æÒÑÓµÓĞµÄ²ØÆ·£¬Î´ÓµÓĞµÄÖ±½Ó¶ÁÈ¡Ô­ĞÍ
+/// çºªå¿µå“ç®¡ç†å™¨ï¼ˆå•ä¾‹ï¼‰ï¼Œä¸ºæ‰€æœ‰çºªå¿µå“æä¾›ä¸€ä¸ªå®ä¾‹ä¾›å¤–ç•Œè®¿é—®ï¼ŒåŒæ—¶æä¾›æ¥å£ä¿®æ”¹ï¼Œå·²æ‹¥æœ‰çºªå¿µå“é€šè¿‡å­˜æ¡£è¯»å–ï¼Œæœªæ‹¥æœ‰çºªå¿µå“ç›´æ¥ä»åŸå‹æ•°æ®è¯»å‡º
 /// </summary>
 public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
 {
-    public SouvenirDataManager souvenirDataManager; //ÔÚInspector°ó¶¨
+    public SouvenirDataManager souvenirDataManager; //åœ¨Inspectorç»‘å®š
 
-    // ËùÓĞ²ØÆ·Ô­ĞÍ
+    // æ‰€æœ‰è—å“åŸå‹
     private IReadOnlyList<SouvenirData> allSouvenirDatas => souvenirDataManager.Data;
-    // ´æµµÂ·¾¶
+    // å­˜æ¡£è·¯å¾„
     private string SavePath => Path.Combine(Application.persistentDataPath, "OwnedSouvenirs.json");
-    //½öÒÑÓµÓĞµÄ²ØÆ·ÊµÀı£¨Key=²ØÆ·ID£©
+    //ä»…å·²æ‹¥æœ‰çš„è—å“å®ä¾‹ï¼ˆKey=è—å“IDï¼‰
     private Dictionary<int, Souvenir> ownedSouvenirs = new Dictionary<int, Souvenir>();
-    //È«²¿²ØÆ·ÊµÀı
+    //å…¨éƒ¨è—å“å®ä¾‹
     private Dictionary<int, Souvenir> allSouvenirs = new Dictionary<int, Souvenir>();
-    // ´æµµÊı¾İ£¨ÄÚ´æ»º´æ£©
+    // å­˜æ¡£æ•°æ®ï¼ˆå†…å­˜ç¼“å­˜ï¼‰
     private OwnedSouvenirContainer saveData;
-    //Ìá¹©Ö»¶Á×Öµä
+    /// <summary>
+    /// å·²æ‹¥æœ‰çºªå¿µå“åªè¯»å­—å…¸
+    /// </summary>
     public Dictionary<int, Souvenir> OwnedSouvenirs => ownedSouvenirs;
-    //Ìá¹©Ö»¶Á×Öµä
+    /// <summary>
+    /// æ‰€æœ‰çºªå¿µå“åªè¯»å­—å…¸
+    /// </summary>
     public Dictionary<int, Souvenir> AllSouvenirs => allSouvenirs;
 
     protected override void Awake()
@@ -37,16 +41,16 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     }
 
     /// <summary>
-    /// ÔİÊ±ÓÃÀ´±£´æµÄµØ·½
+    /// æš‚æ—¶ç”¨æ¥ä¿å­˜çš„åœ°æ–¹
     /// </summary>
     private void OnDisable()
     {
         SaveData();
     }
 
-    #region ³õÊ¼»¯/±£´æÏà¹Ø
+    #region åˆå§‹åŒ–/ä¿å­˜ç›¸å…³
     /// <summary>
-    /// ¼ÓÔØ´æµµ£¨ÎŞ´æµµÔò³õÊ¼»¯¿ÕÊı¾İ£©
+    /// åŠ è½½å­˜æ¡£ï¼ˆæ— å­˜æ¡£åˆ™åˆå§‹åŒ–ç©ºæ•°æ®ï¼‰
     /// </summary>
     private void LoadSaveData()
     {
@@ -57,7 +61,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
                 string json = File.ReadAllText(SavePath);
                 saveData = JsonConvert.DeserializeObject<OwnedSouvenirContainer>(json);
 
-                /* °æ±¾¼æÈİ
+                /* ç‰ˆæœ¬å…¼å®¹
                 if (saveData.SaveVersion < 1)
                 {
                     UpgradeSaveData(_saveData);
@@ -70,13 +74,13 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
         }
         catch (Exception e)
         {
-            Debug.LogError($"¼ÓÔØ´æµµÊ§°Ü£¬ÖØÖÃ£º{e.Message}");
+            Debug.LogError($"åŠ è½½å­˜æ¡£å¤±è´¥ï¼Œé‡ç½®ï¼š{e.Message}");
             saveData = new OwnedSouvenirContainer(); // { SaveVersion = 1 };
         }
     }
 
     /// <summary>
-    /// »º´æÒÑÓµÓĞµÄ²ØÆ·ÊµÀı£¨´Ó´æµµÊı¾İ´´½¨£©
+    /// ç¼“å­˜å·²æ‹¥æœ‰çš„è—å“å®ä¾‹ï¼ˆä»å­˜æ¡£æ•°æ®åˆ›å»ºï¼‰
     /// </summary>
     private void CacheOwnedSouvenirInstances()
     {
@@ -88,10 +92,10 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
             SouvenirData souvenirData = souvenirDataManager.GetDataById(dto.Id);
             if (souvenirData == null)
             {
-                Debug.LogError($"·¢ÏÖ²»´æÔÚµÄ¼ÍÄîÆ·£¬·Ç·¨IdÎª£º{dto.Id}");
+                Debug.LogError($"å‘ç°ä¸å­˜åœ¨çš„çºªå¿µå“ï¼Œéæ³•Idä¸ºï¼š{dto.Id}");
             }
 
-            // ´´½¨ÒÑÓµÓĞµÄ²ØÆ·ÊµÀı£¨¼Û¸ñÓÃ´æµµµÄ×Ô¶¨ÒåÖµ£©
+            // åˆ›å»ºå·²æ‹¥æœ‰çš„è—å“å®ä¾‹ï¼ˆä»·æ ¼ç”¨å­˜æ¡£çš„è‡ªå®šä¹‰å€¼ï¼‰
             Souvenir souvenir = new Souvenir(souvenirData, true)
             {
                 Price = dto.CustomPrice
@@ -102,7 +106,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     }
 
     /// <summary>
-    /// ±£´æ´æµµµ½±¾µØÎÄ¼ş£¨ÄÚ²¿Âß¼­£©ÖØĞÂ¸ÄĞ´savedata
+    /// ä¿å­˜å­˜æ¡£åˆ°æœ¬åœ°æ–‡ä»¶ï¼ˆå†…éƒ¨é€»è¾‘ï¼‰é‡æ–°æ”¹å†™savedata
     /// </summary>
     private void SaveData()
     {
@@ -115,28 +119,28 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
                 OwnedSouvenirDTO ownedSouvenirDTO = new OwnedSouvenirDTO(kt.Key, s.Price);
                 saveData.OwnedSouvenirs.Add(ownedSouvenirDTO);
             }
-            // ĞòÁĞ»¯´æµµÊı¾İÎªJSON
+            // åºåˆ—åŒ–å­˜æ¡£æ•°æ®ä¸ºJSON
             string json = JsonConvert.SerializeObject(saveData, Formatting.Indented);
-            // Ğ´Èë³Ö¾Ã»¯Â·¾¶
+            // å†™å…¥æŒä¹…åŒ–è·¯å¾„
             File.WriteAllText(SavePath, json);
-            Debug.Log($"´æµµ±£´æ³É¹¦ ¡ú Â·¾¶£º{SavePath}");
+            Debug.Log($"å­˜æ¡£ä¿å­˜æˆåŠŸ â†’ è·¯å¾„ï¼š{SavePath}");
         }
         catch (Exception e)
         {
-            Debug.LogError($"´æµµ±£´æÊ§°Ü£º{e.Message}");
+            Debug.LogError($"å­˜æ¡£ä¿å­˜å¤±è´¥ï¼š{e.Message}");
         }
     }
 
     /// <summary>
-    /// ¼ÓÔØËùÓĞÎ´»ñµÃµÄÊÕ²ØÆ·ÊµÀı
+    /// åŠ è½½æ‰€æœ‰æœªè·å¾—çš„æ”¶è—å“å®ä¾‹
     /// </summary>
     private void LoadNotOwnedData()
     {
-        // ÕÒ³ö¡°Î´ÓµÓĞ¡±ÇÒ¡°»¹Ã»ÊµÀı»¯¡±µÄ ID
+        // æ‰¾å‡ºâ€œæœªæ‹¥æœ‰â€ä¸”â€œè¿˜æ²¡å®ä¾‹åŒ–â€çš„ ID
         var missingIds = allSouvenirDatas
-            .Select(d => d.Id)               // È«²¿Åä±íID
-            .Except(ownedSouvenirs.Keys)     // È¥µôÒÑÓµÓĞ
-            .Except(allSouvenirs.Keys);      // È¥µôÒÑÊµÀı»¯£¨±£ÏÕ£©
+            .Select(d => d.Id)               // å…¨éƒ¨é…è¡¨ID
+            .Except(ownedSouvenirs.Keys)     // å»æ‰å·²æ‹¥æœ‰
+            .Except(allSouvenirs.Keys);      // å»æ‰å·²å®ä¾‹åŒ–ï¼ˆä¿é™©ï¼‰
 
         foreach (int id in missingIds)
         {
@@ -147,9 +151,9 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     }
     #endregion
 
-    #region ½Ó¿Ú
+    #region æ¥å£
     /// <summary>
-    /// ¡¾¹«¿ª½Ó¿Ú¡¿ÊÖ¶¯´¥·¢±£´æ£¨Íâ²¿¿Éµ÷ÓÃ£¬±ÈÈçÓÎÏ·ÍË³ö/´æµµµã£©
+    /// ã€å…¬å¼€æ¥å£ã€‘æ‰‹åŠ¨è§¦å‘ä¿å­˜ï¼ˆå¤–éƒ¨å¯è°ƒç”¨ï¼Œæ¯”å¦‚æ¸¸æˆé€€å‡º/å­˜æ¡£ç‚¹ï¼‰
     /// </summary>
     public void ManualSave()
     {
@@ -157,23 +161,23 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     }
 
     /// <summary>
-    /// ¸ù¾İ¼ÍÄîÆ·µÄIdÀ´»ñµÃ¶ÔÓ¦µÄ¼ÍÄîÆ·£¬Èç¹ûÊÇÒÑÓµÓĞµÄ¼ÍÄîÆ·»á·µ»Øfalseµ«ÊÇ»áÊä³ö¶ÔÓ¦µÄ¼ÍÄîÆ·
+    /// æ ¹æ®çºªå¿µå“çš„Idæ¥è·å¾—å¯¹åº”çš„çºªå¿µå“ï¼Œå¦‚æœæ˜¯å·²æ‹¥æœ‰çš„çºªå¿µå“ä¼šè¿”å›falseä½†æ˜¯ä¼šè¾“å‡ºå¯¹åº”çš„çºªå¿µå“
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="souvenir">·µ»Ø¼ÍÄîÆ·</param>
-    /// <param name="errorMsg">·µ»Ø´íÎóĞÅÏ¢</param>
-    /// <returns>²Ù×÷³É¹¦Óë·ñ</returns>
+    /// <param name="souvenir">è¿”å›çºªå¿µå“</param>
+    /// <param name="errorMsg">è¿”å›é”™è¯¯ä¿¡æ¯</param>
+    /// <returns>æ“ä½œæˆåŠŸä¸å¦</returns>
     public bool OwnSouvenirById(int id, out Souvenir souvenir, out string errorMsg)
     {
         if (!allSouvenirs.ContainsKey(id))
         {
-            errorMsg = "¸ÃidËù¶ÔÓ¦µÄ¼ÍÄîÆ·²»´æÔÚ";
+            errorMsg = "è¯¥idæ‰€å¯¹åº”çš„çºªå¿µå“ä¸å­˜åœ¨";
             souvenir = null;
             return false;
         }
         else if (ownedSouvenirs.ContainsKey(id))
         {
-            errorMsg = "¸ÃidËù¶ÔÓ¦µÄ¼ÍÄîÆ·ÒÑÓµÓĞ";
+            errorMsg = "è¯¥idæ‰€å¯¹åº”çš„çºªå¿µå“å·²æ‹¥æœ‰";
             souvenir = ownedSouvenirs[id];
             return false;
         }
@@ -185,23 +189,23 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     }
 
     /// <summary>
-    /// ¸ù¾İ¼ÍÄîÆ·µÄIdÀ´Ê§È¥¶ÔÓ¦µÄ¼ÍÄîÆ·£¬Èç¹ûÊÇÎ´ÓµÓĞµÄ¼ÍÄîÆ·»á·µ»Øfalseµ«ÊÇ»áÊä³ö¶ÔÓ¦µÄ¼ÍÄîÆ·
+    /// æ ¹æ®çºªå¿µå“çš„Idæ¥å¤±å»å¯¹åº”çš„çºªå¿µå“ï¼Œå¦‚æœæ˜¯æœªæ‹¥æœ‰çš„çºªå¿µå“ä¼šè¿”å›falseä½†æ˜¯ä¼šè¾“å‡ºå¯¹åº”çš„çºªå¿µå“
     /// </summary>
     /// <param name="id"></param>
-    /// <param name="souvenir">·µ»Ø¼ÍÄîÆ·</param>
-    /// <param name="errorMsg">·µ»Ø´íÎóĞÅÏ¢</param>
-    /// <returns>²Ù×÷³É¹¦Óë·ñ</returns>
+    /// <param name="souvenir">è¿”å›çºªå¿µå“</param>
+    /// <param name="errorMsg">è¿”å›é”™è¯¯ä¿¡æ¯</param>
+    /// <returns>æ“ä½œæˆåŠŸä¸å¦</returns>
     public bool LoseSouvenirById(int id, out Souvenir souvenir, out string errorMsg)
     {
         if (!allSouvenirs.ContainsKey(id))
         {
-            errorMsg = "¸ÃidËù¶ÔÓ¦µÄ¼ÍÄîÆ·²»´æÔÚ";
+            errorMsg = "è¯¥idæ‰€å¯¹åº”çš„çºªå¿µå“ä¸å­˜åœ¨";
             souvenir = null;
             return false;
         }
         else if (!ownedSouvenirs.ContainsKey(id))
         {
-            errorMsg = "¸ÃidËù¶ÔÓ¦µÄ¼ÍÄîÆ·Î´ÓµÓĞ";
+            errorMsg = "è¯¥idæ‰€å¯¹åº”çš„çºªå¿µå“æœªæ‹¥æœ‰";
             souvenir = ownedSouvenirs[id];
             return false;
         }
@@ -213,7 +217,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     }
 
     /// <summary>
-    /// ²éÑ¯¼ÍÄîÆ·ÊÇ·ñÓµÓĞ
+    /// æŸ¥è¯¢çºªå¿µå“æ˜¯å¦æ‹¥æœ‰
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
@@ -223,10 +227,10 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     }
 
     /// <summary>
-    /// Í¨¹ıID²éÑ¯¼ÍÄîÆ·
+    /// é€šè¿‡IDæŸ¥è¯¢çºªå¿µå“
     /// </summary>
-    /// <param name="id">¼ÍÄîÆ·ID</param>
-    /// <returns>¶ÔÓ¦µÄSouvenir£¬²»´æÔÚÔò·µ»Ønull</returns>
+    /// <param name="id">çºªå¿µå“ID</param>
+    /// <returns>å¯¹åº”çš„Souvenirï¼Œä¸å­˜åœ¨åˆ™è¿”å›null</returns>
     public Souvenir GetSouvenirById(int id)
     {
         if (allSouvenirs.TryGetValue(id, out Souvenir result))
@@ -237,10 +241,10 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     }
 
     /// <summary>
-    /// Í¨¹ıID²éÑ¯ÒÑÓµÓĞ¼ÍÄîÆ·
+    /// é€šè¿‡IDæŸ¥è¯¢å·²æ‹¥æœ‰çºªå¿µå“
     /// </summary>
-    /// <param name="id">ÒÑÓµÓĞ¼ÍÄîÆ·ID</param>
-    /// <returns>¶ÔÓ¦µÄSouvenir£¬²»´æÔÚÔò·µ»Ønull</returns>
+    /// <param name="id">å·²æ‹¥æœ‰çºªå¿µå“ID</param>
+    /// <returns>å¯¹åº”çš„Souvenirï¼Œä¸å­˜åœ¨åˆ™è¿”å›null</returns>
     public Souvenir GetOwnedSouvenirById(int id)
     {
         if (ownedSouvenirs.TryGetValue(id, out Souvenir result))

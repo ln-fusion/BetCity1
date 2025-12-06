@@ -1,0 +1,118 @@
+\doxysection{Combat\+Manager Class Reference}
+\hypertarget{class_combat_manager}{}\label{class_combat_manager}\index{CombatManager@{CombatManager}}
+Inheritance diagram for Combat\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_combat_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_combat_manager_a25fe4bf0a6ca66602eba24302aa0c0bb}\label{class_combat_manager_a25fe4bf0a6ca66602eba24302aa0c0bb} 
+int {\bfseries Get\+Public\+Deck\+Count} ()
+\item 
+\Hypertarget{class_combat_manager_a892d4da5dc521b52435a2776616756da}\label{class_combat_manager_a892d4da5dc521b52435a2776616756da} 
+void {\bfseries Refresh\+Deck\+Display} ()
+\begin{DoxyCompactList}\small\item\em 刷新卡组显示，触发卡组数量变化事件 \end{DoxyCompactList}\item 
+\Hypertarget{class_combat_manager_a69f96022dc3205645410653762b08008}\label{class_combat_manager_a69f96022dc3205645410653762b08008} 
+void {\bfseries Game\+Start} ()
+\item 
+\Hypertarget{class_combat_manager_ae67496fecbcba1accf7e1531cd041871}\label{class_combat_manager_ae67496fecbcba1accf7e1531cd041871} 
+void {\bfseries On\+D4\+Dice\+Clicked} ()
+\item 
+\Hypertarget{class_combat_manager_a6002387b64924ae5cdd12564eebc3073}\label{class_combat_manager_a6002387b64924ae5cdd12564eebc3073} 
+void {\bfseries On\+Coin\+Clicked} ()
+\item 
+\Hypertarget{class_combat_manager_abea77b037dbb3f22d1e7db698c794087}\label{class_combat_manager_abea77b037dbb3f22d1e7db698c794087} 
+void {\bfseries Read\+Deck} ()
+\item 
+\Hypertarget{class_combat_manager_afe70abec3ddf0e15bd7e5363de590cd5}\label{class_combat_manager_afe70abec3ddf0e15bd7e5363de590cd5} 
+void {\bfseries Shuffle\+Deck} ()
+\item 
+\Hypertarget{class_combat_manager_ab96a810ef7f1594e36d1968790d795ac}\label{class_combat_manager_ab96a810ef7f1594e36d1968790d795ac} 
+int {\bfseries Draw\+Cards} (Card\+Owner player, int count)
+\item 
+\Hypertarget{class_combat_manager_a6611e6c9172238402c6cdedb4ddbb3dd}\label{class_combat_manager_a6611e6c9172238402c6cdedb4ddbb3dd} 
+void {\bfseries Reset\+Deck} (bool draw\+Initial\+Cards=true)
+\item 
+\Hypertarget{class_combat_manager_a061258e50fd1fc34801477c6d4e2fea3}\label{class_combat_manager_a061258e50fd1fc34801477c6d4e2fea3} 
+void {\bfseries Summon\+Request} (Card\+Owner player, Game\+Object monster)
+\item 
+\Hypertarget{class_combat_manager_a89736ab8c765b042fa56fabd049164dc}\label{class_combat_manager_a89736ab8c765b042fa56fabd049164dc} 
+void {\bfseries Summon\+Confirm} (Transform block)
+\item 
+\Hypertarget{class_combat_manager_a76cd0e714e574bedb5cab28156d2a2e2}\label{class_combat_manager_a76cd0e714e574bedb5cab28156d2a2e2} 
+void {\bfseries Summon} (Card\+Owner player, Game\+Object monster, Transform block)
+\item 
+\Hypertarget{class_combat_manager_a1d5c094a05d8849bb125fc0a09087d02}\label{class_combat_manager_a1d5c094a05d8849bb125fc0a09087d02} 
+void {\bfseries Send\+Card\+To\+Graveyard} (\mbox{\hyperlink{class_card}{Card}} card)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_combat_manager_a881de9083d766b73c4e378fb62816ddd}\label{class_combat_manager_a881de9083d766b73c4e378fb62816ddd} 
+\mbox{\hyperlink{class_player_data}{Player\+Data}} {\bfseries player\+Data}
+\item 
+\Hypertarget{class_combat_manager_a8a2318f64a7b9d24ef0e3dc8c29aad98}\label{class_combat_manager_a8a2318f64a7b9d24ef0e3dc8c29aad98} 
+\mbox{\hyperlink{class_player_data}{Player\+Data}} {\bfseries enemy\+Data}
+\item 
+\Hypertarget{class_combat_manager_a42000d7f7145c5cbdf010f22c13fbef8}\label{class_combat_manager_a42000d7f7145c5cbdf010f22c13fbef8} 
+Game\+Object {\bfseries card\+Prefab}
+\item 
+\Hypertarget{class_combat_manager_acf1887d147a0b8539b8a99ad741ef788}\label{class_combat_manager_acf1887d147a0b8539b8a99ad741ef788} 
+Transform {\bfseries player\+Hand}
+\item 
+\Hypertarget{class_combat_manager_a30f6ed7ec2f36ec7098355d93c67aea7}\label{class_combat_manager_a30f6ed7ec2f36ec7098355d93c67aea7} 
+Transform {\bfseries enemy\+Hand}
+\item 
+\Hypertarget{class_combat_manager_a546f9d65f8f5498c48210e608799365e}\label{class_combat_manager_a546f9d65f8f5498c48210e608799365e} 
+Game\+Object {\bfseries player\+Icon}
+\item 
+\Hypertarget{class_combat_manager_a4579cd0092644930cb69655dfc2086d3}\label{class_combat_manager_a4579cd0092644930cb69655dfc2086d3} 
+Game\+Object {\bfseries enemy\+Icon}
+\item 
+\Hypertarget{class_combat_manager_a7bf9c53694d8e062fad40b34e43e8c30}\label{class_combat_manager_a7bf9c53694d8e062fad40b34e43e8c30} 
+Game\+Object\mbox{[}$\,$\mbox{]} {\bfseries Blocks}
+\item 
+\Hypertarget{class_combat_manager_a0225ae03b1972668c1fa04c76c31864c}\label{class_combat_manager_a0225ae03b1972668c1fa04c76c31864c} 
+\mbox{\hyperlink{class_d4_dice_manager}{D4\+Dice\+Manager}} {\bfseries d4\+Dice\+Manager}
+\item 
+\Hypertarget{class_combat_manager_a96ebb8c1217c7cd7f4cdb1b3534a10c7}\label{class_combat_manager_a96ebb8c1217c7cd7f4cdb1b3534a10c7} 
+\mbox{\hyperlink{class_coin_manager}{Coin\+Manager}} {\bfseries coin\+Manager}
+\item 
+\Hypertarget{class_combat_manager_a76c16faa6506fdf93dd74119bbff4fc9}\label{class_combat_manager_a76c16faa6506fdf93dd74119bbff4fc9} 
+Transform {\bfseries temporary\+Block}
+\item 
+\Hypertarget{class_combat_manager_a131bd5b1e3531b4d1ef26608189deda3}\label{class_combat_manager_a131bd5b1e3531b4d1ef26608189deda3} 
+Unity\+Event$<$ int $>$ {\bfseries on\+Deck\+Count\+Changed} = new Unity\+Event$<$int$>$()
+\item 
+\Hypertarget{class_combat_manager_a6a4513134e3720ee534deec7ab430fd1}\label{class_combat_manager_a6a4513134e3720ee534deec7ab430fd1} 
+Game\+Phase {\bfseries Game\+Phase} = Game\+Phase.\+begin
+\item 
+\Hypertarget{class_combat_manager_a32e5a9050477a3bc4de1b5b2b8e394da}\label{class_combat_manager_a32e5a9050477a3bc4de1b5b2b8e394da} 
+Unity\+Event {\bfseries phase\+Change\+Event} = new Unity\+Event()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_combat_manager_a12c274566758e606386ee25e7d0cc345}\label{class_combat_manager_a12c274566758e606386ee25e7d0cc345} 
+static \mbox{\hyperlink{class_combat_manager}{Combat\+Manager}} {\bfseries Instance}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_combat_manager_ab72dab6f4877b57e9b4630903993065e}\label{class_combat_manager_ab72dab6f4877b57e9b4630903993065e} 
+static System.\+Action$<$ int $>$ {\bfseries Deck\+Count\+Changed}
+\begin{DoxyCompactList}\small\item\em 卡组数量变化事件 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Properties inherited from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+static T {\bfseries Instance}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Assets/\+Script/\+Battle/\+Manager/Combat\+Manager.\+cs\end{DoxyCompactItemize}

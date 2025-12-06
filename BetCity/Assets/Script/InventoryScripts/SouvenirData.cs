@@ -1,21 +1,27 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 
 /// <summary>
-/// ´æ·Å¼ÍÄîÆ·Ô­ĞÍÊı¾İ,×¢ÒâÔ­ĞÍÊı¾İÖ»ÄÜÍ¨¹ıInspectorĞŞ¸Ä
+/// å­˜æ”¾çºªå¿µå“åŸå‹æ•°æ®,æ³¨æ„åŸå‹æ•°æ®åªèƒ½é€šè¿‡Inspectorä¿®æ”¹
 /// </summary>
 [CreateAssetMenu(fileName = "Item", menuName = "Souvenir")]
 public class SouvenirData : ScriptableObject
 {
-    [field: SerializeField] public int Id { get; private set; } // idÎªÖ÷¼ü
+    /// <summary>
+    /// Idä¸ºä¸»é”®ç´¢å¼•
+    /// </summary>
+    [field: SerializeField] public int Id { get; private set; }
     [field: SerializeField] public string Name { get; private set; }
     [field: TextArea]
     [field: SerializeField] public string Info { get; private set; }
     [field: SerializeField] public int ArtworkID { get; private set; }
     [field: SerializeField] public Sprite Image { get; private set; }
     [field: SerializeField] public int Price { get; private set; }
+    /// <summary>
+    /// çºªå¿µå“åˆ†ç±»ï¼Œæˆ˜æ–—ç±»/æ¢ç´¢ç±»
+    /// </summary>
     [field: SerializeField] public SouvenirCategory Category { get; private set; }
 }
 

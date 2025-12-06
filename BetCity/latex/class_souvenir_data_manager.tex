@@ -1,0 +1,79 @@
+\doxysection{Souvenir\+Data\+Manager Class Reference}
+\hypertarget{class_souvenir_data_manager}{}\label{class_souvenir_data_manager}\index{SouvenirDataManager@{SouvenirDataManager}}
+
+
+负责管理所有的\+Souvernir\+Data即纪念品原型数据  
+
+
+Inheritance diagram for Souvenir\+Data\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_souvenir_data_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{class_souvenir_data}{Souvenir\+Data}} \mbox{\hyperlink{class_souvenir_data_manager_aa6edc321a64ea6cd0ae2a12475f2e882}{Get\+Data\+By\+Id}} (int id)
+\begin{DoxyCompactList}\small\item\em 通过\+ID查询纪念品数据 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+override void \mbox{\hyperlink{class_souvenir_data_manager_ae53fb06841986b823d9aee59e2cc5d84}{Awake}} ()
+\begin{DoxyCompactList}\small\item\em 初始化数据 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_souvenir_data_manager_a48016c15e6ff8a16207e3fecb8076bcf}\label{class_souvenir_data_manager_a48016c15e6ff8a16207e3fecb8076bcf} 
+IRead\+Only\+List$<$ \mbox{\hyperlink{class_souvenir_data}{Souvenir\+Data}} $>$ {\bfseries Data}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 所有纪念品数据列表（只读对外暴露） \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Properties inherited from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+static T {\bfseries Instance}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+负责管理所有的\+Souvernir\+Data即纪念品原型数据 
+
+\label{doc-func-members}
+\Hypertarget{class_souvenir_data_manager_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_souvenir_data_manager_ae53fb06841986b823d9aee59e2cc5d84}\index{SouvenirDataManager@{SouvenirDataManager}!Awake@{Awake}}
+\index{Awake@{Awake}!SouvenirDataManager@{SouvenirDataManager}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_souvenir_data_manager_ae53fb06841986b823d9aee59e2cc5d84} 
+override void Souvenir\+Data\+Manager.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+初始化数据 
+
+
+
+Reimplemented from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}.
+
+\Hypertarget{class_souvenir_data_manager_aa6edc321a64ea6cd0ae2a12475f2e882}\index{SouvenirDataManager@{SouvenirDataManager}!GetDataById@{GetDataById}}
+\index{GetDataById@{GetDataById}!SouvenirDataManager@{SouvenirDataManager}}
+\doxysubsubsection{\texorpdfstring{GetDataById()}{GetDataById()}}
+{\footnotesize\ttfamily \label{class_souvenir_data_manager_aa6edc321a64ea6cd0ae2a12475f2e882} 
+\mbox{\hyperlink{class_souvenir_data}{Souvenir\+Data}} Souvenir\+Data\+Manager.\+Get\+Data\+By\+Id (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+通过\+ID查询纪念品数据 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & 纪念品\+ID\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+对应的\+Souvenir\+Data，不存在则返回null
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Assets/\+Script/\+Inventory\+Scripts/Souvenir\+Data\+Manager.\+cs\end{DoxyCompactItemize}

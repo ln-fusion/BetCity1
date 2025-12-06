@@ -67,10 +67,10 @@ public class ItemPopupManager : MonoBehaviour
             takeCallback: () => 
             { 
                 // 1. 更新背包数据（原有逻辑保留）
-                if (bagData.playerBag.ContainsKey(item.id))
-                    bagData.playerBag[item.id]++;
+                if (bagData.playerBag.ContainsKey(item.Id))
+                    bagData.playerBag[item.Id]++;
                 else
-                    bagData.playerBag[item.id] = 1;
+                    bagData.playerBag[item.Id] = 1;
 
                 // 2. 查找InventoryManager，实例化道具UI（核心新增）
                 InventoryManager inventoryManager = FindObjectOfType<InventoryManager>();

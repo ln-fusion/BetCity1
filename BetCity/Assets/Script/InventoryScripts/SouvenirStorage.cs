@@ -1,16 +1,16 @@
-using System;
+锘縰sing System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 存储玩家拥有的纪念品
+/// 瀛樺偍鐜╁鎷ユ湁鐨勭邯蹇靛搧
 /// </summary>
 [Serializable]
 public class OwnedSouvenirDTO
 {
-    public int Id { get; set; }          // 关联原型ID
-    public int CustomPrice { get; set; } // 玩家修改后的价格（无修改则等于原型）
+    public int Id { get; set; }          // 鍏宠仈鍘熷瀷ID
+    public int CustomPrice { get; set; } // 鐜╁淇敼鍚庣殑浠锋牸锛堟棤淇敼鍒欑瓑浜庡師鍨嬶級
 
     public OwnedSouvenirDTO() { }
 
@@ -22,11 +22,11 @@ public class OwnedSouvenirDTO
 }
 
 /// <summary>
-/// 存档容器
+/// 瀛樻。瀹瑰櫒
 /// </summary>
 [Serializable]
 public class OwnedSouvenirContainer
 {
     public List<OwnedSouvenirDTO> OwnedSouvenirs = new List<OwnedSouvenirDTO>();
-    //public int SaveVersion = 1;  版本兼容
+    //public int SaveVersion = 1;  鐗堟湰鍏煎
 }

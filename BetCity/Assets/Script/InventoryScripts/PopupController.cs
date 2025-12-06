@@ -28,9 +28,9 @@ public class PopupController : MonoBehaviour
     public void Init(Souvenir item, System.Action takeCallback, System.Action cancelCallback)
     {
         // 显示道具信息
-        itemNameText.text = item.name;
-        itemDescText.text = item.info;
-        image.sprite = item.image; // 假设item有itemImage字段
+        itemNameText.text = item.Name;
+        itemDescText.text = item.Info;
+        image.sprite = item.Image; // 假设item有itemImage字段
 
         // 保存回调（点击按钮后执行外部逻辑）
         onTake = takeCallback;

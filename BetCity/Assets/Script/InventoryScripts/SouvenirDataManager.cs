@@ -1,58 +1,60 @@
-using System;
+ï»¿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 /// <summary>
-///  ¸ºÔğ¹ÜÀíËùÓĞµÄSouvernirData
+///  è´Ÿè´£ç®¡ç†æ‰€æœ‰çš„SouvernirDataå³çºªå¿µå“åŸå‹æ•°æ®
 /// </summary>
 public partial class SouvenirDataManager : MonoSingleton<SouvenirDataManager>
 {
-    // ËùÓĞ¼ÍÄîÆ·Êı¾İÁĞ±í£¨Ö»¶Á¶ÔÍâ±©Â¶£©
+    /// <summary>
+    /// æ‰€æœ‰çºªå¿µå“æ•°æ®åˆ—è¡¨ï¼ˆåªè¯»å¯¹å¤–æš´éœ²ï¼‰
+    /// </summary>
     public IReadOnlyList<SouvenirData> Data => _data;
     private List<SouvenirData> _data = new List<SouvenirData>();
-    // Êı¾İ×Öµä£¨ÓÃÓÚ¿ìËÙÍ¨¹ıID²éÑ¯£©
+    // æ•°æ®å­—å…¸ï¼ˆç”¨äºå¿«é€Ÿé€šè¿‡IDæŸ¥è¯¢ï¼‰
     private Dictionary<int, SouvenirData> _dataDict = new Dictionary<int, SouvenirData>();
 
-    [Header("Êı¾İÅäÖÃ")]
+    [Header("æ•°æ®é…ç½®")]
     [SerializeField] private string souvenirDataResourcesPath;
 
     /// <summary>
-    /// ³õÊ¼»¯Êı¾İ
+    /// åˆå§‹åŒ–æ•°æ®
     /// </summary>
     protected override void Awake()
     {
         base.Awake();
 
         LoadAllSouvenirData();
-        // ÑéÖ¤Êı¾İºÏ·¨ĞÔ
+        // éªŒè¯æ•°æ®åˆæ³•æ€§
         ValidateData();
 
-        // ±ê¼ÇÎª²»Ïú»Ù
+        // æ ‡è®°ä¸ºä¸é”€æ¯
         DontDestroyOnLoad(gameObject);
     }
 
     /// <summary>
-    /// ´ÓResourcesÄ¿Â¼¼ÓÔØËùÓĞSouvenirData×ÊÔ´£¨¼ÓÔØ²¿·ÖºóÆÚ¿ÉÒÔÓÅ»¯£©
+    /// ä»Resourcesç›®å½•åŠ è½½æ‰€æœ‰SouvenirDataèµ„æºï¼ˆåŠ è½½éƒ¨åˆ†åæœŸå¯ä»¥ä¼˜åŒ–ï¼‰
     /// </summary>
     private void LoadAllSouvenirData()
     {
         try
         {
-            // ÔİÊ±²ÉÓÃÍ¬²½LoadAll
+            // æš‚æ—¶é‡‡ç”¨åŒæ­¥LoadAll
             SouvenirData[] loadedDatas = Resources.LoadAll<SouvenirData>(souvenirDataResourcesPath);
 
             if (loadedDatas == null || loadedDatas.Length == 0)
             {
-                Debug.LogWarning($"[SouvenirDataManager] Î´ÔÚResources/{souvenirDataResourcesPath}Â·¾¶ÏÂÕÒµ½ÈÎºÎSouvenirData×ÊÔ´");
+                Debug.LogWarning($"[SouvenirDataManager] æœªåœ¨Resources/{souvenirDataResourcesPath}è·¯å¾„ä¸‹æ‰¾åˆ°ä»»ä½•SouvenirDataèµ„æº");
                 return;
             }
 
             _data.Clear();
             _dataDict.Clear();
 
-            // Ìî³äÊı¾İÁĞ±íºÍ×Öµä
+            // å¡«å……æ•°æ®åˆ—è¡¨å’Œå­—å…¸
             foreach (SouvenirData data in loadedDatas)
             {
                 if (data == null) continue;
@@ -63,12 +65,12 @@ public partial class SouvenirDataManager : MonoSingleton<SouvenirDataManager>
         }
         catch (Exception e)
         {
-            Debug.LogError($"[SouvenirDataManager] ¼ÓÔØÊı¾İÊ§°Ü£º{e.Message}\n{e.StackTrace}");
+            Debug.LogError($"[SouvenirDataManager] åŠ è½½æ•°æ®å¤±è´¥ï¼š{e.Message}\n{e.StackTrace}");
         }
     }
 
     /// <summary>
-    /// ÑéÖ¤Êı¾İºÏ·¨ĞÔ£¨Ä¿Ç°Ğ£Ñéid×Ö¶ÎÊÇ·ñÖØ¸´,¼Û¸ñÊı¾İÊÇ·ñ>0,¼ÍÄîÆ·Ãû×ÖÊÇ·ñÎª¿Õ£©
+    /// éªŒè¯æ•°æ®åˆæ³•æ€§ï¼ˆç›®å‰æ ¡éªŒidå­—æ®µæ˜¯å¦é‡å¤,ä»·æ ¼æ•°æ®æ˜¯å¦>0,çºªå¿µå“åå­—æ˜¯å¦ä¸ºç©ºï¼‰
     /// </summary>
     private void ValidateData()
     {
@@ -79,35 +81,35 @@ public partial class SouvenirDataManager : MonoSingleton<SouvenirDataManager>
         {
             SouvenirData data = _data[i];
 
-            // Ğ£ÑéIDÎ¨Ò»ĞÔ
+            // æ ¡éªŒIDå”¯ä¸€æ€§
             if (!idSet.Add(data.Id))
             {
-                errorMessages.Add($"ÖØ¸´µÄID£º{data.Id}£¨Êı¾İÃû³Æ£º{data.Name}£©");
+                errorMessages.Add($"é‡å¤çš„IDï¼š{data.Id}ï¼ˆæ•°æ®åç§°ï¼š{data.Name}ï¼‰");
             }
 
-            // Ğ£Ñé±ØÌî×Ö¶Î
+            // æ ¡éªŒå¿…å¡«å­—æ®µ
             if (string.IsNullOrEmpty(data.Name))
             {
-                errorMessages.Add($"IDÎª{data.Id}µÄ¼ÍÄîÆ·Ãû³ÆÎª¿Õ");
+                errorMessages.Add($"IDä¸º{data.Id}çš„çºªå¿µå“åç§°ä¸ºç©º");
             }
 
             if (data.Price < 0)
             {
-                errorMessages.Add($"IDÎª{data.Id}µÄ¼ÍÄîÆ·¼Û¸ñÎŞĞ§£º{data.Price}£¬¼Û¸ñ²»ÄÜÎª¸ºÊı");
+                errorMessages.Add($"IDä¸º{data.Id}çš„çºªå¿µå“ä»·æ ¼æ— æ•ˆï¼š{data.Price}ï¼Œä»·æ ¼ä¸èƒ½ä¸ºè´Ÿæ•°");
             }
         }
         if (errorMessages.Count > 0)
         {
-            string errorMsg = $"[SouvenirDataManager] Êı¾İĞ£ÑéÊ§°Ü£¬¹²{errorMessages.Count}¸ö´íÎó£º\n{string.Join("\n", errorMessages)}";
+            string errorMsg = $"[SouvenirDataManager] æ•°æ®æ ¡éªŒå¤±è´¥ï¼Œå…±{errorMessages.Count}ä¸ªé”™è¯¯ï¼š\n{string.Join("\n", errorMessages)}";
             Debug.LogError(errorMsg);
         }
     }
 
     /// <summary>
-    /// Í¨¹ıID²éÑ¯¼ÍÄîÆ·Êı¾İ
+    /// é€šè¿‡IDæŸ¥è¯¢çºªå¿µå“æ•°æ®
     /// </summary>
-    /// <param name="id">¼ÍÄîÆ·ID</param>
-    /// <returns>¶ÔÓ¦µÄSouvenirData£¬²»´æÔÚÔò·µ»Ønull</returns>
+    /// <param name="id">çºªå¿µå“ID</param>
+    /// <returns>å¯¹åº”çš„SouvenirDataï¼Œä¸å­˜åœ¨åˆ™è¿”å›null</returns>
     public SouvenirData GetDataById(int id)
     {
         if (_dataDict.TryGetValue(id, out SouvenirData result))

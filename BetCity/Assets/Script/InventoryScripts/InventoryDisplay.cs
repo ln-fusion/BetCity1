@@ -48,20 +48,20 @@ public class InventoryDisplay : MonoBehaviour
         // 更新物品名称
         if (itemNameText != null)
         {
-            itemNameText.text = souvenir.name.ToString();
+            itemNameText.text = souvenir.Name.ToString();
         }
 
         // 更新物品描述（）
         if (itemInfo != null)
         {
-            itemInfo.text = souvenir.info.ToString();
+            itemInfo.text = souvenir.Info.ToString();
         }
 
         // 更新物品艺术图
         if (itemArtworkImage != null)
         {
-            itemArtworkImage.sprite = souvenir.image; // Image通过sprite属性赋值
-            itemArtworkImage.enabled = souvenir.image != null; // 图片为空时隐藏
+            itemArtworkImage.sprite = souvenir.Image; // Image通过sprite属性赋值
+            itemArtworkImage.enabled = souvenir.Image != null; // 图片为空时隐藏
         }
         /**/
     }

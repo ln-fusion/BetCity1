@@ -123,7 +123,7 @@ public class InventoryManager : MonoBehaviour
         // 更新描述文本
         if (descriptionDisplayText != null && clickedItem.souvenir != null)
         {
-            descriptionDisplayText.text = clickedItem.souvenir.info;
+            descriptionDisplayText.text = clickedItem.souvenir.Info;
         }
     }
 
@@ -152,7 +152,7 @@ public class InventoryManager : MonoBehaviour
             return;
         }
 
-        int itemId = selectedItem.souvenir.id;
+        int itemId = selectedItem.souvenir.Id;
         Souvenir itemData = selectedItem.souvenir;
 
         // 校验背包容量是否已满
@@ -190,7 +190,7 @@ public class InventoryManager : MonoBehaviour
             return;
         }
 
-        int itemId = selectedItem.souvenir.id;
+        int itemId = selectedItem.souvenir.Id;
         Souvenir itemData = selectedItem.souvenir;
 
         // 校验背包是否还有该道具（可按需添加仓库容量限制）

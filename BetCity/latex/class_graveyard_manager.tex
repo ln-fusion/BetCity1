@@ -1,0 +1,97 @@
+\doxysection{Graveyard\+Manager Class Reference}
+\hypertarget{class_graveyard_manager}{}\label{class_graveyard_manager}\index{GraveyardManager@{GraveyardManager}}
+Inheritance diagram for Graveyard\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_graveyard_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_graveyard_manager_a9a35ac05bdb47da163ad1096c92e491a}\label{class_graveyard_manager_a9a35ac05bdb47da163ad1096c92e491a} 
+void {\bfseries Toggle\+Graveyard\+Panel} ()
+\item 
+\Hypertarget{class_graveyard_manager_a3d65cc6637518d4162b1f805322c76f2}\label{class_graveyard_manager_a3d65cc6637518d4162b1f805322c76f2} 
+void {\bfseries Open\+Graveyard\+Panel} ()
+\item 
+\Hypertarget{class_graveyard_manager_a1fc850ef721e6f4f739bb36343c0b451}\label{class_graveyard_manager_a1fc850ef721e6f4f739bb36343c0b451} 
+void {\bfseries Close\+Graveyard\+Panel} ()
+\item 
+\Hypertarget{class_graveyard_manager_a7c4f50bc446adc99b8e38e952ac231d1}\label{class_graveyard_manager_a7c4f50bc446adc99b8e38e952ac231d1} 
+void {\bfseries Refresh\+Graveyard\+Display} ()
+\begin{DoxyCompactList}\small\item\em 刷新墓地显示 \end{DoxyCompactList}\item 
+\Hypertarget{class_graveyard_manager_a3810700a808d6e06dd8c023a71a5a259}\label{class_graveyard_manager_a3810700a808d6e06dd8c023a71a5a259} 
+void {\bfseries Send\+Card\+To\+Graveyard} (\mbox{\hyperlink{class_card}{Card}} card)
+\item 
+\Hypertarget{class_graveyard_manager_ad16dd558b0e87fefad1b9ae8153b24e2}\label{class_graveyard_manager_ad16dd558b0e87fefad1b9ae8153b24e2} 
+void {\bfseries Send\+Cards\+To\+Graveyard} (List$<$ \mbox{\hyperlink{class_card}{Card}} $>$ cards)
+\item 
+\Hypertarget{class_graveyard_manager_ad90923e540a400706c15c8c330d493d1}\label{class_graveyard_manager_ad90923e540a400706c15c8c330d493d1} 
+void {\bfseries Clear\+Graveyard} ()
+\item 
+\Hypertarget{class_graveyard_manager_a6acb1f0ff4a13faa19ab054e1238dc08}\label{class_graveyard_manager_a6acb1f0ff4a13faa19ab054e1238dc08} 
+int {\bfseries Get\+Graveyard\+Card\+Count} ()
+\item 
+\Hypertarget{class_graveyard_manager_ac65676a1980a5a32e12d8b9b1aa31076}\label{class_graveyard_manager_ac65676a1980a5a32e12d8b9b1aa31076} 
+List$<$ \mbox{\hyperlink{class_card}{Card}} $>$ {\bfseries Get\+All\+Graveyard\+Cards} ()
+\item 
+\Hypertarget{class_graveyard_manager_a945d17c4f674e782d18d4ee5411f4215}\label{class_graveyard_manager_a945d17c4f674e782d18d4ee5411f4215} 
+bool {\bfseries Remove\+Card\+From\+Graveyard} (\mbox{\hyperlink{class_card}{Card}} card)
+\item 
+\Hypertarget{class_graveyard_manager_ad6de012551c6d5b799929832af41e0c2}\label{class_graveyard_manager_ad6de012551c6d5b799929832af41e0c2} 
+delegate void {\bfseries Card\+Sent\+To\+Graveyard\+Handler} (\mbox{\hyperlink{class_card}{Card}} card)
+\item 
+\Hypertarget{class_graveyard_manager_a2cf8d70084f15d805789f86d238454c9}\label{class_graveyard_manager_a2cf8d70084f15d805789f86d238454c9} 
+delegate void {\bfseries Cards\+Sent\+To\+Graveyard\+Handler} (List$<$ \mbox{\hyperlink{class_card}{Card}} $>$ cards)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_graveyard_manager_a83abfe10e8d99404866adfc8778f99a7}\label{class_graveyard_manager_a83abfe10e8d99404866adfc8778f99a7} 
+Game\+Object {\bfseries graveyard\+Panel}
+\item 
+\Hypertarget{class_graveyard_manager_a739c39a0e8c261388f67403b6c0c4459}\label{class_graveyard_manager_a739c39a0e8c261388f67403b6c0c4459} 
+Transform {\bfseries card\+List\+Container}
+\item 
+\Hypertarget{class_graveyard_manager_a42efc0e8ec447221fdd5db4c3711247e}\label{class_graveyard_manager_a42efc0e8ec447221fdd5db4c3711247e} 
+Game\+Object {\bfseries card\+Prefab}
+\item 
+\Hypertarget{class_graveyard_manager_a4980c92fac166d4b69ba6fb6af6cc989}\label{class_graveyard_manager_a4980c92fac166d4b69ba6fb6af6cc989} 
+Button {\bfseries close\+Button}
+\item 
+\Hypertarget{class_graveyard_manager_a1c1c860d9272be290c408187c00f7687}\label{class_graveyard_manager_a1c1c860d9272be290c408187c00f7687} 
+Text\+Mesh\+Pro\+UGUI {\bfseries graveyard\+Count\+Text}
+\item 
+\Hypertarget{class_graveyard_manager_ac4fab5ac24098d8259fe2526bad14699}\label{class_graveyard_manager_ac4fab5ac24098d8259fe2526bad14699} 
+Button {\bfseries graveyard\+Button}
+\item 
+\Hypertarget{class_graveyard_manager_a2b7f0370231263d74d88d03232c1047d}\label{class_graveyard_manager_a2b7f0370231263d74d88d03232c1047d} 
+float {\bfseries card\+Scale} = 0.\+5f
+\item 
+\Hypertarget{class_graveyard_manager_a9b19c9e75c8f74af242f38620d8b7f25}\label{class_graveyard_manager_a9b19c9e75c8f74af242f38620d8b7f25} 
+int {\bfseries cards\+Per\+Row} = 3
+\item 
+\Hypertarget{class_graveyard_manager_a9741b182b1bcb93e5c6e0798aacb1e76}\label{class_graveyard_manager_a9741b182b1bcb93e5c6e0798aacb1e76} 
+bool {\bfseries show\+Newest\+First} = true
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_graveyard_manager_a2a4bad209a87c6fe6c514fa5d17441d1}\label{class_graveyard_manager_a2a4bad209a87c6fe6c514fa5d17441d1} 
+static \mbox{\hyperlink{class_graveyard_manager}{Graveyard\+Manager}} {\bfseries Instance}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Events}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_graveyard_manager_a3374e848e5f27d8aef9cb2e708ed9ae4}\label{class_graveyard_manager_a3374e848e5f27d8aef9cb2e708ed9ae4} 
+static Card\+Sent\+To\+Graveyard\+Handler {\bfseries On\+Card\+Sent\+To\+Graveyard}
+\item 
+\Hypertarget{class_graveyard_manager_a949ff7f3c09529f1cffb0b15ec79cf51}\label{class_graveyard_manager_a949ff7f3c09529f1cffb0b15ec79cf51} 
+static Cards\+Sent\+To\+Graveyard\+Handler {\bfseries On\+Cards\+Sent\+To\+Graveyard}
+\end{DoxyCompactItemize}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Assets/\+Script/\+Battle/\+Card/Graveyard\+Manager.\+cs\end{DoxyCompactItemize}

@@ -1,0 +1,175 @@
+\doxysection{Souvenir\+Manager Class Reference}
+\hypertarget{class_souvenir_manager}{}\label{class_souvenir_manager}\index{SouvenirManager@{SouvenirManager}}
+
+
+纪念品管理器（单例），为所有纪念品提供一个实例供外界访问，同时提供接口修改，已拥有纪念品通过存档读取，未拥有纪念品直接从原型数据读出  
+
+
+Inheritance diagram for Souvenir\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_souvenir_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_souvenir_manager_a222b2711d8ae940d1aca18999c27f992}\label{class_souvenir_manager_a222b2711d8ae940d1aca18999c27f992} 
+void {\bfseries Manual\+Save} ()
+\begin{DoxyCompactList}\small\item\em 【公开接口】手动触发保存（外部可调用，比如游戏退出/存档点） \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_souvenir_manager_a34a9adadf34941a7d6f8b64c0c2dc10a}{Own\+Souvenir\+By\+Id}} (int id, out \mbox{\hyperlink{class_souvenir}{Souvenir}} souvenir, out string error\+Msg)
+\begin{DoxyCompactList}\small\item\em 根据纪念品的\+Id来获得对应的纪念品，如果是已拥有的纪念品会返回false但是会输出对应的纪念品 \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_souvenir_manager_abaa1f3aea0c3494a4f7af1ceb61a0623}{Lose\+Souvenir\+By\+Id}} (int id, out \mbox{\hyperlink{class_souvenir}{Souvenir}} souvenir, out string error\+Msg)
+\begin{DoxyCompactList}\small\item\em 根据纪念品的\+Id来失去对应的纪念品，如果是未拥有的纪念品会返回false但是会输出对应的纪念品 \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{class_souvenir_manager_ae262e8e1b7f76f306b9fb3f2f3b670cb}{Is\+Owned}} (int id)
+\begin{DoxyCompactList}\small\item\em 查询纪念品是否拥有 \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_souvenir}{Souvenir}} \mbox{\hyperlink{class_souvenir_manager_a0ba399413b8587a0adc5588978da1021}{Get\+Souvenir\+By\+Id}} (int id)
+\begin{DoxyCompactList}\small\item\em 通过\+ID查询纪念品 \end{DoxyCompactList}\item 
+\mbox{\hyperlink{class_souvenir}{Souvenir}} \mbox{\hyperlink{class_souvenir_manager_a34418e7f3475e6618647250fcbb92287}{Get\+Owned\+Souvenir\+By\+Id}} (int id)
+\begin{DoxyCompactList}\small\item\em 通过\+ID查询已拥有纪念品 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_souvenir_manager_a5b47d32cce311e4d88950b9fdc13f67a}\label{class_souvenir_manager_a5b47d32cce311e4d88950b9fdc13f67a} 
+\mbox{\hyperlink{class_souvenir_data_manager}{Souvenir\+Data\+Manager}} {\bfseries souvenir\+Data\+Manager}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+override void \mbox{\hyperlink{class_souvenir_manager_a1d72fc4cf9d35b1493565a24aa9758e8}{Awake}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_souvenir_manager_ab5c50c8cf2527e89f0d7e02f3cfcf395}\label{class_souvenir_manager_ab5c50c8cf2527e89f0d7e02f3cfcf395} 
+Dictionary$<$ int, \mbox{\hyperlink{class_souvenir}{Souvenir}} $>$ {\bfseries Owned\+Souvenirs}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 已拥有纪念品只读字典 \end{DoxyCompactList}\item 
+\Hypertarget{class_souvenir_manager_acc1a4fa45e1aa061c8117a5e9cac30f9}\label{class_souvenir_manager_acc1a4fa45e1aa061c8117a5e9cac30f9} 
+Dictionary$<$ int, \mbox{\hyperlink{class_souvenir}{Souvenir}} $>$ {\bfseries All\+Souvenirs}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 所有纪念品只读字典 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Properties inherited from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+static T {\bfseries Instance}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+纪念品管理器（单例），为所有纪念品提供一个实例供外界访问，同时提供接口修改，已拥有纪念品通过存档读取，未拥有纪念品直接从原型数据读出 
+
+\label{doc-func-members}
+\Hypertarget{class_souvenir_manager_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_souvenir_manager_a1d72fc4cf9d35b1493565a24aa9758e8}\index{SouvenirManager@{SouvenirManager}!Awake@{Awake}}
+\index{Awake@{Awake}!SouvenirManager@{SouvenirManager}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_souvenir_manager_a1d72fc4cf9d35b1493565a24aa9758e8} 
+override void Souvenir\+Manager.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}.
+
+\Hypertarget{class_souvenir_manager_a34418e7f3475e6618647250fcbb92287}\index{SouvenirManager@{SouvenirManager}!GetOwnedSouvenirById@{GetOwnedSouvenirById}}
+\index{GetOwnedSouvenirById@{GetOwnedSouvenirById}!SouvenirManager@{SouvenirManager}}
+\doxysubsubsection{\texorpdfstring{GetOwnedSouvenirById()}{GetOwnedSouvenirById()}}
+{\footnotesize\ttfamily \label{class_souvenir_manager_a34418e7f3475e6618647250fcbb92287} 
+\mbox{\hyperlink{class_souvenir}{Souvenir}} Souvenir\+Manager.\+Get\+Owned\+Souvenir\+By\+Id (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+通过\+ID查询已拥有纪念品 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & 已拥有纪念品\+ID\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+对应的\+Souvenir，不存在则返回null
+\end{DoxyReturn}
+\Hypertarget{class_souvenir_manager_a0ba399413b8587a0adc5588978da1021}\index{SouvenirManager@{SouvenirManager}!GetSouvenirById@{GetSouvenirById}}
+\index{GetSouvenirById@{GetSouvenirById}!SouvenirManager@{SouvenirManager}}
+\doxysubsubsection{\texorpdfstring{GetSouvenirById()}{GetSouvenirById()}}
+{\footnotesize\ttfamily \label{class_souvenir_manager_a0ba399413b8587a0adc5588978da1021} 
+\mbox{\hyperlink{class_souvenir}{Souvenir}} Souvenir\+Manager.\+Get\+Souvenir\+By\+Id (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+通过\+ID查询纪念品 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & 纪念品\+ID\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+对应的\+Souvenir，不存在则返回null
+\end{DoxyReturn}
+\Hypertarget{class_souvenir_manager_ae262e8e1b7f76f306b9fb3f2f3b670cb}\index{SouvenirManager@{SouvenirManager}!IsOwned@{IsOwned}}
+\index{IsOwned@{IsOwned}!SouvenirManager@{SouvenirManager}}
+\doxysubsubsection{\texorpdfstring{IsOwned()}{IsOwned()}}
+{\footnotesize\ttfamily \label{class_souvenir_manager_ae262e8e1b7f76f306b9fb3f2f3b670cb} 
+bool Souvenir\+Manager.\+Is\+Owned (\begin{DoxyParamCaption}\item[{int}]{id}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+查询纪念品是否拥有 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_souvenir_manager_abaa1f3aea0c3494a4f7af1ceb61a0623}\index{SouvenirManager@{SouvenirManager}!LoseSouvenirById@{LoseSouvenirById}}
+\index{LoseSouvenirById@{LoseSouvenirById}!SouvenirManager@{SouvenirManager}}
+\doxysubsubsection{\texorpdfstring{LoseSouvenirById()}{LoseSouvenirById()}}
+{\footnotesize\ttfamily \label{class_souvenir_manager_abaa1f3aea0c3494a4f7af1ceb61a0623} 
+bool Souvenir\+Manager.\+Lose\+Souvenir\+By\+Id (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{out \mbox{\hyperlink{class_souvenir}{Souvenir}}}]{souvenir}{, }\item[{out string}]{error\+Msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+根据纪念品的\+Id来失去对应的纪念品，如果是未拥有的纪念品会返回false但是会输出对应的纪念品 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & \\
+\hline
+{\em souvenir} & 返回纪念品\\
+\hline
+{\em error\+Msg} & 返回错误信息\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+操作成功与否
+\end{DoxyReturn}
+\Hypertarget{class_souvenir_manager_a34a9adadf34941a7d6f8b64c0c2dc10a}\index{SouvenirManager@{SouvenirManager}!OwnSouvenirById@{OwnSouvenirById}}
+\index{OwnSouvenirById@{OwnSouvenirById}!SouvenirManager@{SouvenirManager}}
+\doxysubsubsection{\texorpdfstring{OwnSouvenirById()}{OwnSouvenirById()}}
+{\footnotesize\ttfamily \label{class_souvenir_manager_a34a9adadf34941a7d6f8b64c0c2dc10a} 
+bool Souvenir\+Manager.\+Own\+Souvenir\+By\+Id (\begin{DoxyParamCaption}\item[{int}]{id}{, }\item[{out \mbox{\hyperlink{class_souvenir}{Souvenir}}}]{souvenir}{, }\item[{out string}]{error\+Msg}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+根据纪念品的\+Id来获得对应的纪念品，如果是已拥有的纪念品会返回false但是会输出对应的纪念品 
+
+
+\begin{DoxyParams}{Parameters}
+{\em id} & \\
+\hline
+{\em souvenir} & 返回纪念品\\
+\hline
+{\em error\+Msg} & 返回错误信息\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+操作成功与否
+\end{DoxyReturn}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Assets/\+Script/\+Inventory\+Scripts/Souvenir\+Manager.\+cs\end{DoxyCompactItemize}
