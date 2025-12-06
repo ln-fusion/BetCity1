@@ -1,2 +1,2 @@
-MaxSanity,CurrentSanity
-100,75
+MaxSanity,CurrentSanity,MaxActionPoints,CurrentActionPoints,CurrentNodeNum
+100,50,10,10,0
