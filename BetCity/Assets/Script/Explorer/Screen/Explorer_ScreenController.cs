@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -73,11 +73,11 @@ public class Explorer_ScreenController : MonoBehaviour
     }
     public void printPlayerNature()
     {
-        texts[0].text = "" + Playernature.maxSanity;
-        texts[1].text = "" + Playernature.currentSanity;
-        texts[2].text = "" + Playernature.maxActionPoints;
-        texts[3].text = "" + Playernature.currentActionPoints;
-        texts[4].text = "" + Playernature.currentNodeNum ;
+        texts[0].text = "" + PlayerNature.maxSanity;
+        texts[1].text = "" + PlayerNature.currentSanity;
+        texts[2].text = "" + PlayerNature.maxActionPoints;
+        texts[3].text = "" + PlayerNature.currentActionPoints;
+        texts[4].text = "" + PlayerNature.currentNodeNum ;
     }
     // Update is called once per frame
     void Update()

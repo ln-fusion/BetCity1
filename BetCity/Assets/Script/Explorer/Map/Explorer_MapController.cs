@@ -1,9 +1,6 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
-
-
-
-
+using UnityEngine.SceneManagement;
 public class Node
 {
     public int id;
@@ -18,8 +15,7 @@ public class Explorer_MapController : MonoBehaviour
     public RectTransform[] node_obj = new RectTransform[35];
     private static bool Initial=false;
     public Explorer_PlayerController playerController;
-    //³õÊ¼»¯µØÍ¼
-    //½áµã³õÊ¼»¯
+    /// åˆå§‹åŒ–åœ°å›¾
     private void Start()
     {
         if (!Initial)
@@ -35,9 +31,9 @@ public class Explorer_MapController : MonoBehaviour
                 node[i].things = "this is "+i+" node";
                 node[i].Xposition = node_obj[i].anchoredPosition.x * x;
                 node[i].Yposition = node_obj[i].anchoredPosition.y * y;
-                //Ö®ºóÌí¼ÓÆäËûµÄnodeÂß¼­
+                //ä¹‹åæ·»åŠ å…¶ä»–çš„nodeé€»è¾‘
             }
-            //ÎÒÔÚ´úÂëÀïÃæÊ¹ÓÃ£¬Ò²¿ÉÒÔÔÚ±à¼­Æ÷ÀïÃæ½øĞĞ¸³Öµ£¬¿ÉÄÜÔö¼Ó¿ªÏú£¬tl
+            //æˆ‘åœ¨ä»£ç é‡Œé¢ä½¿ç”¨ï¼Œä¹Ÿå¯ä»¥åœ¨ç¼–è¾‘å™¨é‡Œé¢è¿›è¡Œèµ‹å€¼ï¼Œå¯èƒ½å¢åŠ å¼€é”€ï¼Œtl
             node[0].connectedNodes=new int[] {1,2};
             node[1].connectedNodes = new int[] {3};
             node[2].connectedNodes = new int[] {6};
@@ -75,14 +71,14 @@ public class Explorer_MapController : MonoBehaviour
             node[34].connectedNodes = new int[] {};
 
         }
-        playerController.ToNodeInstant(node[Playernature.currentNodeNum]);
+        playerController.ToNodeInstant(node[PlayerNature.currentNodeNum]);
     }
     public void ToNode(int nodenum)
     {
-        //Explorer_ScreenController.CreateMessage("µã»÷ÁË°´Å¥");
-        //ÅĞ¶Ï
+        //Explorer_ScreenController.CreateMessage("ç‚¹å‡»äº†æŒ‰é’®");
+        //åˆ¤æ–­
         bool canreach=false;
-        foreach(int j in node[Playernature.currentNodeNum].connectedNodes)
+        foreach(int j in node[PlayerNature.currentNodeNum].connectedNodes)
         {
             if (j == nodenum)
             {
@@ -92,43 +88,14 @@ public class Explorer_MapController : MonoBehaviour
         }
         if (!canreach)
         {
-            Explorer_ScreenController.CreateMessage("ÎŞ·¨µ½´ï");
+            Explorer_ScreenController.CreateMessage("æ— æ³•åˆ°è¾¾");
             return;
         }
-        playerController.ToNode(node[Playernature.currentNodeNum],node[nodenum]);
+        playerController.ToNode(node[PlayerNature.currentNodeNum],node[nodenum]);
     }
-    
-    //[Header("½ÚµãÀàĞÍ")]
-    //public NodeType nodeType = NodeType.Normal;
-
-    //[Header("¹Ì¶¨ÊÂ¼ş³¡¾°Ë÷Òı (½öµ± NodeType Îª FixedEvent Ê±ÓĞĞ§)")]
-    //public int fixedEventSceneIndex = -1; // Ä¬ÈÏ-1±íÊ¾Î´ÉèÖÃ
-
-    //[Header("½ÚµãÁ¬½Ó")]
-    //public List<Node> connectedNodes = new List<Node>();
-
-
-
-    //private PlayerController playerController; // Ìí¼Ó¶Ô PlayerController µÄÒıÓÃ
-
-    //private void Start()
-    //{
-    //    // ÔÚÓÎÏ·¿ªÊ¼Ê±ÕÒµ½³¡¾°ÖĞµÄ PlayerController ÊµÀı
-    //    // È·±£³¡¾°ÖĞÖ»ÓĞÒ»¸ö PlayerController ÊµÀı
-    //    playerController = FindObjectOfType<PlayerController>();
-    //    if (playerController == null)
-    //    {
-    //        Debug.LogError("³¡¾°ÖĞÎ´ÕÒµ½ PlayerController ÊµÀı£¡ÇëÈ·±£ PlayerController ½Å±¾¹ÒÔØÔÚÄ³¸ö»îÔ¾µÄ GameObject ÉÏ¡£");
-    //    }
-    //}
-
-    //// µ±Êó±êµã»÷´Ë½ÚµãµÄÅö×²ÌåÊ±µ÷ÓÃ
-    //private void OnMouseDown()
-    //{
-    //    if (playerController != null)
-    //    {
-    //        Debug.Log($"µã»÷ÁË½Úµã: {this.name}");
-    //        playerController.TryMoveToNode(this); // µ÷ÓÃ PlayerController µÄÒÆ¶¯·½·¨
-    //    }
-    //}
+    public void Travel(string scenename)
+    {
+        Explorer_GameDataManager.SaveToCSV();
+        SceneManager.LoadScene(scenename);
+    }
 }

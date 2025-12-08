@@ -1,15 +1,14 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class EventSceneController : MonoBehaviour
 {
-    // Update is called once per frame
     void Update()
     {
-        // ¼ì²éÍæ¼ÒÊÇ·ñ°´ÏÂÁË Escape ¼ü
+        /// æ£€æŸ¥ç©å®¶æ˜¯å¦æŒ‰ä¸‹äº† Escape é”®
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            Debug.Log("¼ì²âµ½ Escape ¼ü°´ÏÂ£¬×¼±¸·µ»ØµØÍ¼¡£");
+            Debug.Log("æ£€æµ‹åˆ° Escape é”®æŒ‰ä¸‹ï¼Œå‡†å¤‡è¿”å›åœ°å›¾ã€‚");
 
             SceneManager.LoadScene(0);
         }

@@ -1,48 +1,48 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.SceneManagement;
 
 public class SceneStateManager : MonoBehaviour
 {
-    // Ê¹ÓÃµ¥ÀıÄ£Ê½£¬È·±£È«¾ÖÖ»ÓĞÒ»¸öÊµÀı
+    // ä½¿ç”¨å•ä¾‹æ¨¡å¼ï¼Œç¡®ä¿å…¨å±€åªæœ‰ä¸€ä¸ªå®ä¾‹
     public static SceneStateManager Instance { get; private set; }
 
-    // ÓÃÓÚ¼ÇÂ¼ÉÏÒ»¸ö³¡¾°µÄË÷Òı
+    // ç”¨äºè®°å½•ä¸Šä¸€ä¸ªåœºæ™¯çš„ç´¢å¼•
     private int lastSceneIndex = -1;
 
     private void Awake()
     {
-        // µ¥ÀıÄ£Ê½µÄ±ê×¼ÊµÏÖ
+        // å•ä¾‹æ¨¡å¼çš„æ ‡å‡†å®ç°
         if (Instance == null)
         {
             Instance = this;
-            // ÈÃÕâ¸ö¶ÔÏóÔÚÇĞ»»³¡¾°Ê±²»±»Ïú»Ù
+            // è®©è¿™ä¸ªå¯¹è±¡åœ¨åˆ‡æ¢åœºæ™¯æ—¶ä¸è¢«é”€æ¯
             DontDestroyOnLoad(gameObject);
         }
         else
         {
-            // Èç¹ûÒÑ¾­´æÔÚÒ»¸öÊµÀı£¬¾ÍÏú»ÙÕâ¸öĞÂµÄ£¬±£Ö¤Î¨Ò»ĞÔ
+            // å¦‚æœå·²ç»å­˜åœ¨ä¸€ä¸ªå®ä¾‹ï¼Œå°±é”€æ¯è¿™ä¸ªæ–°çš„ï¼Œä¿è¯å”¯ä¸€æ€§
             Destroy(gameObject);
         }
     }
 
-    // µ±ÎÒÃÇÒªÈ¥ÍùÒ»¸öĞÂ³¡¾°Ê±£¬µ÷ÓÃ´Ë·½·¨À´¼ÇÂ¼µ±Ç°³¡¾°
+    // å½“æˆ‘ä»¬è¦å»å¾€ä¸€ä¸ªæ–°åœºæ™¯æ—¶ï¼Œè°ƒç”¨æ­¤æ–¹æ³•æ¥è®°å½•å½“å‰åœºæ™¯
     public void RecordCurrentScene()
     {
         lastSceneIndex = SceneManager.GetActiveScene().buildIndex;
-        Debug.Log($"ÒÑ¼ÇÂ¼µ±Ç°³¡¾°£¬Ë÷ÒıÎª: {lastSceneIndex}");
+        Debug.Log($"å·²è®°å½•å½“å‰åœºæ™¯ï¼Œç´¢å¼•ä¸º: {lastSceneIndex}");
     }
 
-    // µ±ĞèÒª·µ»ØÊ±£¬µ÷ÓÃ´Ë·½·¨
+    // å½“éœ€è¦è¿”å›æ—¶ï¼Œè°ƒç”¨æ­¤æ–¹æ³•
     public void ReturnToLastScene()
     {
         if (lastSceneIndex != -1)
         {
-            Debug.Log($"×¼±¸·µ»Øµ½³¡¾°: {lastSceneIndex}");
+            Debug.Log($"å‡†å¤‡è¿”å›åˆ°åœºæ™¯: {lastSceneIndex}");
             SceneManager.LoadScene(lastSceneIndex);
         }
         else
         {
-            Debug.LogError("Ã»ÓĞ¿É·µ»ØµÄ³¡¾°¼ÇÂ¼£¡");
+            Debug.LogError("æ²¡æœ‰å¯è¿”å›çš„åœºæ™¯è®°å½•ï¼");
         }
     }
 }
