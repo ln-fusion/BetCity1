@@ -14,15 +14,13 @@ public class Test : MonoBehaviour
     }
     public void OnButtonClick()
     {
-        souvenirManager.OwnSouvenirById(0, out Souvenir souvenir, out string str);
+        souvenirManager.OwnSouvenirById(1, out Souvenir souvenir, out string str);
         Debug.Log(str);
         Debug.Log(souvenir);
-        souvenirManager.LoseSouvenirById(0, out souvenir, out str);
-        Debug.Log(str);
-        Debug.Log(souvenir);
-        souvenirManager.OwnSouvenirById(1, out souvenir, out str);
+        souvenirManager.OwnSouvenirById(0, out souvenir, out str);
         Debug.Log(str);
         Debug.Log(souvenir);
 
+        souvenirManager.ManualSave();
     }
 }

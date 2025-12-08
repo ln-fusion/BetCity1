@@ -5,37 +5,37 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using UnityEngine;
+using BetCity.Storage;
+
 
 /// <summary>
 /// 纪念品管理器（单例），为所有纪念品提供一个实例供外界访问，同时提供接口修改，已拥有纪念品通过存档读取，未拥有纪念品直接从原型数据读出
 /// </summary>
-public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
+public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, ISubmitArchive<OwnedSouvenirDTO>
 {
     public SouvenirDataManager souvenirDataManager; //在Inspector绑定
+    public StorageManager storageManager; //在Inspector绑定
 
     // 所有藏品原型
     private IReadOnlyList<SouvenirData> allSouvenirDatas => souvenirDataManager.Data;
-    // 存档路径
-    private string SavePath => Path.Combine(Application.persistentDataPath, "OwnedSouvenirs.json");
     //仅已拥有的藏品实例（Key=藏品ID）
     private Dictionary<int, Souvenir> ownedSouvenirs = new Dictionary<int, Souvenir>();
     //全部藏品实例
-    private Dictionary<int, Souvenir> allSouvenirs = new Dictionary<int, Souvenir>();
-    // 存档数据（内存缓存）
-    private OwnedSouvenirContainer saveData;
+    private  Dictionary<int, Souvenir> allSouvenirs = new Dictionary<int, Souvenir>();
+    private ArchiveContainer ArchiveData => storageManager.ArchiveData;
+    private IReadOnlyList<OwnedSouvenirDTO> OwnedSouvenirDTOs => storageManager.ArchiveData.OwnedSouvenirDTOs;
     /// <summary>
     /// 已拥有纪念品只读字典
     /// </summary>
-    public Dictionary<int, Souvenir> OwnedSouvenirs => ownedSouvenirs;
+    public IReadOnlyDictionary<int, Souvenir> OwnedSouvenirs => ownedSouvenirs;
     /// <summary>
     /// 所有纪念品只读字典
     /// </summary>
-    public Dictionary<int, Souvenir> AllSouvenirs => allSouvenirs;
+    public IReadOnlyDictionary<int, Souvenir> AllSouvenirs => allSouvenirs;
 
     protected override void Awake()
     {
         base.Awake();
-        LoadSaveData();
         CacheOwnedSouvenirInstances();
         LoadNotOwnedData();
     }
@@ -45,51 +45,22 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     /// </summary>
     private void OnDisable()
     {
-        SaveData();
+        SaveArchive();
     }
 
     #region 初始化/保存相关
-    /// <summary>
-    /// 加载存档（无存档则初始化空数据）
-    /// </summary>
-    private void LoadSaveData()
-    {
-        try
-        {
-            if (File.Exists(SavePath))
-            {
-                string json = File.ReadAllText(SavePath);
-                saveData = JsonConvert.DeserializeObject<OwnedSouvenirContainer>(json);
-
-                /* 版本兼容
-                if (saveData.SaveVersion < 1)
-                {
-                    UpgradeSaveData(_saveData);
-                }*/
-            }
-            else
-            {
-                saveData = new OwnedSouvenirContainer();    //{ SaveVersion = 1 };
-            }
-        }
-        catch (Exception e)
-        {
-            Debug.LogError($"加载存档失败，重置：{e.Message}");
-            saveData = new OwnedSouvenirContainer(); // { SaveVersion = 1 };
-        }
-    }
-
     /// <summary>
     /// 缓存已拥有的藏品实例（从存档数据创建）
     /// </summary>
     private void CacheOwnedSouvenirInstances()
     {
         ownedSouvenirs.Clear();
-        if (saveData == null) return;
+        if (OwnedSouvenirDTOs == null) return;
 
-        foreach (var dto in saveData.OwnedSouvenirs)
+        foreach (var dto in OwnedSouvenirDTOs)
         {
             SouvenirData souvenirData = souvenirDataManager.GetDataById(dto.Id);
+            Debug.Log(dto.Id);
             if (souvenirData == null)
             {
                 Debug.LogError($"发现不存在的纪念品，非法Id为：{dto.Id}");
@@ -106,29 +77,18 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     }
 
     /// <summary>
-    /// 保存存档到本地文件（内部逻辑）重新改写savedata
+    /// 根据字典生成当前存档并提交
     /// </summary>
-    private void SaveData()
+    private void SaveArchive()
     {
-        try
+        List<OwnedSouvenirDTO> saveData = new List<OwnedSouvenirDTO>();
+        foreach (var kt in ownedSouvenirs)
         {
-            saveData = new OwnedSouvenirContainer();
-            foreach(var kt in ownedSouvenirs)
-            {
-                Souvenir s = kt.Value;
-                OwnedSouvenirDTO ownedSouvenirDTO = new OwnedSouvenirDTO(kt.Key, s.Price);
-                saveData.OwnedSouvenirs.Add(ownedSouvenirDTO);
-            }
-            // 序列化存档数据为JSON
-            string json = JsonConvert.SerializeObject(saveData, Formatting.Indented);
-            // 写入持久化路径
-            File.WriteAllText(SavePath, json);
-            Debug.Log($"存档保存成功 → 路径：{SavePath}");
+            Souvenir s = kt.Value;
+            OwnedSouvenirDTO ownedSouvenirDTO = new OwnedSouvenirDTO(kt.Key, s.Price);
+            saveData.Add(ownedSouvenirDTO);
         }
-        catch (Exception e)
-        {
-            Debug.LogError($"存档保存失败：{e.Message}");
-        }
+        SubmitArchive(saveData);
     }
 
     /// <summary>
@@ -157,7 +117,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
     /// </summary>
     public void ManualSave()
     {
-        SaveData();
+        SaveArchive();
     }
 
     /// <summary>
@@ -252,6 +212,14 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir
             return result;
         }
         return null;
+    }
+
+    /// <summary>
+    /// 上传对应的存档
+    /// </summary>
+    public void SubmitArchive(List<OwnedSouvenirDTO> dTOs) 
+    {
+        storageManager.ModifyArchive(dTOs, this);
     }
     #endregion
 }

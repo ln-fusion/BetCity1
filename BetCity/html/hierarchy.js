@@ -1,8 +1,15 @@
 var hierarchy =
 [
+    [ "BetCity.Storage.ArchiveContainer", "class_bet_city_1_1_storage_1_1_archive_container.html", null ],
     [ "Card", "class_card.html", [
       [ "MonsterCard", "class_monster_card.html", null ],
       [ "SpellCard", "class_spell_card.html", null ]
+    ] ],
+    [ "BetCity.Storage.IModifyArchive", "interface_bet_city_1_1_storage_1_1_i_modify_archive.html", [
+      [ "BetCity.Storage.StorageManager", "class_bet_city_1_1_storage_1_1_storage_manager.html", null ]
+    ] ],
+    [ "IModifySouvenir", "interface_i_modify_souvenir.html", [
+      [ "SouvenirManager", "class_souvenir_manager.html", null ]
     ] ],
     [ "IPointerDownHandler", null, [
       [ "BattleCard", "class_battle_card.html", null ],
@@ -14,6 +21,9 @@ var hierarchy =
     ] ],
     [ "IPointerExitHandler", null, [
       [ "HighlightOnSelect", "class_highlight_on_select.html", null ]
+    ] ],
+    [ "BetCity.Storage.ISubmitArchive&lt; T &gt;", "interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g.html", [
+      [ "SouvenirManager", "class_souvenir_manager.html", null ]
     ] ],
     [ "Item", "class_item.html", null ],
     [ "MonoBehaviour", null, [
@@ -41,9 +51,12 @@ var hierarchy =
       [ "InventoryManager", "class_inventory_manager.html", null ],
       [ "ItemPopupManager", "class_item_popup_manager.html", null ],
       [ "MonoSingleton< T >", "class_mono_singleton-1-g.html", [
+        [ "BetCity.Storage.StorageManager", "class_bet_city_1_1_storage_1_1_storage_manager.html", null ],
         [ "CombatManager", "class_combat_manager.html", null ],
+        [ "EconomySystem", "class_economy_system.html", null ],
         [ "SouvenirDataManager", "class_souvenir_data_manager.html", null ],
-        [ "SouvenirManager", "class_souvenir_manager.html", null ]
+        [ "SouvenirManager", "class_souvenir_manager.html", null ],
+        [ "StoreManager", "class_store_manager.html", null ]
       ] ],
       [ "MySceneLoader", "class_my_scene_loader.html", null ],
       [ "NewBehaviourScript", "class_new_behaviour_script.html", null ],
@@ -63,8 +76,7 @@ var hierarchy =
       [ "SceneStateManager", "class_scene_state_manager.html", null ],
       [ "Test", "class_test.html", null ]
     ] ],
-    [ "OwnedSouvenirContainer", "class_owned_souvenir_container.html", null ],
-    [ "OwnedSouvenirDTO", "class_owned_souvenir_d_t_o.html", null ],
+    [ "BetCity.Storage.OwnedSouvenirDTO", "class_bet_city_1_1_storage_1_1_owned_souvenir_d_t_o.html", null ],
     [ "PlayerState", "class_player_state.html", null ],
     [ "ScriptableObject", null, [
       [ "SouvenirData", "class_souvenir_data.html", null ]

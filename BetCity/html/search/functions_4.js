@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['manualsave_0',['ManualSave',['../class_souvenir_manager.html#a222b2711d8ae940d1aca18999c27f992',1,'SouvenirManager']]]
+  ['losesouvenirbyid_0',['LoseSouvenirById',['../class_souvenir_manager.html#abaa1f3aea0c3494a4f7af1ceb61a0623',1,'SouvenirManager']]]
 ];

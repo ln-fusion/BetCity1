@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// 允许修改Souvenir的接口（目前设计除SouvenirManger应无人继承）
 /// </summary>
-internal interface IModifySouvenir
+public interface IModifySouvenir
 {
     bool LoseSouvenirById(int id, out Souvenir souvenir, out string errorMsg);
     bool OwnSouvenirById(int id, out Souvenir souvenir, out string errorMsg);
@@ -39,7 +39,7 @@ public class Souvenir
     /// 修改IsOwned属性，只限实现IModifySouvenir的SouvenirManger访问
     /// <param name="caller">允许修改Souvenir的接口</param>
     /// </summary>
-    internal void SetIsOwned(bool isOwned, IModifySouvenir caller)
+    public void SetIsOwned(bool isOwned, IModifySouvenir caller)
     {
         // 关键：校验调用者必须是B的实例（防止其他类伪造接口）
         if (caller is not SouvenirManager)

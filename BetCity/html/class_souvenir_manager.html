@@ -100,7 +100,9 @@ Inheritance diagram for SouvenirManager:</div>
  <div class="center">
   <img src="class_souvenir_manager.png" usemap="#SouvenirManager_map" alt=""/>
   <map id="SouvenirManager_map" name="SouvenirManager_map">
-<area href="class_mono_singleton-1-g.html" title="����������" alt="MonoSingleton&lt; T &gt;" shape="rect" coords="0,56,127,80"/>
+<area href="class_mono_singleton-1-g.html" title="����������" alt="MonoSingleton&lt; T &gt;" shape="rect" coords="0,56,220,80"/>
+<area href="interface_i_modify_souvenir.html" title="允许修改Souvenir的接口（目前设计除SouvenirManger应无人继承）" alt="IModifySouvenir" shape="rect" coords="230,56,450,80"/>
+<area href="interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g.html" title="需要修改存档的Manager（如纪念品Manager）提交给StorageManager处理时需要继承此接口" alt="BetCity.Storage.ISubmitArchive&lt; T &gt;" shape="rect" coords="460,56,680,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -119,11 +121,20 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>ManualSave</b> ()</td
 <tr class="memdesc:a0ba399413b8587a0adc5588978da1021"><td class="mdescLeft">&#160;</td><td class="mdescRight">通过ID查询纪念品  <br /></td></tr>
 <tr class="memitem:a34418e7f3475e6618647250fcbb92287" id="r_a34418e7f3475e6618647250fcbb92287"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_souvenir.html">Souvenir</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a34418e7f3475e6618647250fcbb92287">GetOwnedSouvenirById</a> (int id)</td></tr>
 <tr class="memdesc:a34418e7f3475e6618647250fcbb92287"><td class="mdescLeft">&#160;</td><td class="mdescRight">通过ID查询已拥有纪念品  <br /></td></tr>
+<tr class="memitem:a7fcac5bff654f68b978bf6cb3979dccc" id="r_a7fcac5bff654f68b978bf6cb3979dccc"><td class="memItemLeft" align="right" valign="top"><a id="a7fcac5bff654f68b978bf6cb3979dccc" name="a7fcac5bff654f68b978bf6cb3979dccc"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SubmitArchive</b> (List&lt; <a class="el" href="class_bet_city_1_1_storage_1_1_owned_souvenir_d_t_o.html">OwnedSouvenirDTO</a> &gt; dTOs)</td></tr>
+<tr class="memdesc:a7fcac5bff654f68b978bf6cb3979dccc"><td class="mdescLeft">&#160;</td><td class="mdescRight">上传对应的存档 <br /></td></tr>
+<tr class="inherit_header pub_methods_interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g"><td colspan="2" onclick="javascript:dynsection.toggleInherit('pub_methods_interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g')"><span class="dynarrow"><span class="arrowhead closed"></span></span>Public Member Functions inherited from <a class="el" href="interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g.html">BetCity.Storage.ISubmitArchive&lt; T &gt;</a></td></tr>
+<tr class="memitem:a109845871e54c502f224107a80882738 inherit pub_methods_interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g" id="r_a109845871e54c502f224107a80882738"><td class="memItemLeft" align="right" valign="top">
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SubmitArchive</b> (List&lt; T &gt; t)</td></tr>
+<tr class="memdesc:a109845871e54c502f224107a80882738 inherit pub_methods_interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g"><td class="mdescLeft">&#160;</td><td class="mdescRight">上传对应修改到StorageManager,StorageManager会根据对应类型调用函数 <br /></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pub-attribs" class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a5b47d32cce311e4d88950b9fdc13f67a" id="r_a5b47d32cce311e4d88950b9fdc13f67a"><td class="memItemLeft" align="right" valign="top"><a id="a5b47d32cce311e4d88950b9fdc13f67a" name="a5b47d32cce311e4d88950b9fdc13f67a"></a>
 <a class="el" href="class_souvenir_data_manager.html">SouvenirDataManager</a>&#160;</td><td class="memItemRight" valign="bottom"><b>souvenirDataManager</b></td></tr>
+<tr class="memitem:a51023f2bdab520c9e1b21e912b93bd38" id="r_a51023f2bdab520c9e1b21e912b93bd38"><td class="memItemLeft" align="right" valign="top"><a id="a51023f2bdab520c9e1b21e912b93bd38" name="a51023f2bdab520c9e1b21e912b93bd38"></a>
+<a class="el" href="class_bet_city_1_1_storage_1_1_storage_manager.html">StorageManager</a>&#160;</td><td class="memItemRight" valign="bottom"><b>storageManager</b></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-pro-methods" class="groupheader"><a id="pro-methods" name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
@@ -131,12 +142,12 @@ Protected Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 id="header-properties" class="groupheader"><a id="properties" name="properties"></a>
 Properties</h2></td></tr>
-<tr class="memitem:ab5c50c8cf2527e89f0d7e02f3cfcf395" id="r_ab5c50c8cf2527e89f0d7e02f3cfcf395"><td class="memItemLeft" align="right" valign="top"><a id="ab5c50c8cf2527e89f0d7e02f3cfcf395" name="ab5c50c8cf2527e89f0d7e02f3cfcf395"></a>
-Dictionary&lt; int, <a class="el" href="class_souvenir.html">Souvenir</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>OwnedSouvenirs</b><code> [get]</code></td></tr>
-<tr class="memdesc:ab5c50c8cf2527e89f0d7e02f3cfcf395"><td class="mdescLeft">&#160;</td><td class="mdescRight">已拥有纪念品只读字典 <br /></td></tr>
-<tr class="memitem:acc1a4fa45e1aa061c8117a5e9cac30f9" id="r_acc1a4fa45e1aa061c8117a5e9cac30f9"><td class="memItemLeft" align="right" valign="top"><a id="acc1a4fa45e1aa061c8117a5e9cac30f9" name="acc1a4fa45e1aa061c8117a5e9cac30f9"></a>
-Dictionary&lt; int, <a class="el" href="class_souvenir.html">Souvenir</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>AllSouvenirs</b><code> [get]</code></td></tr>
-<tr class="memdesc:acc1a4fa45e1aa061c8117a5e9cac30f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">所有纪念品只读字典 <br /></td></tr>
+<tr class="memitem:a7b2fd1e3fbd038c78bb1de8c87405219" id="r_a7b2fd1e3fbd038c78bb1de8c87405219"><td class="memItemLeft" align="right" valign="top"><a id="a7b2fd1e3fbd038c78bb1de8c87405219" name="a7b2fd1e3fbd038c78bb1de8c87405219"></a>
+IReadOnlyDictionary&lt; int, <a class="el" href="class_souvenir.html">Souvenir</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>OwnedSouvenirs</b><code> [get]</code></td></tr>
+<tr class="memdesc:a7b2fd1e3fbd038c78bb1de8c87405219"><td class="mdescLeft">&#160;</td><td class="mdescRight">已拥有纪念品只读字典 <br /></td></tr>
+<tr class="memitem:a5ee3612514bf76008dfb969622df2e46" id="r_a5ee3612514bf76008dfb969622df2e46"><td class="memItemLeft" align="right" valign="top"><a id="a5ee3612514bf76008dfb969622df2e46" name="a5ee3612514bf76008dfb969622df2e46"></a>
+IReadOnlyDictionary&lt; int, <a class="el" href="class_souvenir.html">Souvenir</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>AllSouvenirs</b><code> [get]</code></td></tr>
+<tr class="memdesc:a5ee3612514bf76008dfb969622df2e46"><td class="mdescLeft">&#160;</td><td class="mdescRight">所有纪念品只读字典 <br /></td></tr>
 <tr class="inherit_header properties_class_mono_singleton-1-g"><td colspan="2" onclick="javascript:dynsection.toggleInherit('properties_class_mono_singleton-1-g')"><span class="dynarrow"><span class="arrowhead closed"></span></span>Properties inherited from <a class="el" href="class_mono_singleton-1-g.html">MonoSingleton&lt; T &gt;</a></td></tr>
 <tr class="memitem:a5637ba1f44359d4610b5eba552ef5f57 inherit properties_class_mono_singleton-1-g" id="r_a5637ba1f44359d4610b5eba552ef5f57"><td class="memItemLeft" align="right" valign="top">
 static T&#160;</td><td class="memItemRight" valign="bottom"><b>Instance</b><code> [get]</code></td></tr>
@@ -316,6 +327,8 @@ static T&#160;</td><td class="memItemRight" valign="bottom"><b>Instance</b><code
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>操作成功与否</dd></dl>
 
+<p>Implements <a class="el" href="interface_i_modify_souvenir.html">IModifySouvenir</a>.</p>
+
 </div>
 </div>
 <a id="a34a9adadf34941a7d6f8b64c0c2dc10a" name="a34a9adadf34941a7d6f8b64c0c2dc10a"></a>
@@ -360,6 +373,8 @@ static T&#160;</td><td class="memItemRight" valign="bottom"><b>Instance</b><code
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>操作成功与否</dd></dl>
+
+<p>Implements <a class="el" href="interface_i_modify_souvenir.html">IModifySouvenir</a>.</p>
 
 </div>
 </div>

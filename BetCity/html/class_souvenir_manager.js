@@ -6,6 +6,7 @@ var class_souvenir_manager =
     [ "LoseSouvenirById", "class_souvenir_manager.html#abaa1f3aea0c3494a4f7af1ceb61a0623", null ],
     [ "ManualSave", "class_souvenir_manager.html#a222b2711d8ae940d1aca18999c27f992", null ],
     [ "OwnSouvenirById", "class_souvenir_manager.html#a34a9adadf34941a7d6f8b64c0c2dc10a", null ],
-    [ "AllSouvenirs", "class_souvenir_manager.html#acc1a4fa45e1aa061c8117a5e9cac30f9", null ],
-    [ "OwnedSouvenirs", "class_souvenir_manager.html#ab5c50c8cf2527e89f0d7e02f3cfcf395", null ]
+    [ "SubmitArchive", "class_souvenir_manager.html#a7fcac5bff654f68b978bf6cb3979dccc", null ],
+    [ "AllSouvenirs", "class_souvenir_manager.html#a5ee3612514bf76008dfb969622df2e46", null ],
+    [ "OwnedSouvenirs", "class_souvenir_manager.html#a7b2fd1e3fbd038c78bb1de8c87405219", null ]
 ];

@@ -8,7 +8,7 @@
 Inheritance diagram for Souvenir\+Manager\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
-\includegraphics[height=3.000000cm]{class_souvenir_manager}
+\includegraphics[height=2.456140cm]{class_souvenir_manager}
 \end{center}
 \end{figure}
 \doxysubsubsection*{Public Member Functions}
@@ -26,12 +26,23 @@ bool \mbox{\hyperlink{class_souvenir_manager_ae262e8e1b7f76f306b9fb3f2f3b670cb}{
 \mbox{\hyperlink{class_souvenir}{Souvenir}} \mbox{\hyperlink{class_souvenir_manager_a0ba399413b8587a0adc5588978da1021}{Get\+Souvenir\+By\+Id}} (int id)
 \begin{DoxyCompactList}\small\item\em 通过\+ID查询纪念品 \end{DoxyCompactList}\item 
 \mbox{\hyperlink{class_souvenir}{Souvenir}} \mbox{\hyperlink{class_souvenir_manager_a34418e7f3475e6618647250fcbb92287}{Get\+Owned\+Souvenir\+By\+Id}} (int id)
-\begin{DoxyCompactList}\small\item\em 通过\+ID查询已拥有纪念品 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em 通过\+ID查询已拥有纪念品 \end{DoxyCompactList}\item 
+\Hypertarget{class_souvenir_manager_a7fcac5bff654f68b978bf6cb3979dccc}\label{class_souvenir_manager_a7fcac5bff654f68b978bf6cb3979dccc} 
+void {\bfseries Submit\+Archive} (List$<$ \mbox{\hyperlink{class_bet_city_1_1_storage_1_1_owned_souvenir_d_t_o}{Owned\+Souvenir\+DTO}} $>$ d\+TOs)
+\begin{DoxyCompactList}\small\item\em 上传对应的存档 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Member Functions inherited from \mbox{\hyperlink{interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g}{Bet\+City.\+Storage.\+ISubmit\+Archive$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+void {\bfseries Submit\+Archive} (List$<$ T $>$ t)
+\begin{DoxyCompactList}\small\item\em 上传对应修改到\+Storage\+Manager,Storage\+Manager会根据对应类型调用函数 \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsubsection*{Public Attributes}
 \begin{DoxyCompactItemize}
 \item 
 \Hypertarget{class_souvenir_manager_a5b47d32cce311e4d88950b9fdc13f67a}\label{class_souvenir_manager_a5b47d32cce311e4d88950b9fdc13f67a} 
 \mbox{\hyperlink{class_souvenir_data_manager}{Souvenir\+Data\+Manager}} {\bfseries souvenir\+Data\+Manager}
+\item 
+\Hypertarget{class_souvenir_manager_a51023f2bdab520c9e1b21e912b93bd38}\label{class_souvenir_manager_a51023f2bdab520c9e1b21e912b93bd38} 
+\mbox{\hyperlink{class_bet_city_1_1_storage_1_1_storage_manager}{Storage\+Manager}} {\bfseries storage\+Manager}
 \end{DoxyCompactItemize}
 \doxysubsubsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
@@ -41,11 +52,11 @@ override void \mbox{\hyperlink{class_souvenir_manager_a1d72fc4cf9d35b1493565a24a
 \doxysubsubsection*{Properties}
 \begin{DoxyCompactItemize}
 \item 
-\Hypertarget{class_souvenir_manager_ab5c50c8cf2527e89f0d7e02f3cfcf395}\label{class_souvenir_manager_ab5c50c8cf2527e89f0d7e02f3cfcf395} 
-Dictionary$<$ int, \mbox{\hyperlink{class_souvenir}{Souvenir}} $>$ {\bfseries Owned\+Souvenirs}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\Hypertarget{class_souvenir_manager_a7b2fd1e3fbd038c78bb1de8c87405219}\label{class_souvenir_manager_a7b2fd1e3fbd038c78bb1de8c87405219} 
+IRead\+Only\+Dictionary$<$ int, \mbox{\hyperlink{class_souvenir}{Souvenir}} $>$ {\bfseries Owned\+Souvenirs}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
 \begin{DoxyCompactList}\small\item\em 已拥有纪念品只读字典 \end{DoxyCompactList}\item 
-\Hypertarget{class_souvenir_manager_acc1a4fa45e1aa061c8117a5e9cac30f9}\label{class_souvenir_manager_acc1a4fa45e1aa061c8117a5e9cac30f9} 
-Dictionary$<$ int, \mbox{\hyperlink{class_souvenir}{Souvenir}} $>$ {\bfseries All\+Souvenirs}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\Hypertarget{class_souvenir_manager_a5ee3612514bf76008dfb969622df2e46}\label{class_souvenir_manager_a5ee3612514bf76008dfb969622df2e46} 
+IRead\+Only\+Dictionary$<$ int, \mbox{\hyperlink{class_souvenir}{Souvenir}} $>$ {\bfseries All\+Souvenirs}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
 \begin{DoxyCompactList}\small\item\em 所有纪念品只读字典 \end{DoxyCompactList}\end{DoxyCompactItemize}
 \doxysubsection*{Properties inherited from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}}
 \begin{DoxyCompactItemize}
@@ -146,6 +157,10 @@ bool Souvenir\+Manager.\+Lose\+Souvenir\+By\+Id (\begin{DoxyParamCaption}\item[{
 \begin{DoxyReturn}{Returns}
 操作成功与否
 \end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interface_i_modify_souvenir}{IModify\+Souvenir}}.
+
 \Hypertarget{class_souvenir_manager_a34a9adadf34941a7d6f8b64c0c2dc10a}\index{SouvenirManager@{SouvenirManager}!OwnSouvenirById@{OwnSouvenirById}}
 \index{OwnSouvenirById@{OwnSouvenirById}!SouvenirManager@{SouvenirManager}}
 \doxysubsubsection{\texorpdfstring{OwnSouvenirById()}{OwnSouvenirById()}}
@@ -168,6 +183,10 @@ bool Souvenir\+Manager.\+Own\+Souvenir\+By\+Id (\begin{DoxyParamCaption}\item[{i
 \begin{DoxyReturn}{Returns}
 操作成功与否
 \end{DoxyReturn}
+
+
+Implements \mbox{\hyperlink{interface_i_modify_souvenir}{IModify\+Souvenir}}.
+
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

@@ -1,5 +1,14 @@
 var annotated_dup =
 [
+    [ "BetCity", "namespace_bet_city.html", [
+      [ "Storage", "namespace_bet_city_1_1_storage.html", [
+        [ "ISubmitArchive&lt; T &gt;", "interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g.html", "interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g" ],
+        [ "IModifyArchive", "interface_bet_city_1_1_storage_1_1_i_modify_archive.html", "interface_bet_city_1_1_storage_1_1_i_modify_archive" ],
+        [ "ArchiveContainer", "class_bet_city_1_1_storage_1_1_archive_container.html", "class_bet_city_1_1_storage_1_1_archive_container" ],
+        [ "OwnedSouvenirDTO", "class_bet_city_1_1_storage_1_1_owned_souvenir_d_t_o.html", "class_bet_city_1_1_storage_1_1_owned_souvenir_d_t_o" ],
+        [ "StorageManager", "class_bet_city_1_1_storage_1_1_storage_manager.html", "class_bet_city_1_1_storage_1_1_storage_manager" ]
+      ] ]
+    ] ],
     [ "BagData", "class_bag_data.html", null ],
     [ "BattleCard", "class_battle_card.html", null ],
     [ "BattleDeckManager", "class_battle_deck_manager.html", null ],
@@ -16,11 +25,13 @@ var annotated_dup =
     [ "DialogManager", "class_dialog_manager.html", null ],
     [ "DiceCounter", "class_dice_counter.html", null ],
     [ "DiceManager", "class_dice_manager.html", null ],
+    [ "EconomySystem", "class_economy_system.html", "class_economy_system" ],
     [ "EventSceneController", "class_event_scene_controller.html", null ],
     [ "EventWindowManager", "class_event_window_manager.html", null ],
     [ "GameDataManager", "class_game_data_manager.html", "class_game_data_manager" ],
     [ "GraveyardManager", "class_graveyard_manager.html", "class_graveyard_manager" ],
     [ "HighlightOnSelect", "class_highlight_on_select.html", null ],
+    [ "IModifySouvenir", "interface_i_modify_souvenir.html", null ],
     [ "InventoryData", "class_inventory_data.html", null ],
     [ "InventoryDisplay", "class_inventory_display.html", null ],
     [ "InventoryManager", "class_inventory_manager.html", "class_inventory_manager" ],
@@ -32,8 +43,6 @@ var annotated_dup =
     [ "NewBehaviourScript", "class_new_behaviour_script.html", null ],
     [ "Node", "class_node.html", null ],
     [ "Open", "class_open.html", null ],
-    [ "OwnedSouvenirContainer", "class_owned_souvenir_container.html", null ],
-    [ "OwnedSouvenirDTO", "class_owned_souvenir_d_t_o.html", null ],
     [ "PhaseDisplayer", "class_phase_displayer.html", null ],
     [ "PlayerAction", "class_player_action.html", null ],
     [ "PlayerController", "class_player_controller.html", null ],
@@ -48,10 +57,11 @@ var annotated_dup =
     [ "SanityManager", "class_sanity_manager.html", null ],
     [ "SanityUIController", "class_sanity_u_i_controller.html", null ],
     [ "SceneStateManager", "class_scene_state_manager.html", null ],
-    [ "Souvenir", "class_souvenir.html", null ],
+    [ "Souvenir", "class_souvenir.html", "class_souvenir" ],
     [ "SouvenirData", "class_souvenir_data.html", "class_souvenir_data" ],
     [ "SouvenirDataManager", "class_souvenir_data_manager.html", "class_souvenir_data_manager" ],
     [ "SouvenirManager", "class_souvenir_manager.html", "class_souvenir_manager" ],
     [ "SpellCard", "class_spell_card.html", null ],
+    [ "StoreManager", "class_store_manager.html", null ],
     [ "Test", "class_test.html", null ]
 ];

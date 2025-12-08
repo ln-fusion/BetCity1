@@ -1,5 +1,8 @@
 var searchData=
 [
-  ['eventscenecontroller_0',['EventSceneController',['../class_event_scene_controller.html',1,'']]],
-  ['eventwindowmanager_1',['EventWindowManager',['../class_event_window_manager.html',1,'']]]
+  ['d4dicemanager_0',['D4DiceManager',['../class_d4_dice_manager.html',1,'']]],
+  ['deckmanager_1',['DeckManager',['../class_deck_manager.html',1,'']]],
+  ['dialogmanager_2',['DialogManager',['../class_dialog_manager.html',1,'']]],
+  ['dicecounter_3',['DiceCounter',['../class_dice_counter.html',1,'']]],
+  ['dicemanager_4',['DiceManager',['../class_dice_manager.html',1,'']]]
 ];

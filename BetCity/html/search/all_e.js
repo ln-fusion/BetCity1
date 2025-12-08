@@ -5,10 +5,15 @@ var searchData=
   ['sanityuicontroller_2',['SanityUIController',['../class_sanity_u_i_controller.html',1,'']]],
   ['saveinventorydata_3',['SaveInventoryData',['../class_inventory_manager.html#af4c8db1d79e231d6dfdce766e864ff3f',1,'InventoryManager']]],
   ['saveplayerdata_4',['SavePlayerData',['../class_game_data_manager.html#a8264e134daecfb84402e5c0f7ebc0fc6',1,'GameDataManager']]],
-  ['scenestatemanager_5',['SceneStateManager',['../class_scene_state_manager.html',1,'']]],
-  ['souvenir_6',['Souvenir',['../class_souvenir.html',1,'']]],
-  ['souvenirdata_7',['SouvenirData',['../class_souvenir_data.html',1,'']]],
-  ['souvenirdatamanager_8',['SouvenirDataManager',['../class_souvenir_data_manager.html',1,'']]],
-  ['souvenirmanager_9',['SouvenirManager',['../class_souvenir_manager.html',1,'']]],
-  ['spellcard_10',['SpellCard',['../class_spell_card.html',1,'']]]
+  ['saveversion_5',['SaveVersion',['../class_bet_city_1_1_storage_1_1_archive_container.html#a0bd6e3f5447dd4a9880858dafc2cf821',1,'BetCity::Storage::ArchiveContainer']]],
+  ['scenestatemanager_6',['SceneStateManager',['../class_scene_state_manager.html',1,'']]],
+  ['setisowned_7',['SetIsOwned',['../class_souvenir.html#a0bb429a01643e492643253887ddfef38',1,'Souvenir']]],
+  ['souvenir_8',['Souvenir',['../class_souvenir.html',1,'']]],
+  ['souvenirdata_9',['SouvenirData',['../class_souvenir_data.html',1,'']]],
+  ['souvenirdatamanager_10',['SouvenirDataManager',['../class_souvenir_data_manager.html',1,'']]],
+  ['souvenirmanager_11',['SouvenirManager',['../class_souvenir_manager.html',1,'']]],
+  ['spellcard_12',['SpellCard',['../class_spell_card.html',1,'']]],
+  ['storagemanager_13',['StorageManager',['../class_bet_city_1_1_storage_1_1_storage_manager.html',1,'BetCity::Storage']]],
+  ['storemanager_14',['StoreManager',['../class_store_manager.html',1,'']]],
+  ['submitarchive_15',['SubmitArchive',['../class_souvenir_manager.html#a7fcac5bff654f68b978bf6cb3979dccc',1,'SouvenirManager.SubmitArchive()'],['../interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g.html#a109845871e54c502f224107a80882738',1,'BetCity.Storage.ISubmitArchive-1-g.SubmitArchive()']]]
 ];

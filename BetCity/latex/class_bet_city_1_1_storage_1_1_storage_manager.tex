@@ -1,0 +1,77 @@
+\doxysection{Bet\+City.\+Storage.\+Storage\+Manager Class Reference}
+\hypertarget{class_bet_city_1_1_storage_1_1_storage_manager}{}\label{class_bet_city_1_1_storage_1_1_storage_manager}\index{BetCity.Storage.StorageManager@{BetCity.Storage.StorageManager}}
+
+
+管理所有存储内容，目前包含存档数据（后续可以增加其他json文件如配置文件）  
+
+
+Inheritance diagram for Bet\+City.\+Storage.\+Storage\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_bet_city_1_1_storage_1_1_storage_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_bet_city_1_1_storage_1_1_storage_manager_ae5b65152e1f792fdc5c1e327d371974b}\label{class_bet_city_1_1_storage_1_1_storage_manager_ae5b65152e1f792fdc5c1e327d371974b} 
+void {\bfseries Manual\+Save} ()
+\begin{DoxyCompactList}\small\item\em 【公开接口】手动触发保存（外部可调用，比如游戏退出/存档点） \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_bet_city_1_1_storage_1_1_storage_manager_a4b3d8a3a534f9bd8159d5cb8cae57078}{Modify\+Archive$<$ T $>$}} (List$<$ T $>$ t, ISubmit\+Archive$<$ T $>$ caller)
+\begin{DoxyCompactList}\small\item\em 根据调用者的身份修改相应的存档 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+override void \mbox{\hyperlink{class_bet_city_1_1_storage_1_1_storage_manager_a0fd2c21c4115dc449d4b4a6241706c2f}{Awake}} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_bet_city_1_1_storage_1_1_storage_manager_a2f321f18d768814b24cf0b4e84334b3b}\label{class_bet_city_1_1_storage_1_1_storage_manager_a2f321f18d768814b24cf0b4e84334b3b} 
+string {\bfseries Archive\+Save\+Path}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 存档路径，后续更改实现多存档 \end{DoxyCompactList}\item 
+\Hypertarget{class_bet_city_1_1_storage_1_1_storage_manager_a36608fdee8f7fb6b5aa5b238ad140fe5}\label{class_bet_city_1_1_storage_1_1_storage_manager_a36608fdee8f7fb6b5aa5b238ad140fe5} 
+\mbox{\hyperlink{class_bet_city_1_1_storage_1_1_archive_container}{Archive\+Container}} {\bfseries Archive\+Data}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 存档数据 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Properties inherited from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+static T {\bfseries Instance}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+管理所有存储内容，目前包含存档数据（后续可以增加其他json文件如配置文件） 
+
+\label{doc-func-members}
+\Hypertarget{class_bet_city_1_1_storage_1_1_storage_manager_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_bet_city_1_1_storage_1_1_storage_manager_a0fd2c21c4115dc449d4b4a6241706c2f}\index{BetCity.Storage.StorageManager@{BetCity.Storage.StorageManager}!Awake@{Awake}}
+\index{Awake@{Awake}!BetCity.Storage.StorageManager@{BetCity.Storage.StorageManager}}
+\doxysubsubsection{\texorpdfstring{Awake()}{Awake()}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_storage_1_1_storage_manager_a0fd2c21c4115dc449d4b4a6241706c2f} 
+override void Bet\+City.\+Storage.\+Storage\+Manager.\+Awake (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}
+
+
+
+Reimplemented from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}.
+
+\Hypertarget{class_bet_city_1_1_storage_1_1_storage_manager_a4b3d8a3a534f9bd8159d5cb8cae57078}\index{BetCity.Storage.StorageManager@{BetCity.Storage.StorageManager}!ModifyArchive$<$ T $>$@{ModifyArchive$<$ T $>$}}
+\index{ModifyArchive$<$ T $>$@{ModifyArchive$<$ T $>$}!BetCity.Storage.StorageManager@{BetCity.Storage.StorageManager}}
+\doxysubsubsection{\texorpdfstring{ModifyArchive$<$ T $>$()}{ModifyArchive< T >()}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_storage_1_1_storage_manager_a4b3d8a3a534f9bd8159d5cb8cae57078} 
+void Bet\+City.\+Storage.\+Storage\+Manager.\+Modify\+Archive$<$ T $>$ (\begin{DoxyParamCaption}\item[{List$<$ T $>$}]{t}{, }\item[{ISubmit\+Archive$<$ T $>$}]{caller}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+根据调用者的身份修改相应的存档 
+
+
+
+Implements \mbox{\hyperlink{interface_bet_city_1_1_storage_1_1_i_modify_archive_aec1b8e367b910bb606097217168f09c3}{Bet\+City.\+Storage.\+IModify\+Archive}}.
+
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Assets/\+Script/\+Storage/Storage\+Manager.\+cs\end{DoxyCompactItemize}
