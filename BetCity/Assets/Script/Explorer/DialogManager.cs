@@ -1,576 +1,576 @@
-using System.Collections;
+//using System.Collections;
 
-using System.Collections.Generic;
+//using System.Collections.Generic;
 
-using UnityEngine;
+//using UnityEngine;
 
-using TMPro;
+//using TMPro;
 
-using UnityEngine.UI;
+//using UnityEngine.UI;
 
-using System;
+//using System;
 
 
 
-public class DialogManager : MonoBehaviour
+//public class DialogManager : MonoBehaviour
 
-{
+//{
 
-    public TextAsset dialogDataFile;
+//    public TextAsset dialogDataFile;
 
-    public SpriteRenderer spriteLeft;
+//    public SpriteRenderer spriteLeft;
 
-    public SpriteRenderer spriteRight;
+//    public SpriteRenderer spriteRight;
 
-    public TMP_Text nameText;
+//    public TMP_Text nameText;
 
-    public TMP_Text dialogText;
+//    public TMP_Text dialogText;
 
-    public List<Sprite> sprites = new List<Sprite>();
+//    public List<Sprite> sprites = new List<Sprite>();
 
-    private Dictionary<string, Sprite> imageDic = new Dictionary<string, Sprite>();
+//    private Dictionary<string, Sprite> imageDic = new Dictionary<string, Sprite>();
 
-    public int dialogIndex;
+//    public int dialogIndex;
 
-    public string[] dialogRows;
+//    public string[] dialogRows;
 
-    public Button next;
+//    public Button next;
 
-    public GameObject optionButton;
+//    public GameObject optionButton;
 
-    public Transform buttonGroup;
+//    public Transform buttonGroup;
 
-    private SanityManager sanityManager;
+//    private SanityManager sanityManager;
 
-    public TMP_FontAsset chineseFont;
+//    public TMP_FontAsset chineseFont;
 
 
 
-    private void Awake()
+//    private void Awake()
 
-    {
+//    {
 
-        // 初始化角色图片映射
+//        // 初始化角色图片映射
 
-        if (sprites.Count >= 2)
+//        if (sprites.Count >= 2)
 
-        {
+//        {
 
-            imageDic["A"] = sprites[0];
+//            imageDic["A"] = sprites[0];
 
-            imageDic["B"] = sprites[1];
+//            imageDic["B"] = sprites[1];
 
-            imageDic["player"] = sprites.Count > 2 ? sprites[2] : null;
+//            imageDic["player"] = sprites.Count > 2 ? sprites[2] : null;
 
-        }
+//        }
 
 
 
-        sanityManager = FindObjectOfType<SanityManager>();
+//        sanityManager = FindObjectOfType<SanityManager>();
 
-        if (sanityManager == null)
+//        if (sanityManager == null)
 
-        {
+//        {
 
-            Debug.LogError("场景中未找到SanityManager实例，请确保已添加该组件！");
+//            Debug.LogError("场景中未找到SanityManager实例，请确保已添加该组件！");
 
-        }
+//        }
 
 
 
-        // 设置中文字体
+//        // 设置中文字体
 
-        if (chineseFont != null)
+//        if (chineseFont != null)
 
-        {
+//        {
 
-            nameText.font = chineseFont;
+//            nameText.font = chineseFont;
 
-            dialogText.font = chineseFont;
+//            dialogText.font = chineseFont;
 
-            if (optionButton != null)
+//            if (optionButton != null)
 
-            {
+//            {
 
-                var optionText = optionButton.GetComponentInChildren<TMP_Text>();
+//                var optionText = optionButton.GetComponentInChildren<TMP_Text>();
 
-                if (optionText != null)
+//                if (optionText != null)
 
-                {
+//                {
 
-                    optionText.font = chineseFont;
+//                    optionText.font = chineseFont;
 
-                }
+//                }
 
-            }
+//            }
 
-        }
+//        }
 
-        else
+//        else
 
-        {
+//        {
 
-            Debug.LogWarning("请在Inspector中指定支持中文的字体资产（TMP_FontAsset）");
+//            Debug.LogWarning("请在Inspector中指定支持中文的字体资产（TMP_FontAsset）");
 
-        }
+//        }
 
-    }
+//    }
 
 
 
-    void Start()
+//    void Start()
 
-    {
+//    {
 
-        if (dialogDataFile != null)
+//        if (dialogDataFile != null)
 
-        {
+//        {
 
-            ReadText(dialogDataFile);
+//            ReadText(dialogDataFile);
 
-            dialogIndex = 0;
+//            dialogIndex = 0;
 
-            ShowDiaLogRow();
+//            ShowDiaLogRow();
 
-        }
+//        }
 
-        else
+//        else
 
-        {
+//        {
 
-            Debug.LogError("请在Inspector中指定对话数据文件！");
+//            Debug.LogError("请在Inspector中指定对话数据文件！");
 
-        }
+//        }
 
-    }
+//    }
 
 
 
-    public void UpdateText(string _name, string _text)
+//    public void UpdateText(string _name, string _text)
 
-    {
+//    {
 
-        string filteredName = FilterInvalidCharacters(_name);
+//        string filteredName = FilterInvalidCharacters(_name);
 
-        string filteredText = FilterInvalidCharacters(_text);
+//        string filteredText = FilterInvalidCharacters(_text);
 
 
 
-        nameText.text = filteredName;
+//        nameText.text = filteredName;
 
-        dialogText.text = filteredText;
+//        dialogText.text = filteredText;
 
-    }
+//    }
 
 
 
-    public void UpdateImage(string _name, string _position)
+//    public void UpdateImage(string _name, string _position)
 
-    {
+//    {
 
-        spriteLeft.sprite = null;
+//        spriteLeft.sprite = null;
 
-        spriteRight.sprite = null;
+//        spriteRight.sprite = null;
 
 
 
-        if (imageDic.TryGetValue(_name, out Sprite sprite))
+//        if (imageDic.TryGetValue(_name, out Sprite sprite))
 
-        {
+//        {
 
-            if (_position == "左")
+//            if (_position == "左")
 
-            {
+//            {
 
-                spriteLeft.sprite = sprite;
+//                spriteLeft.sprite = sprite;
 
-            }
+//            }
 
-            else if (_position == "右")
+//            else if (_position == "右")
 
-            {
+//            {
 
-                spriteRight.sprite = sprite;
+//                spriteRight.sprite = sprite;
 
-            }
+//            }
 
-        }
+//        }
 
-        else
+//        else
 
-        {
+//        {
 
-            Debug.LogWarning($"未找到角色 {_name} 的图片资源");
+//            Debug.LogWarning($"未找到角色 {_name} 的图片资源");
 
-        }
+//        }
 
-    }
+//    }
 
 
 
-    public void ReadText(TextAsset _textAsset)
+//    public void ReadText(TextAsset _textAsset)
 
-    {
+//    {
 
-        dialogRows = _textAsset.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
+//        dialogRows = _textAsset.text.Split(new[] { '\n', '\r' }, System.StringSplitOptions.RemoveEmptyEntries);
 
-        if (dialogRows.Length > 0 && dialogRows[0].Contains("标志,ID,人物,位置,内容,跳转,效果,目标"))
+//        if (dialogRows.Length > 0 && dialogRows[0].Contains("标志,ID,人物,位置,内容,跳转,效果,目标"))
 
-        {
+//        {
 
-            List<string> tempRows = new List<string>(dialogRows);
+//            List<string> tempRows = new List<string>(dialogRows);
 
-            tempRows.RemoveAt(0);
+//            tempRows.RemoveAt(0);
 
-            dialogRows = tempRows.ToArray();
+//            dialogRows = tempRows.ToArray();
 
-        }
+//        }
 
-        Debug.Log($"成功读取 {dialogRows.Length} 行对话数据");
+//        Debug.Log($"成功读取 {dialogRows.Length} 行对话数据");
 
-    }
+//    }
 
 
 
-    // 检查并显示当前对话ID对应的所有选项
+//    // 检查并显示当前对话ID对应的所有选项
 
-    private bool CheckAndShowOptions()
+//    private bool CheckAndShowOptions()
 
-    {
+//    {
 
-        List<string[]> optionRows = new List<string[]>();
+//        List<string[]> optionRows = new List<string[]>();
 
 
 
-        foreach (string row in dialogRows)
+//        foreach (string row in dialogRows)
 
-        {
+//        {
 
-            string[] cells = SplitCsvRow(row);
+//            string[] cells = SplitCsvRow(row);
 
-            // 关键修复：只匹配标志为&且ID等于当前dialogIndex的选项行
+//            // 关键修复：只匹配标志为&且ID等于当前dialogIndex的选项行
 
-            if (cells.Length >= 6 && cells[0] == "&" && int.TryParse(cells[1], out int optionId))
+//            if (cells.Length >= 6 && cells[0] == "&" && int.TryParse(cells[1], out int optionId))
 
-            {
+//            {
 
-                // 你的选项行ID是3和4，但流程中当前ID是3，所以只需要匹配3即可
+//                // 你的选项行ID是3和4，但流程中当前ID是3，所以只需要匹配3即可
 
-                if (optionId == dialogIndex)
+//                if (optionId == dialogIndex)
 
-                {
+//                {
 
-                    optionRows.Add(cells);
+//                    optionRows.Add(cells);
 
-                }
+//                }
 
-            }
+//            }
 
-        }
+//        }
 
 
 
-        // 生成选项按钮
+//        // 生成选项按钮
 
-        if (optionRows.Count > 0)
+//        if (optionRows.Count > 0)
 
-        {
+//        {
 
-            GenerateOptions(optionRows);
+//            GenerateOptions(optionRows);
 
-            return true;
+//            return true;
 
-        }
+//        }
 
-        return false;
+//        return false;
 
-    }
+//    }
 
 
 
-    // 同时修复ShowDiaLogRow中普通对话的跳转逻辑（确保下一步正确更新ID）
+//    // 同时修复ShowDiaLogRow中普通对话的跳转逻辑（确保下一步正确更新ID）
 
-    public void ShowDiaLogRow()
-    {
-        ClearOptionButtons();
+//    public void ShowDiaLogRow()
+//    {
+//        ClearOptionButtons();
 
-        // 1. 先生成选项，但不立即退出
-        bool hasOptions = CheckAndShowOptions();
+//        // 1. 先生成选项，但不立即退出
+//        bool hasOptions = CheckAndShowOptions();
 
-        // 2. 接着查找并处理对话行（文本、图片）
-        foreach (string row in dialogRows)
-        {
-            string[] cells = SplitCsvRow(row);
-            if (cells.Length < 6) continue;
+//        // 2. 接着查找并处理对话行（文本、图片）
+//        foreach (string row in dialogRows)
+//        {
+//            string[] cells = SplitCsvRow(row);
+//            if (cells.Length < 6) continue;
 
-            // 找到当前 ID 对应的文本行
-            if (cells[0] == "#" && int.TryParse(cells[1], out int id) && id == dialogIndex)
-            {
-                // 更新文本和立绘（这里会确保人物显示出来）
-                UpdateText(cells[2], cells[4]);
-                UpdateImage(cells[2], cells[3]);
-                ProcessSanityEffect(cells[6], cells[7]);
+//            // 找到当前 ID 对应的文本行
+//            if (cells[0] == "#" && int.TryParse(cells[1], out int id) && id == dialogIndex)
+//            {
+//                // 更新文本和立绘（这里会确保人物显示出来）
+//                UpdateText(cells[2], cells[4]);
+//                UpdateImage(cells[2], cells[3]);
+//                ProcessSanityEffect(cells[6], cells[7]);
 
-                // 3. 关键逻辑：根据是否有选项来决定 Next 按钮的状态
-                if (hasOptions)
-                {
-                    // 如果有选项，隐藏下一步按钮，等待玩家点击选项
-                    next.gameObject.SetActive(false);
-                }
-                else
-                {
-                    // 如果没选项，显示下一步按钮
-                    next.onClick.RemoveAllListeners();
-                    if (int.TryParse(cells[5], out int nextId))
-                    {
-                        next.onClick.AddListener(() =>
-                        {
-                            dialogIndex = nextId;
-                            ShowDiaLogRow();
-                        });
-                    }
-                    next.gameObject.SetActive(true);
-                }
+//                // 3. 关键逻辑：根据是否有选项来决定 Next 按钮的状态
+//                if (hasOptions)
+//                {
+//                    // 如果有选项，隐藏下一步按钮，等待玩家点击选项
+//                    next.gameObject.SetActive(false);
+//                }
+//                else
+//                {
+//                    // 如果没选项，显示下一步按钮
+//                    next.onClick.RemoveAllListeners();
+//                    if (int.TryParse(cells[5], out int nextId))
+//                    {
+//                        next.onClick.AddListener(() =>
+//                        {
+//                            dialogIndex = nextId;
+//                            ShowDiaLogRow();
+//                        });
+//                    }
+//                    next.gameObject.SetActive(true);
+//                }
 
-                // 处理完毕，退出方法
-                return;
-            }
-            // 处理 END 结束标记
-            else if (cells[0].Equals("END", StringComparison.OrdinalIgnoreCase) && int.TryParse(cells[1], out int endId) && endId == dialogIndex)
-            {
-                Debug.Log("剧情结束");
-                // 如果你有 ClearImages() 方法，可以在这里调用
-                // ClearImages(); 
-                next.gameObject.SetActive(false);
-                return;
-            }
-        }
+//                // 处理完毕，退出方法
+//                return;
+//            }
+//            // 处理 END 结束标记
+//            else if (cells[0].Equals("END", StringComparison.OrdinalIgnoreCase) && int.TryParse(cells[1], out int endId) && endId == dialogIndex)
+//            {
+//                Debug.Log("剧情结束");
+//                // 如果你有 ClearImages() 方法，可以在这里调用
+//                // ClearImages(); 
+//                next.gameObject.SetActive(false);
+//                return;
+//            }
+//        }
 
-        // 4. 特殊情况：如果有选项，但 CSV 里没有配置对应的 '#' 文本行
-        // 这种情况下，我们也要隐藏 Next 按钮，防止卡住
-        if (hasOptions)
-        {
-            next.gameObject.SetActive(false);
-            return;
-        }
+//        // 4. 特殊情况：如果有选项，但 CSV 里没有配置对应的 '#' 文本行
+//        // 这种情况下，我们也要隐藏 Next 按钮，防止卡住
+//        if (hasOptions)
+//        {
+//            next.gameObject.SetActive(false);
+//            return;
+//        }
 
-        Debug.LogError($"未找到ID为 {dialogIndex} 的对话行，请检查CSV");
-    }
+//        Debug.LogError($"未找到ID为 {dialogIndex} 的对话行，请检查CSV");
+//    }
 
 
 
-    // 生成选项按钮
+//    // 生成选项按钮
 
-    public void GenerateOptions(List<string[]> optionRows)
+//    public void GenerateOptions(List<string[]> optionRows)
 
-    {
+//    {
 
-        foreach (var cells in optionRows)
+//        foreach (var cells in optionRows)
 
-        {
+//        {
 
-            GameObject button = Instantiate(optionButton, buttonGroup);
+//            GameObject button = Instantiate(optionButton, buttonGroup);
 
-            var buttonText = button.GetComponentInChildren<TMP_Text>();
+//            var buttonText = button.GetComponentInChildren<TMP_Text>();
 
-            if (buttonText != null)
+//            if (buttonText != null)
 
-            {
+//            {
 
-                buttonText.font = chineseFont;
+//                buttonText.font = chineseFont;
 
-                buttonText.text = FilterInvalidCharacters(cells[4]);
+//                buttonText.text = FilterInvalidCharacters(cells[4]);
 
-            }
+//            }
 
 
 
-            // 解析选项对应的跳转ID
+//            // 解析选项对应的跳转ID
 
-            if (int.TryParse(cells[5], out int targetId))
+//            if (int.TryParse(cells[5], out int targetId))
 
-            {
+//            {
 
-                Button btnComponent = button.GetComponent<Button>();
+//                Button btnComponent = button.GetComponent<Button>();
 
-                btnComponent.onClick.AddListener(() =>
+//                btnComponent.onClick.AddListener(() =>
 
-                {
+//                {
 
-                    // 处理选项可能带来的理智效果
+//                    // 处理选项可能带来的理智效果
 
-                    ProcessSanityEffect(cells[6], cells[7]);
+//                    ProcessSanityEffect(cells[6], cells[7]);
 
-                    OnOptionClick(targetId);
+//                    OnOptionClick(targetId);
 
-                });
+//                });
 
-            }
+//            }
 
-            else
+//            else
 
-            {
+//            {
 
-                Debug.LogWarning($"选项 {cells[4]} 的跳转ID配置无效");
+//                Debug.LogWarning($"选项 {cells[4]} 的跳转ID配置无效");
 
-            }
+//            }
 
-        }
+//        }
 
-    }
+//    }
 
 
 
-    public void OnOptionClick(int _id)
+//    public void OnOptionClick(int _id)
 
-    {
+//    {
 
-        dialogIndex = _id;
+//        dialogIndex = _id;
 
-        ClearOptionButtons();
+//        ClearOptionButtons();
 
-        ShowDiaLogRow();
+//        ShowDiaLogRow();
 
-    }
+//    }
 
 
 
-    private void ClearOptionButtons()
+//    private void ClearOptionButtons()
 
-    {
+//    {
 
-        for (int i = 0; i < buttonGroup.childCount; i++)
+//        for (int i = 0; i < buttonGroup.childCount; i++)
 
-        {
+//        {
 
-            Destroy(buttonGroup.GetChild(i).gameObject);
+//            Destroy(buttonGroup.GetChild(i).gameObject);
 
-        }
+//        }
 
-    }
+//    }
 
 
 
-    private void ProcessSanityEffect(string effect, string target)
+//    private void ProcessSanityEffect(string effect, string target)
 
-    {
+//    {
 
-        if (sanityManager == null || string.IsNullOrEmpty(effect) || target != "player")
+//        if (sanityManager == null || string.IsNullOrEmpty(effect) || target != "player")
 
-            return;
+//            return;
 
 
 
-        if (effect.Contains("加@"))
+//        if (effect.Contains("加@"))
 
-        {
+//        {
 
-            int amount = ParseEffectValue(effect, "加@");
+//            int amount = ParseEffectValue(effect, "加@");
 
-            if (amount > 0) sanityManager.IncreaseSanity(amount);
+//            if (amount > 0) sanityManager.IncreaseSanity(amount);
 
-        }
+//        }
 
-        else if (effect.Contains("@"))
+//        else if (effect.Contains("@"))
 
-        {
+//        {
 
-            int amount = ParseEffectValue(effect, "@");
+//            int amount = ParseEffectValue(effect, "@");
 
-            if (amount > 0) sanityManager.DecreaseSanity(amount);
+//            if (amount > 0) sanityManager.DecreaseSanity(amount);
 
-        }
+//        }
 
-    }
+//    }
 
 
 
-    private int ParseEffectValue(string effect, string splitStr)
+//    private int ParseEffectValue(string effect, string splitStr)
 
-    {
+//    {
 
-        string[] parts = effect.Split(new[] { splitStr }, System.StringSplitOptions.None);
+//        string[] parts = effect.Split(new[] { splitStr }, System.StringSplitOptions.None);
 
-        if (parts.Length >= 2)
+//        if (parts.Length >= 2)
 
-        {
+//        {
 
-            int.TryParse(parts[1], out int amount);
+//            int.TryParse(parts[1], out int amount);
 
-            return amount;
+//            return amount;
 
-        }
+//        }
 
-        return 0;
+//        return 0;
 
-    }
+//    }
 
 
 
-    private string FilterInvalidCharacters(string input)
+//    private string FilterInvalidCharacters(string input)
 
-    {
+//    {
 
-        if (string.IsNullOrEmpty(input)) return input;
+//        if (string.IsNullOrEmpty(input)) return input;
 
-        return input.Replace("餷", "").Replace("�", "");
+//        return input.Replace("餷", "").Replace("�", "");
 
-    }
+//    }
 
 
 
-    // 处理CSV行分割，支持包含逗号的带引号内容
+//    // 处理CSV行分割，支持包含逗号的带引号内容
 
-    private string[] SplitCsvRow(string row)
+//    private string[] SplitCsvRow(string row)
 
-    {
+//    {
 
-        List<string> cells = new List<string>();
+//        List<string> cells = new List<string>();
 
-        bool inQuotes = false;
+//        bool inQuotes = false;
 
-        string currentCell = "";
+//        string currentCell = "";
 
 
 
-        foreach (char c in row)
+//        foreach (char c in row)
 
-        {
+//        {
 
-            if (c == '"')
+//            if (c == '"')
 
-            {
+//            {
 
-                inQuotes = !inQuotes;
+//                inQuotes = !inQuotes;
 
-            }
+//            }
 
-            else if (c == ',' && !inQuotes)
+//            else if (c == ',' && !inQuotes)
 
-            {
+//            {
 
-                cells.Add(currentCell);
+//                cells.Add(currentCell);
 
-                currentCell = "";
+//                currentCell = "";
 
-            }
+//            }
 
-            else
+//            else
 
-            {
+//            {
 
-                currentCell += c;
+//                currentCell += c;
 
-            }
+//            }
 
-        }
+//        }
 
 
 
-        cells.Add(currentCell);
+//        cells.Add(currentCell);
 
-        return cells.ToArray();
+//        return cells.ToArray();
 
-    }
+//    }
 
-}
+//}
