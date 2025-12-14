@@ -1,6 +1,13 @@
 var annotated_dup =
 [
     [ "BetCity", "namespace_bet_city.html", [
+      [ "Core", "namespace_bet_city_1_1_core.html", [
+        [ "ActionSystem", "namespace_bet_city_1_1_core_1_1_action_system.html", [
+          [ "ActionManager", "class_bet_city_1_1_core_1_1_action_system_1_1_action_manager.html", "class_bet_city_1_1_core_1_1_action_system_1_1_action_manager" ],
+          [ "GameAction", "class_bet_city_1_1_core_1_1_action_system_1_1_game_action.html", "class_bet_city_1_1_core_1_1_action_system_1_1_game_action" ],
+          [ "GameActionContext", "class_bet_city_1_1_core_1_1_action_system_1_1_game_action_context.html", "class_bet_city_1_1_core_1_1_action_system_1_1_game_action_context" ]
+        ] ]
+      ] ],
       [ "Storage", "namespace_bet_city_1_1_storage.html", [
         [ "ISubmitArchive&lt; T &gt;", "interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g.html", "interface_bet_city_1_1_storage_1_1_i_submit_archive-1-g" ],
         [ "IModifyArchive", "interface_bet_city_1_1_storage_1_1_i_modify_archive.html", "interface_bet_city_1_1_storage_1_1_i_modify_archive" ],
@@ -22,13 +29,14 @@ var annotated_dup =
     [ "CombatManager", "class_combat_manager.html", "class_combat_manager" ],
     [ "D4DiceManager", "class_d4_dice_manager.html", null ],
     [ "DeckManager", "class_deck_manager.html", null ],
-    [ "DialogManager", "class_dialog_manager.html", null ],
-    [ "DiceCounter", "class_dice_counter.html", null ],
-    [ "DiceManager", "class_dice_manager.html", null ],
     [ "EconomySystem", "class_economy_system.html", "class_economy_system" ],
     [ "EventSceneController", "class_event_scene_controller.html", null ],
     [ "EventWindowManager", "class_event_window_manager.html", null ],
-    [ "GameDataManager", "class_game_data_manager.html", "class_game_data_manager" ],
+    [ "Explorer_DiceManager", "class_explorer___dice_manager.html", null ],
+    [ "Explorer_GameDataManager", "class_explorer___game_data_manager.html", null ],
+    [ "Explorer_MapController", "class_explorer___map_controller.html", null ],
+    [ "Explorer_PlayerController", "class_explorer___player_controller.html", null ],
+    [ "Explorer_ScreenController", "class_explorer___screen_controller.html", null ],
     [ "GraveyardManager", "class_graveyard_manager.html", "class_graveyard_manager" ],
     [ "HighlightOnSelect", "class_highlight_on_select.html", null ],
     [ "IModifySouvenir", "interface_i_modify_souvenir.html", null ],
@@ -37,25 +45,17 @@ var annotated_dup =
     [ "InventoryManager", "class_inventory_manager.html", "class_inventory_manager" ],
     [ "Item", "class_item.html", null ],
     [ "ItemPopupManager", "class_item_popup_manager.html", null ],
+    [ "Message", "class_message.html", null ],
     [ "MonoSingleton&lt; T &gt;", "class_mono_singleton-1-g.html", null ],
     [ "MonsterCard", "class_monster_card.html", null ],
     [ "MySceneLoader", "class_my_scene_loader.html", null ],
-    [ "NewBehaviourScript", "class_new_behaviour_script.html", null ],
     [ "Node", "class_node.html", null ],
     [ "Open", "class_open.html", null ],
     [ "PhaseDisplayer", "class_phase_displayer.html", null ],
-    [ "PlayerAction", "class_player_action.html", null ],
-    [ "PlayerController", "class_player_controller.html", null ],
     [ "PlayerData", "class_player_data.html", null ],
-    [ "PlayerEventSystem", "class_player_event_system.html", null ],
-    [ "PlayerMovement", "class_player_movement.html", null ],
     [ "PlayerState", "class_player_state.html", null ],
-    [ "PlayerStateSaver", "class_player_state_saver.html", null ],
     [ "PopupController", "class_popup_controller.html", "class_popup_controller" ],
     [ "ReturnManager", "class_return_manager.html", null ],
-    [ "SanityEvent", "class_sanity_event.html", null ],
-    [ "SanityManager", "class_sanity_manager.html", null ],
-    [ "SanityUIController", "class_sanity_u_i_controller.html", null ],
     [ "SceneStateManager", "class_scene_state_manager.html", null ],
     [ "Souvenir", "class_souvenir.html", "class_souvenir" ],
     [ "SouvenirData", "class_souvenir_data.html", "class_souvenir_data" ],
@@ -63,5 +63,6 @@ var annotated_dup =
     [ "SouvenirManager", "class_souvenir_manager.html", "class_souvenir_manager" ],
     [ "SpellCard", "class_spell_card.html", null ],
     [ "StoreManager", "class_store_manager.html", null ],
-    [ "Test", "class_test.html", null ]
+    [ "Test", "class_test.html", null ],
+    [ "Test_DataManager", "class_test___data_manager.html", null ]
 ];

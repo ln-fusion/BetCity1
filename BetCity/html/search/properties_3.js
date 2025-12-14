@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['id_0',['Id',['../class_souvenir_data.html#acafac6111ce9d4ab4b58cda40fbbe7c8',1,'SouvenirData.Id'],['../class_bet_city_1_1_storage_1_1_owned_souvenir_d_t_o.html#a9a3d4574bafeac08bd91546560090fd3',1,'BetCity.Storage.OwnedSouvenirDTO.Id']]]
+  ['extradata_0',['ExtraData',['../class_bet_city_1_1_core_1_1_action_system_1_1_game_action_context.html#aca250a709e64263281279e162ca771a9',1,'BetCity::Core::ActionSystem::GameActionContext']]]
 ];

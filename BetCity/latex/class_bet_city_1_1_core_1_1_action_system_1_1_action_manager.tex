@@ -1,0 +1,188 @@
+\doxysection{Bet\+City.\+Core.\+Action\+System.\+Action\+Manager Class Reference}
+\hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager}{}\label{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager}\index{BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}}
+
+
+游戏行为单例管理者  
+
+
+Inheritance diagram for Bet\+City.\+Core.\+Action\+System.\+Action\+Manager\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager}
+\end{center}
+\end{figure}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a3ab8ed283f40a17bcab8ce3bfef07c4e}{Perform}} (\mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action}{Game\+Action}} action, System.\+Action On\+Perform\+Finished=null)
+\begin{DoxyCompactList}\small\item\em 行为演出 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+static Guid \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a1edbce0a8189d12a318437e53316dd15}{Attach\+Performer$<$ T $>$}} (Func$<$ T, IEnumerator $>$ performer)
+\begin{DoxyCompactList}\small\item\em 为游戏行为类型\+T新增演出逻辑 \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a033810454f4acdc37a641378022c7484}{Detach\+Performer$<$ T $>$}} (Guid guid)
+\begin{DoxyCompactList}\small\item\em 移除指定\+GUID的演出逻辑 \end{DoxyCompactList}\item 
+static Guid \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a9bad3dfcf66bdb13f3c6090351154070}{Subscribe\+Reaction$<$ T $>$}} (Action$<$ T $>$ reaction, Reaction\+Timing timing)
+\begin{DoxyCompactList}\small\item\em 全局订阅游戏行为回调 \end{DoxyCompactList}\item 
+static bool \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a9caa98a92bc5c4d226d9ff68a06b3153}{Unsubscribe\+Reaction$<$ T $>$}} (Guid guid, Reaction\+Timing timing)
+\begin{DoxyCompactList}\small\item\em 全局取消订阅游戏行为回调 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_adbf13d189fbe428c22fe67ec6a228e01}\label{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_adbf13d189fbe428c22fe67ec6a228e01} 
+bool {\bfseries Is\+Performing} = false\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 是否有事件在运行 \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Properties inherited from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+static T {\bfseries Instance}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Additional Inherited Members}
+\doxysubsection*{Protected Member Functions inherited from \mbox{\hyperlink{class_mono_singleton-1-g}{Mono\+Singleton$<$ T $>$}}}
+\begin{DoxyCompactItemize}
+\item 
+virtual void \mbox{\hyperlink{class_mono_singleton-1-g_a04acead2ed3d970430f4c8c7716071f1}{Awake}} ()
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+游戏行为单例管理者 
+
+\label{doc-func-members}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a1edbce0a8189d12a318437e53316dd15}\index{BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}!AttachPerformer$<$ T $>$@{AttachPerformer$<$ T $>$}}
+\index{AttachPerformer$<$ T $>$@{AttachPerformer$<$ T $>$}!BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}}
+\doxysubsubsection{\texorpdfstring{AttachPerformer$<$ T $>$()}{AttachPerformer< T >()}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a1edbce0a8189d12a318437e53316dd15} 
+Guid Bet\+City.\+Core.\+Action\+System.\+Action\+Manager.\+Attach\+Performer$<$ T $>$ (\begin{DoxyParamCaption}\item[{Func$<$ T, IEnumerator $>$}]{performer}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+为游戏行为类型\+T新增演出逻辑 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & 游戏行为类型\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em performer} & 演出逻辑\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+唯一标识\+GUID（用于取消订阅）
+\end{DoxyReturn}
+\begin{Desc}
+\item[Type Constraints]\begin{description}
+\item[{\em T} : {\em \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action}{Game\+Action}}}]\end{description}
+\end{Desc}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a033810454f4acdc37a641378022c7484}\index{BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}!DetachPerformer$<$ T $>$@{DetachPerformer$<$ T $>$}}
+\index{DetachPerformer$<$ T $>$@{DetachPerformer$<$ T $>$}!BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}}
+\doxysubsubsection{\texorpdfstring{DetachPerformer$<$ T $>$()}{DetachPerformer< T >()}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a033810454f4acdc37a641378022c7484} 
+bool Bet\+City.\+Core.\+Action\+System.\+Action\+Manager.\+Detach\+Performer$<$ T $>$ (\begin{DoxyParamCaption}\item[{Guid}]{guid}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+移除指定\+GUID的演出逻辑 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & 游戏行为类型\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em guid} & 订阅时返回的唯一标识\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+是否移除成功
+\end{DoxyReturn}
+\begin{Desc}
+\item[Type Constraints]\begin{description}
+\item[{\em T} : {\em \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action}{Game\+Action}}}]\end{description}
+\end{Desc}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a3ab8ed283f40a17bcab8ce3bfef07c4e}\index{BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}!Perform@{Perform}}
+\index{Perform@{Perform}!BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}}
+\doxysubsubsection{\texorpdfstring{Perform()}{Perform()}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a3ab8ed283f40a17bcab8ce3bfef07c4e} 
+void Bet\+City.\+Core.\+Action\+System.\+Action\+Manager.\+Perform (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action}{Game\+Action}}}]{action}{, }\item[{System.\+Action}]{On\+Perform\+Finished}{ = {\ttfamily null}}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+行为演出 
+
+
+\begin{DoxyParams}{Parameters}
+{\em action} & 行为\\
+\hline
+{\em On\+Perform\+Finished} & 完成执行委托\\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a9bad3dfcf66bdb13f3c6090351154070}\index{BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}!SubscribeReaction$<$ T $>$@{SubscribeReaction$<$ T $>$}}
+\index{SubscribeReaction$<$ T $>$@{SubscribeReaction$<$ T $>$}!BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}}
+\doxysubsubsection{\texorpdfstring{SubscribeReaction$<$ T $>$()}{SubscribeReaction< T >()}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a9bad3dfcf66bdb13f3c6090351154070} 
+Guid Bet\+City.\+Core.\+Action\+System.\+Action\+Manager.\+Subscribe\+Reaction$<$ T $>$ (\begin{DoxyParamCaption}\item[{Action$<$ T $>$}]{reaction}{, }\item[{Reaction\+Timing}]{timing}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+全局订阅游戏行为回调 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & 游戏行为类型\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em reaction} & 回调逻辑\\
+\hline
+{\em timing} & 执行时机\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+唯一标识\+GUID（用于取消订阅）
+\end{DoxyReturn}
+\begin{Desc}
+\item[Type Constraints]\begin{description}
+\item[{\em T} : {\em \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action}{Game\+Action}}}]\end{description}
+\end{Desc}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a9caa98a92bc5c4d226d9ff68a06b3153}\index{BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}!UnsubscribeReaction$<$ T $>$@{UnsubscribeReaction$<$ T $>$}}
+\index{UnsubscribeReaction$<$ T $>$@{UnsubscribeReaction$<$ T $>$}!BetCity.Core.ActionSystem.ActionManager@{BetCity.Core.ActionSystem.ActionManager}}
+\doxysubsubsection{\texorpdfstring{UnsubscribeReaction$<$ T $>$()}{UnsubscribeReaction< T >()}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_action_manager_a9caa98a92bc5c4d226d9ff68a06b3153} 
+bool Bet\+City.\+Core.\+Action\+System.\+Action\+Manager.\+Unsubscribe\+Reaction$<$ T $>$ (\begin{DoxyParamCaption}\item[{Guid}]{guid}{, }\item[{Reaction\+Timing}]{timing}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [static]}}
+
+
+
+全局取消订阅游戏行为回调 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & 游戏行为类型\\
+\hline
+\end{DoxyTemplParams}
+
+\begin{DoxyParams}{Parameters}
+{\em guid} & 订阅时返回的唯一标识\\
+\hline
+{\em timing} & 执行时机\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+是否取消成功
+\end{DoxyReturn}
+\begin{Desc}
+\item[Type Constraints]\begin{description}
+\item[{\em T} : {\em \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action}{Game\+Action}}}]\end{description}
+\end{Desc}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Assets/\+Script/\+Core/\+Action\+System/Action\+Manger.\+cs\end{DoxyCompactItemize}
