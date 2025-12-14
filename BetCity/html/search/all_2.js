@@ -10,5 +10,7 @@ var searchData=
   ['coin_7',['Coin',['../class_economy_system.html#abc421f8230098914d43360966b76b5bf',1,'EconomySystem']]],
   ['coinmanager_8',['CoinManager',['../class_coin_manager.html',1,'']]],
   ['combatmanager_9',['CombatManager',['../class_combat_manager.html',1,'']]],
-  ['customprice_10',['CustomPrice',['../class_bet_city_1_1_storage_1_1_owned_souvenir_d_t_o.html#a3c526ca9a9f21a54f00b1227b43692d0',1,'BetCity::Storage::OwnedSouvenirDTO']]]
+  ['context_10',['Context',['../class_bet_city_1_1_core_1_1_action_system_1_1_game_action.html#a8210d59a264e983a546e5c8676ea8cc1',1,'BetCity::Core::ActionSystem::GameAction']]],
+  ['createcontextforreactions_3c_20t_20_3e_11',['CreateContextForReactions&lt; T &gt;',['../class_bet_city_1_1_core_1_1_action_system_1_1_game_action.html#a5bbddee96e94771c04c43e412f8b8f03',1,'BetCity::Core::ActionSystem::GameAction']]],
+  ['customprice_12',['CustomPrice',['../class_bet_city_1_1_storage_1_1_owned_souvenir_d_t_o.html#a3c526ca9a9f21a54f00b1227b43692d0',1,'BetCity::Storage::OwnedSouvenirDTO']]]
 ];

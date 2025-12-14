@@ -1,0 +1,159 @@
+\doxysection{Bet\+City.\+Core.\+Action\+System.\+Game\+Action Class Reference}
+\hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action}{}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action}\index{BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}}
+
+
+一个通用游戏行为  
+
+
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a1dfb745a0c9591dd832212115b6f45bb}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a1dfb745a0c9591dd832212115b6f45bb} 
+IEnumerator {\bfseries Perform} ()
+\begin{DoxyCompactList}\small\item\em 反应演出逻辑 \end{DoxyCompactList}\item 
+virtual \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_context}{Game\+Action\+Context}} \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a5bbddee96e94771c04c43e412f8b8f03}{Create\+Context\+For\+Reactions$<$ T $>$}} ()
+\begin{DoxyCompactList}\small\item\em 为反应创建上下文信息 \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_ad661db569b06c9b80f36df7c2754a4c7}{Add\+Reaction}} (Game\+Action action, Reaction\+Timing timing)
+\begin{DoxyCompactList}\small\item\em 增加一个连锁反应 \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a5e72fed3f1a759ef25fb5e4b0aaeaf8d}{Remove\+Reactions}} (Game\+Action reaction, Reaction\+Timing timing)
+\begin{DoxyCompactList}\small\item\em 移除一个特定游戏行为，如果有多个同种游戏行为，只会被删除一个 \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_aee000b936f5f78b550fe5b0bc96da613}{Remove\+Reactions}} (Type reaction\+Type, Reaction\+Timing timing)
+\begin{DoxyCompactList}\small\item\em 移除一种游戏行为，如果有多个同种游戏行为，都会被删除 \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_af0653045b01aad469399781faa2714a2}{Remove\+Reactions}} (Reaction\+Timing timing, Func$<$ Game\+Action, bool $>$ predicate)
+\begin{DoxyCompactList}\small\item\em 移除一个游戏行为(LINQ风格) \end{DoxyCompactList}\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a8db38c8537d06cf5b217189142c9a771}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a8db38c8537d06cf5b217189142c9a771} 
+void {\bfseries Refresh\+Priority} ()
+\begin{DoxyCompactList}\small\item\em 刷新优先级，除有必要没必要刷新（因为会在执行前统一刷新以节省资源） \end{DoxyCompactList}\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_ad2a87530ebb2841c0d9136837e51b574}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_ad2a87530ebb2841c0d9136837e51b574} 
+void {\bfseries Set\+Priority} (int priority)
+\begin{DoxyCompactList}\small\item\em 设定优先级 \end{DoxyCompactList}\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_af098fccff339b896086e4e398cc30062}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_af098fccff339b896086e4e398cc30062} 
+{\bfseries Game\+Action} (\mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_context}{Game\+Action\+Context}} context)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Properties}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a8210d59a264e983a546e5c8676ea8cc1}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a8210d59a264e983a546e5c8676ea8cc1} 
+\mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_context}{Game\+Action\+Context}} {\bfseries Context}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 上下文信息 \end{DoxyCompactList}\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_aa1f458a9421f64ee2cd439ef213e82e7}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_aa1f458a9421f64ee2cd439ef213e82e7} 
+IRead\+Only\+List$<$ Game\+Action $>$ {\bfseries Pre\+Reactions}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 该行为的前置连锁行为 \end{DoxyCompactList}\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a3a3665e8f9e8bd207a3833541858add6}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a3a3665e8f9e8bd207a3833541858add6} 
+IRead\+Only\+List$<$ Game\+Action $>$ {\bfseries Post\+Reactions}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 该行为的后置连锁行为 \end{DoxyCompactList}\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a9309b7a41a9942d5a704fff3b1b7a915}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a9309b7a41a9942d5a704fff3b1b7a915} 
+IRead\+Only\+List$<$ Game\+Action $>$ {\bfseries Perform\+Reactions}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 该行为逻辑内带的连锁行为 \end{DoxyCompactList}\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_affc5058974bb2ce09ca184fc03f7496c}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_affc5058974bb2ce09ca184fc03f7496c} 
+int {\bfseries Priority}\hspace{0.3cm}{\ttfamily  \mbox{[}get\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 该行为的优先级，越低越优先，会影响该行为作为别的行为的前置或是后置连锁行为时的执行顺序 \end{DoxyCompactList}\item 
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a62d2c9bbb2c03078581f9dbc7d6d95cf}\label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a62d2c9bbb2c03078581f9dbc7d6d95cf} 
+bool {\bfseries Is\+Valid} = true\hspace{0.3cm}{\ttfamily  \mbox{[}get, set\mbox{]}}
+\begin{DoxyCompactList}\small\item\em 该行为是否有效 \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+一个通用游戏行为 
+
+\label{doc-func-members}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_ad661db569b06c9b80f36df7c2754a4c7}\index{BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}!AddReaction@{AddReaction}}
+\index{AddReaction@{AddReaction}!BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}}
+\doxysubsubsection{\texorpdfstring{AddReaction()}{AddReaction()}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_ad661db569b06c9b80f36df7c2754a4c7} 
+void Bet\+City.\+Core.\+Action\+System.\+Game\+Action.\+Add\+Reaction (\begin{DoxyParamCaption}\item[{Game\+Action}]{action}{, }\item[{Reaction\+Timing}]{timing}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+增加一个连锁反应 
+
+
+\begin{DoxyParams}{Parameters}
+{\em action} & 反应类型\\
+\hline
+{\em timing} & 前置/后置反应\\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a5bbddee96e94771c04c43e412f8b8f03}\index{BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}!CreateContextForReactions$<$ T $>$@{CreateContextForReactions$<$ T $>$}}
+\index{CreateContextForReactions$<$ T $>$@{CreateContextForReactions$<$ T $>$}!BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}}
+\doxysubsubsection{\texorpdfstring{CreateContextForReactions$<$ T $>$()}{CreateContextForReactions< T >()}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a5bbddee96e94771c04c43e412f8b8f03} 
+virtual \mbox{\hyperlink{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_context}{Game\+Action\+Context}} Bet\+City.\+Core.\+Action\+System.\+Game\+Action.\+Create\+Context\+For\+Reactions$<$ T $>$ (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [virtual]}}
+
+
+
+为反应创建上下文信息 
+
+
+\begin{DoxyTemplParams}{Template Parameters}
+{\em T} & \\
+\hline
+\end{DoxyTemplParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\begin{Desc}
+\item[Type Constraints]\begin{description}
+\item[{\em T} : {\em Game\+Action}]\end{description}
+\end{Desc}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a5e72fed3f1a759ef25fb5e4b0aaeaf8d}\index{BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}!RemoveReactions@{RemoveReactions}}
+\index{RemoveReactions@{RemoveReactions}!BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}}
+\doxysubsubsection{\texorpdfstring{RemoveReactions()}{RemoveReactions()}\hspace{0.1cm}{\footnotesize\ttfamily [1/3]}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_a5e72fed3f1a759ef25fb5e4b0aaeaf8d} 
+void Bet\+City.\+Core.\+Action\+System.\+Game\+Action.\+Remove\+Reactions (\begin{DoxyParamCaption}\item[{Game\+Action}]{reaction}{, }\item[{Reaction\+Timing}]{timing}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+移除一个特定游戏行为，如果有多个同种游戏行为，只会被删除一个 
+
+
+\begin{DoxyParams}{Parameters}
+{\em reaction} & 反应类型\\
+\hline
+{\em timing} & 前置/后置反应\\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_af0653045b01aad469399781faa2714a2}\index{BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}!RemoveReactions@{RemoveReactions}}
+\index{RemoveReactions@{RemoveReactions}!BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}}
+\doxysubsubsection{\texorpdfstring{RemoveReactions()}{RemoveReactions()}\hspace{0.1cm}{\footnotesize\ttfamily [2/3]}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_af0653045b01aad469399781faa2714a2} 
+void Bet\+City.\+Core.\+Action\+System.\+Game\+Action.\+Remove\+Reactions (\begin{DoxyParamCaption}\item[{Reaction\+Timing}]{timing}{, }\item[{Func$<$ Game\+Action, bool $>$}]{predicate}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+移除一个游戏行为(LINQ风格) 
+
+
+\begin{DoxyParams}{Parameters}
+{\em timing} & 前置/后置\\
+\hline
+{\em predicate} & 筛选条件（返回true则删除）\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\Hypertarget{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_aee000b936f5f78b550fe5b0bc96da613}\index{BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}!RemoveReactions@{RemoveReactions}}
+\index{RemoveReactions@{RemoveReactions}!BetCity.Core.ActionSystem.GameAction@{BetCity.Core.ActionSystem.GameAction}}
+\doxysubsubsection{\texorpdfstring{RemoveReactions()}{RemoveReactions()}\hspace{0.1cm}{\footnotesize\ttfamily [3/3]}}
+{\footnotesize\ttfamily \label{class_bet_city_1_1_core_1_1_action_system_1_1_game_action_aee000b936f5f78b550fe5b0bc96da613} 
+void Bet\+City.\+Core.\+Action\+System.\+Game\+Action.\+Remove\+Reactions (\begin{DoxyParamCaption}\item[{Type}]{reaction\+Type}{, }\item[{Reaction\+Timing}]{timing}{}\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+移除一种游戏行为，如果有多个同种游戏行为，都会被删除 
+
+
+\begin{DoxyParams}{Parameters}
+{\em reaction\+Type} & 反应类型\\
+\hline
+{\em timing} & 前置/后置反应\\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+Assets/\+Script/\+Core/\+Action\+System/Game\+Action.\+cs\end{DoxyCompactItemize}
