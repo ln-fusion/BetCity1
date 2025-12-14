@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BetCity.Explorer;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -96,6 +97,18 @@ namespace BetCity.Storage
                 if (typeof(T) == typeof(OwnedSouvenirDTO))
                 {
                     ArchiveData.ModifyOwnedSouvenir(t.Cast<OwnedSouvenirDTO>().ToList(), this);
+                }
+                else
+                {
+                    throw new InvalidOperationException(caller + "传入错误类型信息" + typeof(T));
+                }
+            }
+            else if (caller is Explorer_PlayerController)
+            {
+                if (typeof(T) == typeof(Explorer_PlayerDTO))
+                {
+
+                    ArchiveData.ModifyExplorerPlayerData(t.Cast<Explorer_PlayerDTO>().ToList(), this);
                 }
                 else
                 {
