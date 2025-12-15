@@ -1,4 +1,5 @@
-﻿using BetCity.Explorer;
+﻿using BetCity.Core.Tools;
+using BetCity.Explorer;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
@@ -28,6 +29,7 @@ namespace BetCity.Storage
         protected override void Awake()
         {
             base.Awake();
+            DontDestroyOnLoad(gameObject);
             LoadArchiveData();
         }
 
