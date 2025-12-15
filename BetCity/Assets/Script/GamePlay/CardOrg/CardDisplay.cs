@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using BetCity.GamePlay.CardOrg;
 
 public class CardDisplay : MonoBehaviour
 {

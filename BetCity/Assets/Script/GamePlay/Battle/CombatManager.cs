@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using BetCity.GamePlay.CardOrg;
 
 public enum GamePhase
 {
