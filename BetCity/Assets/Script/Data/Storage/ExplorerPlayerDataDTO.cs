@@ -9,28 +9,34 @@ namespace BetCity.Storage
     /// 地图系统中玩家的数值
     /// </summary>
     [Serializable]
-    public class Explorer_PlayerDTO
+    public class PlayerDTO
     {
 
         /// <summary>
         /// 关联原型ID
         /// </summary>
-        public static int maxSanity { get; private set; }
-        public static int currentSanity { get; private set; }
-        public static int maxActionPoints { get; private set; }
-        public static int currentActionPoints { get; private set; }
-        public static int currentNodeNum { get; private set; }
+        //public int MaxSanity { get; private set; }
+        //public int CurrentSanity { get; private set; }
+        //public int MaxActionPoints { get; private set; }
+        //public int CurrentActionPoints { get; private set; }
+        //public int CurrentNodeNum { get; private set; }
+        public int MaxSanity { get; set; }
+        public int CurrentSanity { get; set; }
+        public int MaxActionPoints { get; set; }
+        public int CurrentActionPoints { get;set; }
+        public int CurrentNodeNum { get; set; }
 
-        public Explorer_PlayerDTO() { }
+
+        public PlayerDTO() { }
 
         [JsonConstructor]
-        public Explorer_PlayerDTO(int maxsanity, int currentsanity, int maxactionpoints, int currentactionpoints, int currentnodenum)
+        public PlayerDTO(int maxsanity, int currentsanity, int maxactionpoints, int currentactionpoints, int currentnodenum)
         {
-            maxSanity = maxsanity;
-            currentSanity = currentsanity;
-            maxActionPoints = maxactionpoints;
-            currentActionPoints = currentactionpoints;
-            currentNodeNum = currentnodenum;
+            MaxSanity = maxsanity;
+            CurrentSanity = currentsanity;
+            MaxActionPoints = maxactionpoints;
+            CurrentActionPoints = currentactionpoints;
+            CurrentNodeNum = currentnodenum;
         }
     }
 }

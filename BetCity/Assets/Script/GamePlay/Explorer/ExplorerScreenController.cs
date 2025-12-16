@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿using BetCity.Core.Tools;
+using BetCity.Storage;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,27 +10,29 @@ namespace BetCity.Explorer
     /// <summary>
     /// 适配不同大小的屏幕
     /// </summary>
-    public class Explorer_ScreenController : MonoBehaviour
+    public class ExplorerScreenController : MonoSingleton<ExplorerScreenController>
     {
-        private float screen_height;
-        private float screen_width;
+        private float _screenHeight;
+        private float _screenWidth;
         public RectTransform Map;
         public RectTransform Player;
         public Canvas canvas;
-        private static bool Initial = false;
-        public static float mapscale;
+        private static bool _initial = false;
+        public static float MapScale;
         //Message
-        public static GameObject messagePrefab;
-        public static GameObject messageTransform;
-        public static float messagepos;
+        public static GameObject MessagePrefab;
+        public static GameObject MessageTransform;
+        public static float MessagePos;
         //playernature
-        public Text[] texts;
+        public data.PlayerData PlayerData;
+        public Text[] Texts;
 
 
         // Start is called before the first frame update
-        void Awake()
+        protected override void Awake()
         {
-            if (!Initial)
+            base.Awake();
+            if (!_initial)
             {
                 RectTransform canvasrect = canvas.GetComponent<RectTransform>();
                 /*
@@ -39,30 +43,30 @@ namespace BetCity.Explorer
                 screen_width = canvasrect.sizeDelta.x;
                 Debug.Log(screen_height + "+" + screen_width);
                 */
-                screen_height = canvasrect.rect.height;
-                screen_width = canvasrect.rect.width;
+                _screenHeight = canvasrect.rect.height;
+                _screenWidth = canvasrect.rect.width;
                 //Debug.Log(screen_height + "+" + screen_width);
-                if (screen_height > screen_width * 0.7f)
+                if (_screenHeight > _screenWidth * 0.7f)
                 {
-                    mapscale = screen_width / 1000;
-                    Map.localScale = new Vector2(mapscale, mapscale);
+                    MapScale = _screenWidth / 1000;
+                    Map.localScale = new Vector2(MapScale, MapScale);
                     Player.localScale = Map.localScale;
                 }
                 else
                 {
-                    float i = screen_height / 700;
+                    float i = _screenHeight / 700;
                     Map.localScale = new Vector2(i, i);
                     Player.localScale = Map.localScale;
                 }
 
-                messagepos = screen_height * 3 / 10;
+                MessagePos = _screenHeight * 3 / 10;
             }
             //Message
-            messagePrefab = Resources.Load<GameObject>("Prefab/Message");
+            MessagePrefab = Resources.Load<GameObject>("Prefab/Message");
             GameObject emptyObj = new GameObject("messagetransform");
             emptyObj.AddComponent<RectTransform>();
             emptyObj.transform.SetParent(canvas.transform, false);
-            messageTransform = emptyObj;
+            MessageTransform = emptyObj;
         }
         private void Start()
         {
@@ -70,19 +74,19 @@ namespace BetCity.Explorer
         }
         public static void CreateMessage(string Content)
         {
-            GameObject NewMessage = Instantiate(messagePrefab, Vector3.zero, Quaternion.identity);
-            NewMessage.GetComponent<RectTransform>().SetParent(messageTransform.GetComponent<RectTransform>(), false);
-            NewMessage.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, messagepos);
+            GameObject NewMessage = Instantiate(MessagePrefab, Vector3.zero, Quaternion.identity);
+            NewMessage.GetComponent<RectTransform>().SetParent(MessageTransform.GetComponent<RectTransform>(), false);
+            NewMessage.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, MessagePos);
             NewMessage.GetComponent<Message>().MessageContent.text = Content;
 
         }
         public void printPlayerNature()
         {
-            texts[0].text = "" + PlayerNature.maxSanity;
-            texts[1].text = "" + PlayerNature.currentSanity;
-            texts[2].text = "" + PlayerNature.maxActionPoints;
-            texts[3].text = "" + PlayerNature.currentActionPoints;
-            texts[4].text = "" + PlayerNature.currentNodeNum;
+            Texts[0].text = "" + PlayerData.MaxSanity;
+            Texts[1].text = "" + PlayerData.CurrentSanity;
+            Texts[2].text = "" + PlayerData.MaxActionPoints;
+            Texts[3].text = "" + PlayerData.CurrentActionPoints;
+            Texts[4].text = "" + PlayerData.CurrentNodeNum;
         }
         // Update is called once per frame
         void Update()

@@ -43,9 +43,11 @@ namespace BetCity.Storage
         [SerializeField]
         [JsonProperty("OwnedSouvenirDTOs")]
         private List<OwnedSouvenirDTO> ownedSouvenirDTOs = new List<OwnedSouvenirDTO>();
-        [SerializeField]
-        [JsonProperty("Explorer_PlayerDataDTO")]
-        private Explorer_PlayerDTO explorer_playerDTO = new Explorer_PlayerDTO();
+        //[JsonIgnore]
+        //public PlayerDTO PlayerDTO => playerDTO;
+        //[SerializeField]
+        //[JsonProperty("PlayerDTO")]
+        public PlayerDTO PlayerDTO;
         /// <summary>
         /// 玩家拥有的卡牌数据
         /// </summary>
@@ -73,13 +75,13 @@ namespace BetCity.Storage
             }
             this.ownedSouvenirDTOs = ownedSouvenirDTOs;
         }
-        public void ModifyExplorerPlayerData(List<Explorer_PlayerDTO> playerDTO, IModifyArchive caller)
+        public void ModifyExplorerPlayerData(List<PlayerDTO> playerDTO, IModifyArchive caller)
         {
             if (caller is not StorageManager)
             {
                 throw new InvalidOperationException("仅StorageManager类可修改存档信息");
             }
-            this.explorer_playerDTO = playerDTO[0];
+            this.PlayerDTO = playerDTO[0];
         }
         /// <summary>
         /// 修改玩家拥有的卡牌存档信息
