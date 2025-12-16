@@ -49,6 +49,7 @@ namespace BetCity.Storage
         /// <summary>
         /// 玩家拥有的卡牌数据
         /// </summary>
+        [JsonIgnore]
         public IReadOnlyList<OwnedCardDTO> OwnedCardDTOs => ownedCardDTOs;
         [SerializeField]
         [JsonProperty("OwnedCardDTOs")]
