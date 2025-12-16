@@ -24,6 +24,10 @@ namespace BetCity.Data.ConfigModels
         [field: SerializeField] public int MonsterScore { get; private set; }
     }
 
+    public enum CardSeries
+    {
+       Memory
+    }
     public enum CardType
     {
         Monster,

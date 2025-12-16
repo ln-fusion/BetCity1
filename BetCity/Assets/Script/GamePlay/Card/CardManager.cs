@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using BetCity.Core.Tools;
-using BetCity.GamePlay.Card;
+using BetCity.Card;
 using BetCity.Storage;
 using BetCity.Data.ConfigModels;
 using BetCity.Card;

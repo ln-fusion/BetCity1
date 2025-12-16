@@ -27,7 +27,7 @@ namespace BetCity.Card
         public string Description => cardData.Description;
         public int ArtworkID => cardData.ArtworkID;
         public UnityEngine.Sprite Image => cardData.Image;
-        public CardSeries Series => cardData.Series;
+        public Data.ConfigModels.CardSeries Series => cardData.Series;
         public CardType Type => cardData.Type;
         public int MonsterScore => cardData.MonsterScore; // 仅怪兽卡有效
 
