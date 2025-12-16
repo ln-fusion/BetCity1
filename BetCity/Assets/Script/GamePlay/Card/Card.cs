@@ -1,17 +1,19 @@
 using BetCity.GamePlay.CardOrg;
 using System;
-
-namespace BetCity.GamePlay.Card 
+using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using BetCity.Data.ConfigModels;
+/// <summary>
+/// 允许修改Card的接口（仅限CardManager使用）
+/// </summary>
+namespace BetCity.Card
 {
-    /// <summary>
-    /// 允许修改Card的接口（仅限CardManager使用）
-    /// </summary>
     public interface IModifyCard
     {
         bool OwnCardById(int id, out Card card, out string errorMsg);
         bool LoseCardById(int id, out Card card, out string errorMsg);
     }
-
     /// <summary>
     /// 卡牌实例类，包含原型数据引用和状态信息
     /// </summary>
@@ -25,7 +27,7 @@ namespace BetCity.GamePlay.Card
         public string Description => cardData.Description;
         public int ArtworkID => cardData.ArtworkID;
         public UnityEngine.Sprite Image => cardData.Image;
-        public CardSeries Series => cardData.Series;
+        public Data.ConfigModels.CardSeries Series => cardData.Series;
         public CardType Type => cardData.Type;
         public int MonsterScore => cardData.MonsterScore; // 仅怪兽卡有效
 
