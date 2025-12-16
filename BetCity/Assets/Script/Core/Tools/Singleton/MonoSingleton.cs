@@ -1,36 +1,39 @@
-using System.Collections;
+Ôªøusing System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-/// <summary>
-/// µ•¿˝π§æﬂ¿‡
-/// </summary>
-public class MonoSingleton<T> : MonoBehaviour where T:MonoBehaviour
+namespace BetCity.Core.Tools
 {
-    private static T instance;
-    public static T Instance
+    /// <summary>
+    /// Âçï‰æãÂ∑•ÂÖ∑Á±ª
+    /// </summary>
+    public class MonoSingleton<T> : MonoBehaviour where T : MonoBehaviour
     {
-        get
+        private static T instance;
+        public static T Instance
         {
-            if (instance==null)
+            get
             {
-                instance = FindObjectOfType<T>();
+                if (instance == null)
+                {
+                    instance = FindObjectOfType<T>();
 
+                }
+                return instance;
             }
-            return instance;
         }
-    }
-    protected virtual void Awake()
-    {
-        if (instance !=null)
+        protected virtual void Awake()
         {
-            Destroy(gameObject);
+            if (instance != null)
+            {
+                Destroy(gameObject);
+            }
+            else
+            {
+                instance = this as T;
+            }
         }
-        else
-        {
-            instance = this as T;
-            DontDestroyOnLoad(gameObject);
-        }
+
     }
 
 }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using UnityEngine;
 using BetCity.Storage;
+using BetCity.Core.Tools;
 
 
 /// <summary>
@@ -36,6 +37,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     protected override void Awake()
     {
         base.Awake();
+        DontDestroyOnLoad(gameObject);
         CacheOwnedSouvenirInstances();
         LoadNotOwnedData();
     }

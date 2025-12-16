@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BetCity.Core.Tools;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,6 +56,12 @@ namespace BetCity.Core.ActionSystem
         /// </summary>
         public bool IsPerforming { get; private set; } = false;
 
+        protected override void Awake()
+        {
+            base.Awake();
+            DontDestroyOnLoad(gameObject);
+        }
+
         /// <summary>
         /// 行为演出
         /// </summary>
@@ -64,7 +71,7 @@ namespace BetCity.Core.ActionSystem
         {
             if (action == null)
             {
-                Debug.LogError("Perform: GameAction cannot be null!");
+                Debug.LogError("[ActionManager]Perform: GameAction cannot be null!");
                 OnPerformFinished?.Invoke();
                 return;
             }
@@ -83,7 +90,6 @@ namespace BetCity.Core.ActionSystem
                 if (actionQueue.Count > 0)
                 {
                     var (action, onFinished) = actionQueue.Dequeue();
-                    IsPerforming = true;
                     Perform(action, onFinished);
                 }
             }));
@@ -91,12 +97,12 @@ namespace BetCity.Core.ActionSystem
         
         private IEnumerator Flow(GameAction action, Action OnFlowFinished = null, int depth = 0)
         {
-            Debug.Log($"[ActionFlow] 开始执行: {action.GetType().Name} (Priority: {action.Priority})");
+            Debug.Log($"[ActionManager] 开始执行: {action.GetType().Name} (Priority: {action.Priority})");
 
             //若当前递归层数过大，直接结束
             if (depth > MAX_RECURSION_DEPTH)
             {
-                Debug.LogWarning($"[ActionFlow] 递归深度超限（当前{depth}层，最大{MAX_RECURSION_DEPTH}层），终止执行行为：{action.GetType().Name}");
+                Debug.LogWarning($"[ActionManager] 递归深度超限（当前{depth}层，最大{MAX_RECURSION_DEPTH}层），终止执行行为：{action.GetType().Name}");
                 OnFlowFinished?.Invoke();
                 yield break;
             }
@@ -148,7 +154,7 @@ namespace BetCity.Core.ActionSystem
                     yield return Flow(reaction, null, depth + 1);
             }
 
-            Debug.Log($"[ActionFlow] 完成执行: {action.GetType().Name}");
+            Debug.Log($"[ActionManager] 完成执行: {action.GetType().Name}");
             OnFlowFinished?.Invoke();
         }
 

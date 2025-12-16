@@ -1,3 +1,4 @@
+using BetCity.Core.Tools;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// 经济系统单例管理
 /// </summary>
-public class EconomySystem : MonoSingleton<EconomySystem>
+public class EconomyManager : MonoSingleton<EconomyManager>, IHasCoin
 {
     /// <summary>
     /// 金币
@@ -17,13 +18,17 @@ public class EconomySystem : MonoSingleton<EconomySystem>
     /// 变化金币，消费变为负数
     /// </summary>
     /// <param name="amount">数量</param>
+    /// <param name="caller">仅允许CoinChangeAction调用</param>
     /// <returns>成功与否</returns>
-    public bool ChangeCoin(int amount)
+    public bool ChangeCoin(int amount, CoinChangeAction caller)
     {
-        if(Coin + amount >= 0)
+        if (caller != null)
         {
-            Coin += amount;
-            return true;
+            if (Coin + amount >= 0)
+            {
+                Coin += amount;
+                return true;
+            }
         }
         return false;
     }
