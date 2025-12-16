@@ -24,7 +24,7 @@ namespace BetCity.Storage
         /// <summary>
         /// 存档数据
         /// </summary>
-        public ArchiveContainer ArchiveData {get; private set;}
+        public ArchiveContainer ArchiveData { get; private set; }
 
         protected override void Awake()
         {
@@ -38,7 +38,6 @@ namespace BetCity.Storage
         {
             SaveArchiveData();
         }
-
         /// <summary>
         /// 加载存档（无存档则初始化空数据）
         /// </summary>
@@ -48,8 +47,15 @@ namespace BetCity.Storage
             {
                 if (File.Exists(ArchiveSavePath))
                 {
+                    ArchiveData = new ArchiveContainer();
                     string json = File.ReadAllText(ArchiveSavePath);
                     ArchiveData = JsonConvert.DeserializeObject<ArchiveContainer>(json);
+                    if (ArchiveData == null)
+                    {
+                        ArchiveData = new ArchiveContainer();
+
+                        Debug.Log("1");
+                    }
                 }
                 else
                 {
@@ -105,12 +111,12 @@ namespace BetCity.Storage
                     throw new InvalidOperationException(caller + "传入错误类型信息" + typeof(T));
                 }
             }
-            else if (caller is Explorer_PlayerController)
+            else if (caller is ExplorerPlayerController)
             {
-                if (typeof(T) == typeof(Explorer_PlayerDTO))
+                if (typeof(T) == typeof(PlayerDTO))
                 {
 
-                    ArchiveData.ModifyExplorerPlayerData(t.Cast<Explorer_PlayerDTO>().ToList(), this);
+                    ArchiveData.ModifyExplorerPlayerData(t.Cast<PlayerDTO>().ToList(), this);
                 }
                 else
                 {
