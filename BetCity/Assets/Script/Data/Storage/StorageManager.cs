@@ -1,4 +1,4 @@
-﻿using BetCity.Core.Tools;
+using BetCity.Core.Tools;
 using BetCity.Explorer;
 using Newtonsoft.Json;
 using System;
@@ -9,7 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using UnityEngine;
-
+using BetCity.Card;
 namespace BetCity.Storage
 {
     /// <summary>
@@ -109,8 +109,18 @@ namespace BetCity.Storage
             {
                 if (typeof(T) == typeof(Explorer_PlayerDTO))
                 {
-
                     ArchiveData.ModifyExplorerPlayerData(t.Cast<Explorer_PlayerDTO>().ToList(), this);
+                }
+                else
+                {
+                    throw new InvalidOperationException(caller + "传入错误类型信息" + typeof(T));
+                }
+            }
+            else if (caller is CardManager)
+            {
+                if (typeof(T) == typeof(OwnedCardDTO))
+                {
+                    ArchiveData.ModifyOwnedCard(t.Cast<OwnedCardDTO>().ToList(), this);
                 }
                 else
                 {
