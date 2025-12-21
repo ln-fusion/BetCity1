@@ -1,10 +1,9 @@
 ﻿using BetCity.Core.ActionSystem;
-using BetCity.Explorer;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BetCity.Core.Tools
+namespace BetCity.GamePlay.Explorer
 {
     /// <summary>
     /// 玩家结点移动类

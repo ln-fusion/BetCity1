@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BetCity.Explorer
+namespace BetCity.GamePlay.Explorer
 {
     /// <summary>
     /// 适配不同大小的屏幕

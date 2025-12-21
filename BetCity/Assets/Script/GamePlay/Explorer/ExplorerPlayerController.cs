@@ -1,6 +1,5 @@
 using BetCity.Core.ActionSystem;
 using BetCity.Core.Tools;
-using BetCity.Explorer;
 using BetCity.Storage;
 using System;
 using System.Collections;
@@ -9,7 +8,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BetCity.Explorer
+namespace BetCity.GamePlay.Explorer
 {
     public class ExplorerPlayerController :MonoSingleton<ExplorerPlayerController>,ISubmitArchive<PlayerDTO>,IHasCoin,IHasCurrentSanity,IHasCurrentActionPoint
     {

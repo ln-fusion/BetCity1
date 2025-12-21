@@ -1,9 +1,11 @@
 ﻿using BetCity.Core.ActionSystem;
 using System.Collections;
+using BetCity.Core.Tools;
+
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BetCity.Core.Tools
+namespace BetCity.GamePlay.Explorer
 {
     public class CurrentActionPointChangeAction : ResourceChangeAction
     {

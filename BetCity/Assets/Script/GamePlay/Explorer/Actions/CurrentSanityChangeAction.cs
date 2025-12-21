@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BetCity.Core.Tools
+namespace BetCity.GamePlay.Explorer
 {
     public class CurrentSanityChangeAction : ResourceChangeAction
     {

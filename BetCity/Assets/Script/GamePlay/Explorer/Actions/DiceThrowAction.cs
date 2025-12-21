@@ -1,7 +1,6 @@
 using BetCity.Core.ActionSystem;
-using BetCity.Explorer;
 using System.Collections;
-namespace BetCity.Core.Tools
+namespace BetCity.GamePlay.Explorer
 {
     /// <summary>
     /// 玩家投掷骰子动作

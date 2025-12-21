@@ -13,7 +13,7 @@ public class Node
     public float Xposition;
     public float Yposition;
 }
-namespace BetCity.Explorer
+namespace BetCity.GamePlay.Explorer
 {
     /// <summary>
     /// 地图控制器

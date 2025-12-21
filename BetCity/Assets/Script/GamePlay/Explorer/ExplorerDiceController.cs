@@ -4,7 +4,7 @@ using System.Collections;
 using System.Runtime.InteropServices;
 using BetCity.Core.Tools;
 using BetCity.Core.ActionSystem;
-namespace BetCity.Explorer {
+namespace BetCity.GamePlay.Explorer {
 
     public class ExplorerDiceController : MonoSingleton<ExplorerDiceController> 
     {

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BetCity.Core.Tools
+namespace BetCity.GamePlay.Explorer
 {
     public interface IHasCurrentActionPoint
     {

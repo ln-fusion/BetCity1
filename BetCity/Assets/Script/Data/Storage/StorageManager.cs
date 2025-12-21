@@ -1,5 +1,5 @@
 using BetCity.Core.Tools;
-using BetCity.Explorer;
+using BetCity.GamePlay.Explorer;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
