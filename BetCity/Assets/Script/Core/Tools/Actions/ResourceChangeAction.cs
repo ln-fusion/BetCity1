@@ -35,6 +35,8 @@ namespace BetCity.Core.Tools
 
     public enum ResourceType
     {
-        Coin
+        Coin,
+        CurrentSanity,
+        ActionPoint
     }
 }

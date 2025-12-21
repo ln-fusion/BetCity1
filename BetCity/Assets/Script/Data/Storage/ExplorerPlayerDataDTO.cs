@@ -25,18 +25,21 @@ namespace BetCity.Storage
         public int MaxActionPoints { get; set; }
         public int CurrentActionPoints { get;set; }
         public int CurrentNodeNum { get; set; }
+        public int Coin { get; set; }
 
 
         public PlayerDTO() { }
 
         [JsonConstructor]
-        public PlayerDTO(int maxsanity, int currentsanity, int maxactionpoints, int currentactionpoints, int currentnodenum)
+        public PlayerDTO(int maxsanity, int currentsanity, int maxactionpoints, int currentactionpoints, int currentnodenum, int coin)
         {
             MaxSanity = maxsanity;
             CurrentSanity = currentsanity;
             MaxActionPoints = maxactionpoints;
             CurrentActionPoints = currentactionpoints;
             CurrentNodeNum = currentnodenum;
+            Coin = coin;
+
         }
     }
 }

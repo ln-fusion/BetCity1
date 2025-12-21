@@ -11,6 +11,7 @@ namespace BetCity.data
         public int MaxActionPoints;
         public int CurrentActionPoints;
         public int CurrentNodeNum;
+        public int Coin;
         protected override void Awake()
         {
             base.Awake();

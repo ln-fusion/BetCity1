@@ -18,6 +18,8 @@ public class Test_DataManager : MonoBehaviour
     }
     public void Travel(string scenename)
     {
+        Debug.Log($"ÇÐ»»µ½explorerscene");
+
         SceneManager.LoadScene(scenename);
     }
 }

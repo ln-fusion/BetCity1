@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+/// <summary>
+/// 单个节点的类
+/// </summary>
 public class Node
 {
     public int id;
@@ -12,13 +15,22 @@ public class Node
 }
 namespace BetCity.Explorer
 {
+    /// <summary>
+    /// 地图控制器
+    /// </summary>
     public class ExplorerMapController : MonoSingleton<ExplorerMapController>
     {
+        /// <summary>
+        /// 静态属性，存入当前所有结点的类信息
+        /// </summary>
         public static Node[] MapNodes = new Node[35];
+        /// <summary>
+        /// 静态属性，存入当前所有结点的位置信息
+        /// </summary>
         public RectTransform[] NodeObj = new RectTransform[35];
         private static bool _initial = false;
-        public ExplorerPlayerController PlayerController;
-        public data.PlayerData PlayerData;
+        private ExplorerPlayerController playerController;
+        private data.PlayerData PlayerData;
 
         // 初始化地图
         protected override void Awake()
@@ -27,6 +39,8 @@ namespace BetCity.Explorer
         }
         private void Start()
         {
+            playerController=ExplorerPlayerController.Instance;
+            PlayerData = data.PlayerData.Instance;
             if (!_initial)
             {
                 _initial = true;
@@ -51,7 +65,7 @@ namespace BetCity.Explorer
                 MapNodes[5].connectedNodes = new int[] { 8 };
                 MapNodes[6].connectedNodes = new int[] { 5, 9 };
                 MapNodes[7].connectedNodes = new int[] { 10 };
-                MapNodes    [8].connectedNodes = new int[] { 13, 15 };
+                MapNodes[8].connectedNodes = new int[] { 13, 15 };
                 MapNodes[9].connectedNodes = new int[] { 8 };
                 MapNodes[10].connectedNodes = new int[] { 11 };
                 MapNodes[11].connectedNodes = new int[] { 12 };
@@ -80,31 +94,38 @@ namespace BetCity.Explorer
                 MapNodes[34].connectedNodes = new int[] { };
 
             }
-            PlayerController.ToNodeInstant(MapNodes[PlayerData.CurrentNodeNum]);
+            playerController.ToNodeInstant(MapNodes[PlayerData.CurrentNodeNum]);
         }
+        /// <summary>
+        /// 按钮绑定函数，前往对应结点
+        /// </summary>
         public void ToNode(int nodenum)
         {
-            //Explorer_ScreenController.CreateMessage("点击了按钮");
-            //判断
-            bool canreach = false;
-            foreach (int j in MapNodes[PlayerData.CurrentNodeNum].connectedNodes)
+            playerController.UseNodeChange(MapNodes[nodenum]);
+        }
+        /// <summary>
+        /// 检查结点是否可到达
+        /// </summary>
+        public bool CheckNode(int currentnodenum,int targetnodenum)
+        {
+            foreach (int j in MapNodes[currentnodenum].connectedNodes)
             {
-                if (j == nodenum)
+                if (j == targetnodenum)
                 {
-                    canreach = true;
-                    break;
+                    return true;
                 }
             }
-            if (!canreach)
-            {
-                ExplorerScreenController.CreateMessage("无法到达");
-                return;
-            }
-            PlayerController.ToNode(MapNodes[PlayerData.CurrentNodeNum], MapNodes[nodenum]);
+            ExplorerScreenController.CreateMessage("无法到达");
+            return false;
         }
+        /// <summary>
+        /// 废弃函数，暂时不用
+        /// </summary>
         public void Travel(string scenename)
         {
-            PlayerController.ManualSave();
+            Debug.Log($"切换到空白场景");
+
+            playerController.ManualSave();
             SceneManager.LoadScene(scenename);
         }
     }
