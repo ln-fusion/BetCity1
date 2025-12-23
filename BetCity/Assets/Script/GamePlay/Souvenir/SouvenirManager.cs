@@ -7,6 +7,8 @@ using System.Linq;
 using UnityEngine;
 using BetCity.Storage;
 using BetCity.Core.Tools;
+using BetCity.Data.ConfigModels;
+using BetCity.Core.EffectSystem;
 
 
 /// <summary>
@@ -14,17 +16,17 @@ using BetCity.Core.Tools;
 /// </summary>
 public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, ISubmitArchive<OwnedSouvenirDTO>
 {
-    public SouvenirDataManager souvenirDataManager; //在Inspector绑定
-    public StorageManager storageManager; //在Inspector绑定
+    public SouvenirDataManager SouvenirDataManager => SouvenirDataManager.Instance;
+    public StorageManager StorageManager => StorageManager.Instance;
 
     // 所有藏品原型
-    private IReadOnlyList<SouvenirData> allSouvenirDatas => souvenirDataManager.Data;
+    private IReadOnlyList<SouvenirData> allSouvenirDatas => SouvenirDataManager.Data;
     //仅已拥有的藏品实例（Key=藏品ID）
     private Dictionary<int, Souvenir> ownedSouvenirs = new Dictionary<int, Souvenir>();
     //全部藏品实例
     private  Dictionary<int, Souvenir> allSouvenirs = new Dictionary<int, Souvenir>();
-    private ArchiveContainer ArchiveData => storageManager.ArchiveData;
-    private IReadOnlyList<OwnedSouvenirDTO> OwnedSouvenirDTOs => storageManager.ArchiveData.OwnedSouvenirDTOs;
+    private ArchiveContainer ArchiveData => StorageManager.ArchiveData;
+    private IReadOnlyList<OwnedSouvenirDTO> OwnedSouvenirDTOs => ArchiveData.OwnedSouvenirDTOs;
     /// <summary>
     /// 已拥有纪念品只读字典
     /// </summary>
@@ -43,11 +45,15 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     }
 
     /// <summary>
-    /// 暂时用来保存的地方
+    /// 暂时用来保存/取消注册的地方
     /// </summary>
     private void OnDisable()
     {
         SaveArchive();
+        foreach (var keyValuePair in ownedSouvenirs)
+        {
+            UnregisterEffect(keyValuePair.Value);
+        }
     }
 
     #region 初始化/保存相关
@@ -61,20 +67,32 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
 
         foreach (var dto in OwnedSouvenirDTOs)
         {
-            SouvenirData souvenirData = souvenirDataManager.GetDataById(dto.Id);
-            Debug.Log(dto.Id);
+            SouvenirData souvenirData = SouvenirDataManager.GetDataById(dto.Id);
             if (souvenirData == null)
             {
                 Debug.LogError($"发现不存在的纪念品，非法Id为：{dto.Id}");
             }
 
-            // 创建已拥有的藏品实例（价格用存档的自定义值）
-            Souvenir souvenir = new Souvenir(souvenirData, true)
+            //创建已拥有的藏品实例（价格用存档的自定义值）
+            Souvenir souvenir = new Souvenir(souvenirData, dto.ExtraData, dto.CustomPrice, true)
             {
                 Price = dto.CustomPrice
             };
+            //注册效果
+            RegisterEffect(souvenir);
             ownedSouvenirs.Add(dto.Id, souvenir);
             allSouvenirs.Add(dto.Id, souvenir);
+        }
+    }
+
+    /// <summary>
+    /// 注册效果
+    /// </summary>
+    private void RegisterEffect(Souvenir souvenir)
+    {
+        foreach (PassiveEffectConfig effect in souvenir.Effects)
+        {
+            effect.Activate();
         }
     }
 
@@ -87,7 +105,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
         foreach (var kt in ownedSouvenirs)
         {
             Souvenir s = kt.Value;
-            OwnedSouvenirDTO ownedSouvenirDTO = new OwnedSouvenirDTO(kt.Key, s.Price);
+            OwnedSouvenirDTO ownedSouvenirDTO = new OwnedSouvenirDTO(kt.Key, s.Price, s.ExtraData);
             saveData.Add(ownedSouvenirDTO);
         }
         SubmitArchive(saveData);
@@ -106,9 +124,20 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
 
         foreach (int id in missingIds)
         {
-            SouvenirData data = souvenirDataManager.GetDataById(id);
+            SouvenirData data = SouvenirDataManager.GetDataById(id);
             var souvenir = new Souvenir(data);
             allSouvenirs[id] = souvenir;
+        }
+    }
+
+    /// <summary>
+    /// 将效果取消注册
+    /// </summary>
+    private void UnregisterEffect(Souvenir souvenir)
+    {
+        foreach (PassiveEffectConfig config in souvenir.Effects)
+        {
+            config.Deactivate();
         }
     }
     #endregion
@@ -146,6 +175,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
         souvenir = allSouvenirs[id];
         ownedSouvenirs[id] = souvenir;
         souvenir.SetIsOwned(true, this);
+        RegisterEffect(souvenir);
         errorMsg = null;
         return true;
     }
@@ -172,6 +202,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
             return false;
         }
         souvenir = allSouvenirs[id];
+        UnregisterEffect(souvenir);
         ownedSouvenirs.Remove(id);
         souvenir.SetIsOwned(false, this);
         errorMsg = null;
@@ -181,8 +212,8 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     /// <summary>
     /// 查询纪念品是否拥有
     /// </summary>
-    /// <param name="id"></param>
-    /// <returns></returns>
+    /// <param name="id">id</param>
+    /// <returns>是否拥有</returns>
     public bool IsOwned(int id)
     {
         return ownedSouvenirs.ContainsKey(id);
@@ -221,7 +252,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     /// </summary>
     public void SubmitArchive(List<OwnedSouvenirDTO> dTOs) 
     {
-        storageManager.ModifyArchive(dTOs, this);
+        StorageManager.ModifyArchive(dTOs, this);
     }
     #endregion
 }

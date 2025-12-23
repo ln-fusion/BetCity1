@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd152886626cfe442bd7ec7ccb1bd03b, type: 3}
   m_Name: "\u9057\u5FD8\u7684\u540A\u5760"
   m_EditorClassIdentifier: 
-  <Id>k__BackingField: 0
+  <Id>k__BackingField: 1
   <Name>k__BackingField: "\u9057\u5FD8\u7684\u540A\u5760"
   <Info>k__BackingField: "\u25CF\u529F\u80FD\uFF1A\u9996\u6B21\u8FDB\u5165\u6BCF\u5F20\u5730\u56FE\u533A\u57DF\u65F6\uFF0C\u53EF\u4EE5\u83B7\u5F97x\u70B9\u7406\u667A\uFF0C\u5E76\u4E14\u51CF\u5C11\u79FB\u52A8\u4E0E\u201C\u7ED3\u675F\u5F53\u65E5\u201D\u5BFC\u81F4\u7684\u7406\u667A\u6D88\u8017\u3002\r\n\u25CF\u80CC\u666F\uFF1A\u6258\u7BA1\u6240\u4E3B\u7BA1\u58F0\u79F0\u8FD9\u679A\u540A\u5760\u6765\u81EA\u7B2C\u4E00\u4E2A\u8FDB\u5165\u8D1D\u57CE\u7684\u8FF7\u5931\u8005\uFF0C\u5728\u9057\u5FD8\u4E0E\u56DE\u5FC6\u91CC\uFF0C\u6211\u4EEC\u5F97\u4EE5\u514D\u4E8E\u6094\u6068\uFF0C\u514D\u4E8E\u5F97\u89C1\u771F\u5B9E\u4E4B\u7269\u7684\u82E6\u75DB\u3002"
   <ArtworkID>k__BackingField: 0
   <Image>k__BackingField: {fileID: 21300000, guid: 4c1adb7896cdb24458edaf61dbcaab76, type: 3}
   <Price>k__BackingField: 10
   <Category>k__BackingField: 1
+  <Effects>k__BackingField: []

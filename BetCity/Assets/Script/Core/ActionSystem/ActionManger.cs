@@ -18,25 +18,28 @@ namespace BetCity.Core.ActionSystem
         // 委托包装类
         private class DelegateWrapper
         {
+            public int Priority { get; }
             public Guid Guid { get; }
             public Delegate OriginalDelegate { get; }
             public Action<GameAction, GameActionContext> WrappedAction { get; }
             public Func<GameAction, IEnumerator> WrappedPerformer { get; }
 
             // 订阅回调包装
-            public DelegateWrapper(Guid guid, Delegate original, Action<GameAction, GameActionContext> wrapped)
+            public DelegateWrapper(Guid guid, Delegate original, Action<GameAction, GameActionContext> wrapped, int priority)
             {
                 this.Guid = guid;
                 OriginalDelegate = original;
                 WrappedAction = wrapped;
+                Priority = priority;
             }
 
             // 演出逻辑包装
-            public DelegateWrapper(Guid guid, Delegate original, Func<GameAction, IEnumerator> wrapped)
+            public DelegateWrapper(Guid guid, Delegate original, Func<GameAction, IEnumerator> wrapped, int priority)
             {
                 this.Guid = guid;
                 OriginalDelegate = original;
                 WrappedPerformer = wrapped;
+                Priority = priority;
             }
         }
 
@@ -81,7 +84,6 @@ namespace BetCity.Core.ActionSystem
                 return;
             }
 
-            action.RefreshPriority();
             IsPerforming = true;
             StartCoroutine(Flow(action, () =>
             {
@@ -116,6 +118,7 @@ namespace BetCity.Core.ActionSystem
 
             PerfromSubscribers(action, preSubs);
             reactions = action.PreReactions;
+
             foreach (var reaction in reactions)
             {
                 if (!action.IsValid)
@@ -179,9 +182,14 @@ namespace BetCity.Core.ActionSystem
             {
                 if (subs.TryGetValue(type, out var wrapperList))
                 {
-                    foreach (var wrapper in wrapperList)
+                    wrapperList = wrapperList.OrderBy(w => w.Priority).ToList();
+                    //tolist产生快照，允许subscriber删除subscriber，尽量不要增加订阅，否则需要在该轮手动执行，但是会失去优先级判断
+                    foreach (var wrapper in wrapperList.ToList())
                     {
-                        wrapper.WrappedAction?.Invoke(action, action.Context);
+                        if (wrapperList.Contains(wrapper))
+                        {
+                            wrapper.WrappedAction?.Invoke(action, action.Context);
+                        }
                     }
                 }
             }
@@ -213,8 +221,9 @@ namespace BetCity.Core.ActionSystem
         /// </summary>
         /// <typeparam name="T">游戏行为类型</typeparam>
         /// <param name="performer">演出逻辑</param>
+        /// <param name="priority">优先级</param>
         /// <returns>唯一标识GUID（用于取消订阅）</returns>
-        public static Guid AttachPerformer<T>(Func<T, IEnumerator> performer) where T : GameAction
+        public static Guid AttachPerformer<T>(Func<T, IEnumerator> performer, int priority = 0) where T : GameAction
         {
             if (performer == null)
             {
@@ -226,7 +235,7 @@ namespace BetCity.Core.ActionSystem
             Guid guid = Guid.NewGuid();
             IEnumerator wrappedPerformer(GameAction action) => performer((T)action);
             // 创建包装类实例
-            var wrapper = new DelegateWrapper(guid, performer, wrappedPerformer);
+            var wrapper = new DelegateWrapper(guid, performer, wrappedPerformer, priority);
             if (!performers.ContainsKey(type))
             {
                 performers[type] = new List<DelegateWrapper>();
@@ -268,8 +277,9 @@ namespace BetCity.Core.ActionSystem
         /// <typeparam name="T">游戏行为类型</typeparam>
         /// <param name="reaction">回调逻辑</param>
         /// <param name="timing">执行时机</param>
+        /// <param name="priority">优先级</param>
         /// <returns>唯一标识GUID（用于取消订阅）</returns>
-        public static Guid SubscribeReaction<T>(Action<T> reaction, ReactionTiming timing) where T : GameAction
+        public static Guid SubscribeReaction<T>(Action<T> reaction, ReactionTiming timing, int priority = 0) where T : GameAction
         {
             if (reaction == null)
             {
@@ -285,7 +295,7 @@ namespace BetCity.Core.ActionSystem
             void wrappedReaction(GameAction action, GameActionContext context) => reaction((T)action);
 
             // 创建包装类实例
-            var wrapper = new DelegateWrapper(guid, reaction, wrappedReaction);
+            var wrapper = new DelegateWrapper(guid, reaction, wrappedReaction, priority);
 
             // 添加到订阅列表
             if (!subs.ContainsKey(type))

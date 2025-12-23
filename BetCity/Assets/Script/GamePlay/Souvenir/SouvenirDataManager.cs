@@ -1,4 +1,5 @@
 ﻿using BetCity.Core.Tools;
+using BetCity.Data.ConfigModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -19,7 +19,7 @@ namespace BetCity.Core.ActionSystem
         /// <summary>
         /// 上下文信息
         /// </summary>
-        public GameActionContext Context { get; private set; }
+        public GameActionContext Context { get; protected set; }
         /// <summary>
         /// 该行为的前置连锁行为
         /// </summary>
@@ -109,10 +109,12 @@ namespace BetCity.Core.ActionSystem
         /// <summary>
         /// 刷新优先级，除有必要没必要刷新（因为会在执行前统一刷新以节省资源）
         /// </summary>
-        public void RefreshPriority()
+        public void RefreshPriority(ReactionTiming timing)
         {
-            preReactions = preReactions.OrderBy(reaction => reaction.Priority).ToList();
-            postReactions = postReactions.OrderBy(reaction => reaction.Priority).ToList();
+            if (timing == ReactionTiming.PRE)
+                preReactions = preReactions.OrderBy(r => r.Priority).ToList();
+            else
+                postReactions = postReactions.OrderBy(r => r.Priority).ToList();
         }
 
         /// <summary>

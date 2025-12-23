@@ -20,14 +20,19 @@ namespace BetCity.Storage
         /// 玩家修改后的价格（无修改则等于原型）
         /// </summary>
         public int CustomPrice { get;} 
+        /// <summary>
+        /// 额外信息，注意序列化后的内容需要强转！
+        /// </summary>
+        public Dictionary<string, object> ExtraData { get;}
 
         public OwnedSouvenirDTO() { }
 
         [JsonConstructor]
-        public OwnedSouvenirDTO(int id, int customPrice)
+        public OwnedSouvenirDTO(int id, int customPrice, Dictionary<string, object> extraData)
         {
             Id = id;
             CustomPrice = customPrice;
+            ExtraData = extraData;
         }
     }
 }

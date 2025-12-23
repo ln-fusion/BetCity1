@@ -1,6 +1,10 @@
+﻿using BetCity.Data.ConfigModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
@@ -19,20 +23,60 @@ public class Souvenir
 {
     private readonly SouvenirData souvenirData;
 
-    //暂时除了金钱属性其他默认不能修改，如有需要可以更改（我搞错了这个不是映射，=>代表只读属性）
+    /// <summary>
+    /// id
+    /// </summary>
     public int Id => souvenirData.Id;
+    /// <summary>
+    /// 名称
+    /// </summary>
     public string Name => souvenirData.Name;
+    /// <summary>
+    /// 信息
+    /// </summary>
     public string Info => souvenirData.Info;
+    /// <summary>
+    /// 美术Id
+    /// </summary>
     public int ArtworkID => souvenirData.ArtworkID;
+    /// <summary>
+    /// 精灵
+    /// </summary>
     public Sprite Image => souvenirData.Image;
+    /// <summary>
+    /// 类别
+    /// </summary>
     public SouvenirCategory Category => souvenirData.Category;
+    /// <summary>
+    /// 价格（可被修改）
+    /// </summary>
     public int Price {  get; set; }
-    public bool IsOwned { get; private set; } 
-    public Souvenir(SouvenirData souvenirData, bool isOwned = false)
+    /// <summary>
+    /// 玩家是否拥有？
+    /// </summary>
+    public bool IsOwned { get; private set; }
+    /// <summary>
+    /// 效果配置
+    /// </summary>
+    public List<PassiveEffectConfig> Effects  => souvenirData.Effects;
+    /// <summary>
+    /// 额外信息
+    /// </summary>
+    public Dictionary<string, object> ExtraData { get; set; } = new Dictionary<string, object>();
+
+    public Souvenir(SouvenirData souvenirData, Dictionary<string, object> extraData, int price,  bool isOwned = false)
+    {
+        this.souvenirData = souvenirData;
+        this.Price = price;
+        this.IsOwned = isOwned;
+        this.ExtraData = extraData == null ? null : extraData;
+    }
+
+    public Souvenir(SouvenirData souvenirData)
     {
         this.souvenirData = souvenirData;
         this.Price = souvenirData.Price;
-        this.IsOwned = isOwned;
+        this.IsOwned = false ;
     }
 
     /// <summary>
@@ -41,12 +85,25 @@ public class Souvenir
     /// </summary>
     public void SetIsOwned(bool isOwned, IModifySouvenir caller)
     {
-        // 关键：校验调用者必须是B的实例（防止其他类伪造接口）
+        // 关键：校验调用者必须是SouvenirManager的实例（防止其他类伪造接口）
         if (caller is not SouvenirManager)
         {
             throw new InvalidOperationException("仅SouvenirManager类可修改Souvenir的Price属性");
         }
         this.IsOwned = isOwned;
+    }
+
+    /// <summary>
+    /// 修改价格属性，只限实现IModifySouvenir的SouvenirManger访问
+    /// <param name="caller">允许修改Souvenir的接口</param>
+    /// </summary>
+    public void SetPrice(bool isOwned, IModifySouvenir caller)
+    {
+        // 关键：校验调用者必须是SouvenirManager的实例（防止其他类伪造接口）
+        if (caller is not SouvenirManager)
+        {
+            throw new InvalidOperationException("仅SouvenirManager类可修改Souvenir的Price属性");
+        }
     }
 }
 
