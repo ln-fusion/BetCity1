@@ -1,4 +1,5 @@
 ﻿using BetCity.Core.Tools;
+using Cysharp.Threading.Tasks;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace BetCity.Core.ActionSystem
             public Guid Guid { get; }
             public Delegate OriginalDelegate { get; }
             public Action<GameAction, GameActionContext> WrappedAction { get; }
-            public Func<GameAction, IEnumerator> WrappedPerformer { get; }
+            public Func<GameAction, UniTask> WrappedPerformer { get; }
 
             // 订阅回调包装
             public DelegateWrapper(Guid guid, Delegate original, Action<GameAction, GameActionContext> wrapped, int priority)
@@ -34,7 +35,7 @@ namespace BetCity.Core.ActionSystem
             }
 
             // 演出逻辑包装
-            public DelegateWrapper(Guid guid, Delegate original, Func<GameAction, IEnumerator> wrapped, int priority)
+            public DelegateWrapper(Guid guid, Delegate original, Func<GameAction, UniTask> wrapped, int priority)
             {
                 this.Guid = guid;
                 OriginalDelegate = original;
@@ -85,35 +86,34 @@ namespace BetCity.Core.ActionSystem
             }
 
             IsPerforming = true;
-            StartCoroutine(Flow(action, () =>
+            // 改为 UniTask 执行
+            Flow(action, () =>
             {
                 IsPerforming = false;
                 OnPerformFinished?.Invoke();
                 if (actionQueue.Count > 0)
                 {
-                    var (action, onFinished) = actionQueue.Dequeue();
-                    Perform(action, onFinished);
+                    var (nextAction, nextOnFinished) = actionQueue.Dequeue();
+                    Perform(nextAction, nextOnFinished);
                 }
-            }));
+            }).Forget(); // 使用 Forget() 忽略返回值，避免警告
         }
-        
-        private IEnumerator Flow(GameAction action, Action OnFlowFinished = null, int depth = 0)
+
+        private async UniTask Flow(GameAction action, Action OnFlowFinished = null, int depth = 0)
         {
             Debug.Log($"[ActionManager] 开始执行: {action.GetType().Name} (Priority: {action.Priority})");
 
-            //若当前递归层数过大，直接结束
             if (depth > MAX_RECURSION_DEPTH)
             {
                 Debug.LogWarning($"[ActionManager] 递归深度超限（当前{depth}层，最大{MAX_RECURSION_DEPTH}层），终止执行行为：{action.GetType().Name}");
                 OnFlowFinished?.Invoke();
-                yield break;
+                return;
             }
 
-            // 若当前行为无效，直接结束
             if (!action.IsValid)
             {
                 OnFlowFinished?.Invoke();
-                yield break;
+                return;
             }
 
             PerfromSubscribers(action, preSubs);
@@ -124,24 +124,24 @@ namespace BetCity.Core.ActionSystem
                 if (!action.IsValid)
                 {
                     OnFlowFinished?.Invoke();
-                    yield break;
+                    return;
                 }
                 if (reaction.IsValid)
-                    yield return Flow(reaction, null, depth + 1);
+                    await Flow(reaction, null, depth + 1); // 改为 await
             }
 
             reactions = action.PerformReactions;
-            yield return action.Perform();
-            yield return PerformPerformer(action);
+            await action.Perform(); // 等待主行为执行
+            await PerformPerformer(action); // 等待执行者执行
             foreach (var reaction in reactions)
             {
                 if (!action.IsValid)
                 {
                     OnFlowFinished?.Invoke();
-                    yield break;
+                    return;
                 }
                 if (reaction.IsValid)
-                    yield return Flow(reaction, null, depth + 1);
+                    await Flow(reaction, null, depth + 1); // 改为 await
             }
 
             PerfromSubscribers(action, postSubs);
@@ -151,17 +151,17 @@ namespace BetCity.Core.ActionSystem
                 if (!action.IsValid)
                 {
                     OnFlowFinished?.Invoke();
-                    yield break;
+                    return;
                 }
                 if (reaction.IsValid)
-                    yield return Flow(reaction, null, depth + 1);
+                    await Flow(reaction, null, depth + 1); // 改为 await
             }
 
             Debug.Log($"[ActionManager] 完成执行: {action.GetType().Name}");
             OnFlowFinished?.Invoke();
         }
 
-        private IEnumerator PerformPerformer(GameAction action)
+        private async UniTask PerformPerformer(GameAction action)
         {
             Type type = action.GetType();
             if (performers.TryGetValue(type, out var wrapperList))
@@ -169,7 +169,7 @@ namespace BetCity.Core.ActionSystem
                 foreach (var wrapper in wrapperList)
                 {
                     if (wrapper.WrappedPerformer != null)
-                        yield return wrapper.WrappedPerformer(action);
+                        await wrapper.WrappedPerformer(action); 
                 }
             }
         }
@@ -223,7 +223,7 @@ namespace BetCity.Core.ActionSystem
         /// <param name="performer">演出逻辑</param>
         /// <param name="priority">优先级</param>
         /// <returns>唯一标识GUID（用于取消订阅）</returns>
-        public static Guid AttachPerformer<T>(Func<T, IEnumerator> performer, int priority = 0) where T : GameAction
+        public static Guid AttachPerformer<T>(Func<T, UniTask> performer, int priority = 0) where T : GameAction
         {
             if (performer == null)
             {
@@ -233,7 +233,7 @@ namespace BetCity.Core.ActionSystem
 
             Type type = typeof(T);
             Guid guid = Guid.NewGuid();
-            IEnumerator wrappedPerformer(GameAction action) => performer((T)action);
+            UniTask wrappedPerformer(GameAction action) => performer((T)action);
             // 创建包装类实例
             var wrapper = new DelegateWrapper(guid, performer, wrappedPerformer, priority);
             if (!performers.ContainsKey(type))

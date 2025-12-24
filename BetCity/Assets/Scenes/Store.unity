@@ -472,9 +472,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   passiveEffectNameDict:
-    list:
-    - key: 0
-      value: 123
+    list: []
 --- !u!114 &716951070
 MonoBehaviour:
   m_ObjectHideFlags: 0

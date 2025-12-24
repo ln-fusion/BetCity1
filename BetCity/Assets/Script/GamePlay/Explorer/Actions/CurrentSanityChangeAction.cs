@@ -1,5 +1,6 @@
-using BetCity.Core.ActionSystem;
+﻿using BetCity.Core.ActionSystem;
 using BetCity.Core.Tools;
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,14 +12,14 @@ namespace BetCity.GamePlay.Explorer
         public CurrentSanityChangeAction(GameActionContext context, int changeAmount)
             : base(context, ResourceType.CurrentSanity, changeAmount) { }
 
-        public override IEnumerator Perform()
+        public override async UniTask Perform()
         {
             if (Context.Target is IHasCurrentSanity target)
             {
                 if (target.ChangeCurrentSanity(ChangeAmount, this))
                     HasChanged = true;
             }
-            yield break;
+            await UniTask.CompletedTask;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
+using Cysharp.Threading.Tasks;
 
 namespace BetCity.Core.ActionSystem
 {
@@ -44,7 +45,7 @@ namespace BetCity.Core.ActionSystem
         /// <summary>
         /// 反应演出逻辑
         /// </summary>
-        public abstract IEnumerator Perform();
+        public abstract UniTask Perform(); 
 
         /// <summary>
         /// 为反应创建上下文信息

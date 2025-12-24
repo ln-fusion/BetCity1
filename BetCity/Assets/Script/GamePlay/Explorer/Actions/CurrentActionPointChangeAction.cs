@@ -4,6 +4,7 @@ using BetCity.Core.Tools;
 
 using System.Collections.Generic;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
 
 namespace BetCity.GamePlay.Explorer
 {
@@ -12,14 +13,14 @@ namespace BetCity.GamePlay.Explorer
         public CurrentActionPointChangeAction(GameActionContext context, int changeAmount)
             : base(context, ResourceType.ActionPoint, changeAmount) { }
 
-        public override IEnumerator Perform()
+        public override async UniTask Perform()
         {
             if (Context.Target is IHasCurrentActionPoint target)
             {
                 if (target.ChangeCurrentActionPoint(ChangeAmount, this))
                     HasChanged = true;
             }
-            yield break;
+            await UniTask.CompletedTask;
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BetCity.Core.ActionSystem;
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,13 +26,13 @@ namespace BetCity.GamePlay.Explorer
         {
             TargetNode=targetNode;
         }
-        public override IEnumerator Perform()
+        public override async UniTask Perform()
         {
             if (Context.Target is ExplorerPlayerController playerController)
             {
-                yield return playerController.Move(TargetNode);
+                await playerController.Move(TargetNode);
             }
-            yield break;
+            return;
         }
     }
 

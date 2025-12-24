@@ -1,27 +1,28 @@
-using BetCity.Core.ActionSystem;
+锘縰sing BetCity.Core.ActionSystem;
+using Cysharp.Threading.Tasks;
 using System.Collections;
 namespace BetCity.GamePlay.Explorer
 {
     /// <summary>
-    /// 玩家投掷骰子动作
+    /// 鐜╁鎶曟幏楠板瓙鍔ㄤ綔
     /// </summary>
     public class DiceThrowAction : GameAction
     {
         /// <summary>
-        /// 是否执行完修改，如果修改不合法一直为false
+        /// 鏄惁鎵ц瀹屼慨鏀癸紝濡傛灉淇敼涓嶅悎娉曚竴鐩翠负false
         /// </summary>
         public bool HasChanged { get; protected set; } = false;
         public DiceThrowAction(GameActionContext context)
             : base(context)
         {
         }
-        public override IEnumerator Perform()
+        public override async UniTask Perform()
         {
             if (Context.Target is ExplorerDiceController diceController)
             {
-                yield return diceController.DiceThrow();
+                await diceController.DiceThrow();
             }
-            yield break;
+            await UniTask.CompletedTask;
         }
     }
 }

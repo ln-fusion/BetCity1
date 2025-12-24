@@ -1,5 +1,6 @@
 ﻿using BetCity.Core.ActionSystem;
 using BetCity.Data.ConfigModels;
+using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,20 +10,20 @@ namespace BetCity.Tools.Test
 {
     public class TestAction : GameAction
     {
-        public override IEnumerator Perform()
+        public override async UniTask Perform()
         {
             Debug.Log("这是TestAction的perform流程");
-            yield break;
+            await UniTask.CompletedTask;
         }
         public TestAction(GameActionContext context) : base(context) { }
     }
 
     public class EndTurnAction : GameAction
     {
-        public override IEnumerator Perform()
+        public override async UniTask Perform()
         {
             Debug.Log("这是EndTurnAction的perform流程");
-            yield break;
+            await UniTask.CompletedTask;
         }
         public EndTurnAction(GameActionContext context) : base(context) { }
     }
