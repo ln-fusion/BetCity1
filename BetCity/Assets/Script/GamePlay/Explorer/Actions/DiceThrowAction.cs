@@ -1,6 +1,7 @@
 ﻿using BetCity.Core.ActionSystem;
 using Cysharp.Threading.Tasks;
 using System.Collections;
+using System.Threading;
 namespace BetCity.GamePlay.Explorer
 {
     /// <summary>
@@ -16,13 +17,13 @@ namespace BetCity.GamePlay.Explorer
             : base(context)
         {
         }
-        public override async UniTask Perform()
+        public override async UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is ExplorerDiceController diceController)
             {
                 await diceController.DiceThrow();
             }
-            await UniTask.CompletedTask;
+            return;
         }
     }
 }

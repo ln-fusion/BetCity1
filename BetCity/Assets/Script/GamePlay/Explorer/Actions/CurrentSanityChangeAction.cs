@@ -3,13 +3,14 @@ using BetCity.Core.Tools;
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using UnityEngine;
 
 namespace BetCity.GamePlay.Explorer
 {
     public class CurrentSanityChangeAction : GameAction
     {
-        public override async UniTask Perform()
+        public override async UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is ExplorerPlayerController playerController)
             {

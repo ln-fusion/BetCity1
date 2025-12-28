@@ -3,6 +3,7 @@ using BetCity.Core.Tools;
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -16,14 +17,14 @@ namespace BetCity.Core.Tools
         public CoinChangeAction(GameActionContext context, int changeAmount)
             : base(context, ResourceType.Coin, changeAmount) { }
 
-        public override async UniTask Perform()
+        public override UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is IHasCoin target)
             {
                 if (target.ChangeCoin(ChangeAmount, this))
                     HasChanged = true;
             }
-            await UniTask.CompletedTask;
+            return UniTask.CompletedTask;
         }
     }
 

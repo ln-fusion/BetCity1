@@ -93,6 +93,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
         foreach (PassiveEffectConfig effect in souvenir.Effects)
         {
             effect.Activate();
+            effect.Source = souvenir;
         }
     }
 

@@ -1,16 +1,16 @@
 ﻿using BetCity.Core.ActionSystem;
-using System.Collections;
 using BetCity.Core.Tools;
-
-using System.Collections.Generic;
-using UnityEngine;
 using Cysharp.Threading.Tasks;
+using System.Collections;
+using System.Collections.Generic;
+using System.Threading;
+using UnityEngine;
 
 namespace BetCity.GamePlay.Explorer
 {
     public class CurrentActionPointChangeAction : GameAction
     {
-        public override async UniTask Perform()
+        public override async UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is  ExplorerPlayerController playerController)
             {

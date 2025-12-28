@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Xml.Linq;
 using UnityEditor;
 using UnityEngine;
@@ -44,7 +45,7 @@ namespace BetCity.Core.ActionSystem
             }
         }
 
-        private IReadOnlyList<GameAction> reactions = null;
+        private PriorityQueue<GameAction, int> reactions = null;
         //全局订阅
         private static Dictionary<Type, List<DelegateWrapper>> preSubs = new();
         //全局订阅
@@ -54,7 +55,13 @@ namespace BetCity.Core.ActionSystem
         //最大允许递归层数
         private const int MAX_RECURSION_DEPTH = 10;
         //排队队列
-        private Queue<(GameAction action, Action OnFinished)> actionQueue = new Queue<(GameAction, Action)>();
+        private PriorityQueue<(GameAction action, Action OnFinished), int> actionQueue = new();
+        // CTS（外部/其他方法可操作），CT由它生成
+        private CancellationTokenSource actionCts = new();
+        //是否是暂停状态
+        private bool isPaused = false;
+        //暂停锁（临界资源）
+        private readonly object pauseLock = new object();
         /// <summary>
         /// 是否有事件在运行
         /// </summary>
@@ -64,6 +71,49 @@ namespace BetCity.Core.ActionSystem
         {
             base.Awake();
             DontDestroyOnLoad(gameObject);
+        }
+
+        #region 接口
+        /// <summary>
+        /// 暂停所有正在执行的动作（可恢复）
+        /// </summary>
+        public void PauseAllActions()
+        {
+            lock (pauseLock)
+            {
+                if (isPaused) return;
+                isPaused = true;
+                Debug.Log("[ActionManager] 所有动作已暂停");
+            }
+        }
+
+        /// <summary>
+        /// 恢复所有暂停的动作
+        /// </summary>
+        public void ResumeAllActions()
+        {
+            lock (pauseLock)
+            {
+                if (!isPaused) return;
+                isPaused = false;
+                Debug.Log("[ActionManager] 所有动作已恢复");
+            }
+        }
+
+        /// <summary>
+        /// 等待暂停状态解除（供异步流程调用）
+        /// </summary>
+        public async UniTask WaitIfPaused(CancellationToken cancellationToken)
+        {
+            while (true)
+            {
+                lock (pauseLock)
+                {
+                    if (!isPaused) break; // 未暂停则退出等待
+                }
+                // 每帧检查一次，同时响应取消信号（如切场景）
+                await UniTask.Yield(cancellationToken);
+            }
         }
 
         /// <summary>
@@ -81,7 +131,7 @@ namespace BetCity.Core.ActionSystem
             }
             if (IsPerforming)
             {
-                actionQueue.Enqueue((action, OnPerformFinished));
+                actionQueue.Enqueue((action, OnPerformFinished), action.Priority);
                 return;
             }
 
@@ -96,70 +146,89 @@ namespace BetCity.Core.ActionSystem
                     var (nextAction, nextOnFinished) = actionQueue.Dequeue();
                     Perform(nextAction, nextOnFinished);
                 }
-            }).Forget(); // 使用 Forget() 忽略返回值，避免警告
+            }, 0, actionCts.Token).Forget(e =>
+            {
+                Debug.LogError($"Flow执行异常: {e}");
+                IsPerforming = false; // 确保状态重置
+                                      // 处理队列中的下一个任务
+                if (actionQueue.Count > 0)
+                {
+                    var (nextAction, nextOnFinished) = actionQueue.Dequeue();
+                    Perform(nextAction, nextOnFinished);
+                }
+            });
         }
+        #endregion
 
-        private async UniTask Flow(GameAction action, Action OnFlowFinished = null, int depth = 0)
+        private async UniTask Flow(GameAction action, Action OnFlowFinished = null, int depth = 0, CancellationToken cancellationToken = default)
         {
             Debug.Log($"[ActionManager] 开始执行: {action.GetType().Name} (Priority: {action.Priority})");
 
             if (depth > MAX_RECURSION_DEPTH)
             {
-                Debug.LogWarning($"[ActionManager] 递归深度超限（当前{depth}层，最大{MAX_RECURSION_DEPTH}层），终止执行行为：{action.GetType().Name}");
+                Debug.LogWarning($"[ActionManager] 递归深度超限，终止执行：{action.GetType().Name}");
                 OnFlowFinished?.Invoke();
                 return;
             }
-
+            await WaitIfPaused(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) return;
             if (!action.IsValid)
             {
                 OnFlowFinished?.Invoke();
                 return;
             }
 
-            PerfromSubscribers(action, preSubs);
+            await PerfromSubscribers(action, preSubs, cancellationToken);
             reactions = action.PreReactions;
+            GameAction reaction;
 
-            foreach (var reaction in reactions)
+            while(reactions.Count > 0 && action.IsValid && !cancellationToken.IsCancellationRequested)
             {
-                if (!action.IsValid)
-                {
-                    OnFlowFinished?.Invoke();
-                    return;
-                }
-                if (reaction.IsValid)
-                    await Flow(reaction, null, depth + 1); // 改为 await
+                await WaitIfPaused(cancellationToken);
+                reaction = reactions.Dequeue();
+                await Flow(reaction, null, depth + 1, cancellationToken);
+            }
+
+            await WaitIfPaused(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) return;
+            if (!action.IsValid)
+            {
+                OnFlowFinished?.Invoke();
+                return;
             }
 
             reactions = action.PerformReactions;
-            await action.Perform(); // 等待主行为执行
-            await PerformPerformer(action); // 等待执行者执行
-            foreach (var reaction in reactions)
+            await action.Perform(cancellationToken); // 等待主行为执行
+            await PerformPerformer(action);
+
+            while (reactions.Count > 0 && action.IsValid && !cancellationToken.IsCancellationRequested)
             {
-                if (!action.IsValid)
-                {
-                    OnFlowFinished?.Invoke();
-                    return;
-                }
-                if (reaction.IsValid)
-                    await Flow(reaction, null, depth + 1); // 改为 await
+                reaction = reactions.Dequeue();
+                await Flow(reaction, null, depth + 1, cancellationToken);
             }
 
-            PerfromSubscribers(action, postSubs);
-            reactions = action.PostReactions;
-            foreach (var reaction in reactions)
+            await WaitIfPaused(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) return;
+            if (!action.IsValid)
             {
-                if (!action.IsValid)
-                {
-                    OnFlowFinished?.Invoke();
-                    return;
-                }
-                if (reaction.IsValid)
-                    await Flow(reaction, null, depth + 1); // 改为 await
+                OnFlowFinished?.Invoke();
+                return;
+            }
+
+            await PerfromSubscribers(action, preSubs, cancellationToken);
+            reactions = action.PostReactions;
+
+            while (reactions.Count > 0 && action.IsValid && !cancellationToken.IsCancellationRequested)
+            {
+                reaction = reactions.Dequeue();
+                await Flow(reaction, null, depth + 1, cancellationToken);
             }
 
             Debug.Log($"[ActionManager] 完成执行: {action.GetType().Name}");
             OnFlowFinished?.Invoke();
         }
+
+
 
         private async UniTask PerformPerformer(GameAction action)
         {
@@ -174,24 +243,27 @@ namespace BetCity.Core.ActionSystem
             }
         }
 
-        private void PerfromSubscribers(GameAction action, Dictionary<Type, List<DelegateWrapper>> subs)
+        private async UniTask PerfromSubscribers(GameAction action, Dictionary<Type, List<DelegateWrapper>> subs, CancellationToken cancellationToken)
         {
+            //订阅删除其他订阅无法第一时间生效，只会在下一次生效
             List<Type> inheritChain = GetInheritChain(action.GetType());
-
+            PriorityQueue<DelegateWrapper, int> delegateWrappers = new();
             foreach (Type type in inheritChain)
             {
                 if (subs.TryGetValue(type, out var wrapperList))
                 {
                     wrapperList = wrapperList.OrderBy(w => w.Priority).ToList();
-                    //tolist产生快照，允许subscriber删除subscriber，尽量不要增加订阅，否则需要在该轮手动执行，但是会失去优先级判断
-                    foreach (var wrapper in wrapperList.ToList())
+                    foreach (var wrapper in wrapperList)
                     {
-                        if (wrapperList.Contains(wrapper))
-                        {
-                            wrapper.WrappedAction?.Invoke(action, action.Context);
-                        }
+                        delegateWrappers.Enqueue(wrapper, wrapper.Priority);
                     }
                 }
+            }
+            while(delegateWrappers.Count > 0 && action.IsValid && !cancellationToken.IsCancellationRequested)
+            {
+                await WaitIfPaused(cancellationToken);
+                var wrapper = delegateWrappers.Dequeue();
+                wrapper.WrappedAction?.Invoke(action, action.Context);
             }
         }
 

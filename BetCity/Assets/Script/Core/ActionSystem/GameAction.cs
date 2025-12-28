@@ -1,10 +1,12 @@
-﻿using System;
+﻿using BetCity.Core.Tools;
+using Cysharp.Threading.Tasks;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
-using Cysharp.Threading.Tasks;
 
 namespace BetCity.Core.ActionSystem
 {
@@ -13,26 +15,22 @@ namespace BetCity.Core.ActionSystem
     /// </summary>
     public abstract class GameAction
     {
-        private List<GameAction> preReactions = new List<GameAction>();
-        private List<GameAction> postReactions = new List<GameAction>();
-        private List<GameAction> performReactions =  new List<GameAction>();
-
+        /// <summary>
+        /// 该行为的前置连锁行为
+        /// </summary>
+        public PriorityQueue<GameAction, int> PreReactions { get; private set; } = new();
+        /// <summary>
+        /// 该行为的后置连锁行为
+        /// </summary>
+        public PriorityQueue<GameAction, int> PostReactions { get; private set; } = new();
+        /// <summary>
+        /// 该行为逻辑内带的连锁行为
+        /// </summary>
+        public PriorityQueue<GameAction, int> PerformReactions { get; private set; } = new();
         /// <summary>
         /// 上下文信息
         /// </summary>
         public GameActionContext Context { get; protected set; }
-        /// <summary>
-        /// 该行为的前置连锁行为
-        /// </summary>
-        public IReadOnlyList<GameAction> PreReactions => preReactions;
-        /// <summary>
-        /// 该行为的后置连锁行为
-        /// </summary>
-        public IReadOnlyList<GameAction> PostReactions => postReactions;
-        /// <summary>
-        /// 该行为逻辑内带的连锁行为
-        /// </summary>
-        public IReadOnlyList<GameAction> PerformReactions => performReactions;
         /// <summary>
         /// 该行为的优先级，越低越优先，会影响该行为作为别的行为的前置或是后置连锁行为时的执行顺序
         /// </summary>
@@ -43,15 +41,15 @@ namespace BetCity.Core.ActionSystem
         public bool IsValid { get; set; } = true;
 
         /// <summary>
-        /// 反应演出逻辑
+        /// 反应演出代码（带检查状态）多帧执行函数需要循环检查取消令牌状态，以及暂停状态
         /// </summary>
-        public abstract UniTask Perform(); 
+        /// <param name="cancellationToken">取消令牌</param>
+        public abstract UniTask Perform(CancellationToken cancellationToken);
 
         /// <summary>
         /// 为反应创建上下文信息
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <returns></returns>
+        /// <returns>上下文信息</returns>
         public virtual GameActionContext CreateContextForReactions<T>() where T : GameAction
         {
             return new GameActionContext(Context.Source, Context.Target, this);
@@ -62,10 +60,10 @@ namespace BetCity.Core.ActionSystem
         /// </summary>
         /// <param name="action">反应类型</param>
         /// <param name="timing">前置/后置反应</param>
-        public void AddReaction(GameAction action, ReactionTiming timing)
+        public void EnqueueReaction(GameAction action, ReactionTiming timing)
         {
-            List<GameAction> reactions = timing == ReactionTiming.PRE ? preReactions : postReactions;
-            reactions.Add(action);
+            PriorityQueue<GameAction, int> reactions = timing == ReactionTiming.PRE ? PreReactions : PostReactions;
+            reactions.Enqueue(action, action.Priority);
         }
 
         /// <summary>
@@ -75,7 +73,7 @@ namespace BetCity.Core.ActionSystem
         /// <param name="timing">前置/后置反应</param>
         public void RemoveReactions(GameAction reaction, ReactionTiming timing)
         {
-            List<GameAction> reactions = timing == ReactionTiming.PRE ? preReactions : postReactions;
+            PriorityQueue<GameAction, int> reactions = timing == ReactionTiming.PRE ? PreReactions : PostReactions;
             reactions.Remove(reaction);
         }
 
@@ -97,7 +95,7 @@ namespace BetCity.Core.ActionSystem
         /// <returns></returns>
         public void RemoveReactions(ReactionTiming timing, Func<GameAction, bool> predicate)
         {
-            List<GameAction> reactions = timing == ReactionTiming.PRE ? preReactions : postReactions;
+            PriorityQueue<GameAction, int> reactions = timing == ReactionTiming.PRE ? PreReactions : PostReactions;
             if (predicate == null)
                 throw new ArgumentNullException(nameof(predicate), "筛选条件不能为空");
             var toRemove = reactions.Where(predicate).ToList();
@@ -105,25 +103,6 @@ namespace BetCity.Core.ActionSystem
             {
                 reactions.Remove(reaction);
             }
-        }
-
-        /// <summary>
-        /// 刷新优先级，除有必要没必要刷新（因为会在执行前统一刷新以节省资源）
-        /// </summary>
-        public void RefreshPriority(ReactionTiming timing)
-        {
-            if (timing == ReactionTiming.PRE)
-                preReactions = preReactions.OrderBy(r => r.Priority).ToList();
-            else
-                postReactions = postReactions.OrderBy(r => r.Priority).ToList();
-        }
-
-        /// <summary>
-        /// 设定优先级
-        /// </summary>
-        public void SetPriority(int priority)
-        {
-            Priority = priority;
         }
 
         public GameAction(GameActionContext context)

@@ -137,7 +137,6 @@ namespace BetCity.Core.EffectSystem
             {
                 //先当永久注册
                 bool val = ActivatePermanentPassiveEffect(id, carrier, condition);
-                Debug.Log(val);
 
                 //注册回合结束动作回调
                 var methodDef = typeof(ActionManager)
@@ -206,6 +205,7 @@ namespace BetCity.Core.EffectSystem
             }
             return true;
         }
+
         /// <summary>
         /// 取消激活被动效果
         /// </summary>
