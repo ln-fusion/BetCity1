@@ -8,19 +8,26 @@ using Cysharp.Threading.Tasks;
 
 namespace BetCity.GamePlay.Explorer
 {
-    public class CurrentActionPointChangeAction : ResourceChangeAction
+    public class CurrentActionPointChangeAction : GameAction
     {
-        public CurrentActionPointChangeAction(GameActionContext context, int changeAmount)
-            : base(context, ResourceType.ActionPoint, changeAmount) { }
-
         public override async UniTask Perform()
         {
-            if (Context.Target is IHasCurrentActionPoint target)
+            if (Context.Target is  ExplorerPlayerController playerController)
             {
-                if (target.ChangeCurrentActionPoint(ChangeAmount, this))
-                    HasChanged = true;
+                playerController.ChangeCurrentActionPoint(ChangeAmount, this);
             }
             await UniTask.CompletedTask;
+        }
+
+        /// <summary>
+        /// 变化量（正数增加，负数减少）
+        /// </summary>
+        public int ChangeAmount { get; }
+
+        public CurrentActionPointChangeAction(GameActionContext context,int changeAmount)
+            : base(context)
+        {
+            ChangeAmount = changeAmount;
         }
     }
 }

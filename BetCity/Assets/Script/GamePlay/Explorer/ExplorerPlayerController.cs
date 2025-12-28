@@ -10,44 +10,36 @@ using UnityEngine.SceneManagement;
 
 namespace BetCity.GamePlay.Explorer
 {
-    public class ExplorerPlayerController :MonoSingleton<ExplorerPlayerController>,ISubmitArchive<PlayerDTO>,IHasCoin,IHasCurrentSanity,IHasCurrentActionPoint
+    public class ExplorerPlayerController :MonoSingleton<ExplorerPlayerController>,ISubmitArchive<PlayerDTO>,IHasCoin
     {
         /// <summary>
         /// 玩家物体，用于获取位置信息
         /// </summary>
         public GameObject Player;
-        private RectTransform _playerTransform;
+        private RectTransform playerTransform;
         private static bool _initial = false;
-        private Animator _animator;
+        private Animator animator;
         [Header("玩家状态")]
         /// <summary>
         /// 地图状态，也可以用枚举结构
         /// </summary>
         public static int PLAYER_STATUS = 0;//0空闲 1行走 2 丢骰子
         /// <summary>
-        /// 接口，返回当前理智值
-        /// </summary>
-        public int CurrentSanity=>PlayerData.CurrentSanity;
-        /// <summary>
         /// 接口，返回当前金币值
         /// </summary>
-        public int Coin=>PlayerData.Coin;
-        /// <summary>
-        /// 接口，返回当前AP点
-        /// </summary>
-        public int CurrentActionPoint=>PlayerData.CurrentActionPoints;
+        public int Coin=>playerData.Coin;
 
         private ExplorerScreenController screenController;
         private ExplorerDiceController diceController;
         private ExplorerMapController mapController;
         private StorageManager storageManager;
         private ActionManager actionManager;
-        private data.PlayerData PlayerData;
+        private data.PlayerData playerData;
 
 
         private float MoveSpeed =300f;//玩家移动速度
-
-
+        // 玩家显示点位
+        Vector2 showPosition = new Vector2(-20, 20);
 
         protected override void Awake()
         {
@@ -60,44 +52,49 @@ namespace BetCity.GamePlay.Explorer
             storageManager=StorageManager.Instance;
             actionManager=ActionManager.Instance;
             mapController=ExplorerMapController.Instance;
-            PlayerData = data.PlayerData.Instance;
-            _playerTransform = Player.GetComponent<RectTransform>();
-            _animator = Player.GetComponent<Animator>();
+            playerData = data.PlayerData.Instance;
             if (!_initial)
             {
                 //强制设置初值，不用事件系统
                 _initial = true;
-                PlayerData.MaxSanity = 20;
-                PlayerData.CurrentSanity = 10;
-                PlayerData.MaxActionPoints = 6;
-                PlayerData.CurrentActionPoints = 0;
-                PlayerData.CurrentNodeNum = 0;
-                PlayerData.Coin = 10;
+                playerData.MaxSanity = 20;
+                playerData.CurrentSanity = 10;
+                playerData.MaxActionPoints = 6;
+                playerData.CurrentActionPoints = 0;
+                playerData.CurrentNodeNum = 0;
+                playerData.Coin = 10;
+                playerData.MapID = 0;
             }
             else
             {
                 //强制设置初值，不用事件系统
-                PlayerData.MaxSanity = storageManager.ArchiveData.PlayerDTO.MaxSanity;
-                PlayerData.CurrentSanity = storageManager.ArchiveData.PlayerDTO.CurrentSanity;
-                PlayerData.MaxActionPoints = storageManager.ArchiveData.PlayerDTO.MaxActionPoints;
-                PlayerData.CurrentActionPoints = storageManager.ArchiveData.PlayerDTO.CurrentActionPoints;
-                PlayerData.CurrentNodeNum = storageManager.ArchiveData.PlayerDTO.CurrentNodeNum;
-                PlayerData.Coin = storageManager.ArchiveData.PlayerDTO.Coin;
+                playerData.MaxSanity = storageManager.ArchiveData.PlayerDTO.MaxSanity;
+                playerData.CurrentSanity = storageManager.ArchiveData.PlayerDTO.CurrentSanity;
+                playerData.MaxActionPoints = storageManager.ArchiveData.PlayerDTO.MaxActionPoints;
+                playerData.CurrentActionPoints = storageManager.ArchiveData.PlayerDTO.CurrentActionPoints;
+                playerData.CurrentNodeNum = storageManager.ArchiveData.PlayerDTO.CurrentNodeNum;
+                playerData.Coin = storageManager.ArchiveData.PlayerDTO.Coin;
+                playerData.MapID = storageManager.ArchiveData.PlayerDTO.MapID;
                 screenController.printPlayerNature();
                 RefreshPlayerPosition();
             }
+            mapController.MapCreate();
+            playerTransform = Player.GetComponent<RectTransform>();
+            animator = Player.GetComponent<Animator>();
+            ToNodeInstant(ExplorerMapController.MapNode[playerData.CurrentNodeNum]);
         }
         /// <summary>
         /// 从storagemanager中读取数据
         /// </summary>
         public void Lode()
         {
-            PlayerData.MaxSanity = storageManager.ArchiveData.PlayerDTO.MaxSanity;
-            PlayerData.CurrentSanity = storageManager.ArchiveData.PlayerDTO.CurrentSanity;
-            PlayerData.MaxActionPoints = storageManager.ArchiveData.PlayerDTO.MaxActionPoints;
-            PlayerData.CurrentActionPoints = storageManager.ArchiveData.PlayerDTO.CurrentActionPoints;
-            PlayerData.CurrentNodeNum = storageManager.ArchiveData.PlayerDTO.CurrentNodeNum;
-            PlayerData.Coin = storageManager.ArchiveData.PlayerDTO.Coin;
+            playerData.MaxSanity = storageManager.ArchiveData.PlayerDTO.MaxSanity;
+            playerData.CurrentSanity = storageManager.ArchiveData.PlayerDTO.CurrentSanity;
+            playerData.MaxActionPoints = storageManager.ArchiveData.PlayerDTO.MaxActionPoints;
+            playerData.CurrentActionPoints = storageManager.ArchiveData.PlayerDTO.CurrentActionPoints;
+            playerData.CurrentNodeNum = storageManager.ArchiveData.PlayerDTO.CurrentNodeNum;
+            playerData.Coin = storageManager.ArchiveData.PlayerDTO.Coin;
+            playerData.MapID=storageManager.ArchiveData.PlayerDTO.MapID;
             screenController.printPlayerNature();
             RefreshPlayerPosition() ;
         }
@@ -106,7 +103,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void RefreshPlayerPosition()
         {
-            ToNodeInstant(ExplorerMapController.MapNodes[ PlayerData.CurrentNodeNum]);
+            ToNodeInstant(ExplorerMapController.MapNode[ playerData.CurrentNodeNum]);
         }
         /// <summary>
         /// 玩家移动Action的实际逻辑
@@ -120,35 +117,37 @@ namespace BetCity.GamePlay.Explorer
                 yield break;
             }
             //判断玩家AP点
-            if (PlayerData.CurrentActionPoints <= 0)
+            if (playerData.CurrentActionPoints <= 0)
             {
                 ExplorerScreenController.CreateMessage("AP点不足");
                 yield break;
             }
-            Node currentnode = ExplorerMapController.MapNodes[PlayerData.CurrentNodeNum];
+            Node currentnode = ExplorerMapController.MapNode[playerData.CurrentNodeNum];
             //判断目标节点是否可到达
             if (!mapController.CheckNode(currentnode.id,targetnode.id))
             {
                 ExplorerScreenController.CreateMessage("无法到达");
                 yield break;
             }
-            UseActionPointChange(-1);
-            PlayerData.CurrentNodeNum=targetnode.id;
-            PLAYER_STATUS = 1;
-            _animator.SetBool("move", true);
+            screenController.ScreenFocus(targetnode);
 
-            Vector2 movetarget = new Vector2(targetnode.Xposition, targetnode.Yposition) - new Vector2(currentnode.Xposition, currentnode.Yposition);
-            Vector2 target = new Vector2(targetnode.Xposition, targetnode.Yposition) + new Vector2(-50, 50);
-            Vector2 moveframe = movetarget.normalized;
-            float distance = movetarget.magnitude;
+            UseActionPointChange(-1);
+            playerData.CurrentNodeNum=targetnode.id;
+            PLAYER_STATUS = 1;
+            animator.SetBool("move", true);
+
+
+            Vector2 movetarget = new Vector2(targetnode.Xposition, targetnode.Yposition) + showPosition;
+            Vector2 moveframe = (movetarget- playerTransform.anchoredPosition).normalized;
+            float distance = Vector2.Distance(playerTransform.anchoredPosition, new Vector2(targetnode.Xposition, targetnode.Yposition) + showPosition);
             while (distance > 10)
             {
-                _playerTransform.anchoredPosition += moveframe * MoveSpeed * Time.deltaTime;
-                distance = Vector2.Distance(_playerTransform.anchoredPosition, target);
+                playerTransform.anchoredPosition += moveframe * MoveSpeed * Time.deltaTime;
+                distance = Vector2.Distance(playerTransform.anchoredPosition, new Vector2(targetnode.Xposition, targetnode.Yposition) + showPosition);
                 yield return null;
             }
-            _playerTransform.anchoredPosition = target;
-            _animator.SetBool("move", false);
+            playerTransform.anchoredPosition = new Vector2(targetnode.Xposition, targetnode.Yposition) + showPosition;
+            animator.SetBool("move", false);
             screenController.printPlayerNature();
             yield return null;
             PLAYER_STATUS = 0;
@@ -158,8 +157,9 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void ToNodeInstant(Node targetnode)
         {
-            PlayerData.CurrentNodeNum = targetnode.id;
-            _playerTransform.anchoredPosition = new Vector2(targetnode.Xposition - 50, targetnode.Yposition + 50);
+            playerData.CurrentNodeNum = targetnode.id;
+            playerTransform.anchoredPosition = new Vector2(targetnode.Xposition, targetnode.Yposition)+showPosition;
+            screenController.ScreenFocusInstant(targetnode);
         }
         #region 接口
         /// <summary>
@@ -167,20 +167,20 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public bool ChangeCurrentSanity(int Sanity, CurrentSanityChangeAction currentSanityChangeAction)
         {
-            if (PlayerData.CurrentSanity >= PlayerData.MaxSanity)
+            if (playerData.CurrentSanity >= playerData.MaxSanity)
             {
                 ExplorerScreenController.CreateMessage("理智值已满");
-                PlayerData.CurrentSanity = PlayerData.MaxSanity;
+                playerData.CurrentSanity = playerData.MaxSanity;
                 screenController.printPlayerNature();
             }
-            else if (PlayerData.CurrentSanity >PlayerData.MaxSanity - Sanity)
+            else if (playerData.CurrentSanity >playerData.MaxSanity - Sanity)
             {
-                PlayerData.CurrentSanity = PlayerData.MaxSanity;
+                playerData.CurrentSanity = playerData.MaxSanity;
                 screenController.printPlayerNature();
             }
             else
             {
-                PlayerData.CurrentSanity += Sanity;
+                playerData.CurrentSanity += Sanity;
                 screenController.printPlayerNature();
             }
             return true;
@@ -190,7 +190,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public bool ChangeCoin(int coin, CoinChangeAction coinChangeAction)
         {
-            PlayerData.Coin += coin;
+            playerData.Coin += coin;
             screenController.printPlayerNature();
             return true;
         }
@@ -199,15 +199,15 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public bool ChangeCurrentActionPoint(int actionPoint, CurrentActionPointChangeAction currentActionPointChangeAction)
         {
-            PlayerData.CurrentActionPoints += actionPoint;
+            playerData.CurrentActionPoints += actionPoint;
             
-            if (PlayerData.CurrentActionPoints >= PlayerData.MaxActionPoints)
+            if (playerData.CurrentActionPoints >= playerData.MaxActionPoints)
             {
-                PlayerData.CurrentActionPoints = PlayerData.MaxActionPoints;
+                playerData.CurrentActionPoints = playerData.MaxActionPoints;
             }
-            else if (PlayerData.CurrentActionPoints < 0)
+            else if (playerData.CurrentActionPoints < 0)
             {
-                PlayerData.CurrentActionPoints = 0;
+                playerData.CurrentActionPoints = 0;
             }
             screenController.printPlayerNature();
             diceController.APRefresh();
@@ -240,6 +240,7 @@ namespace BetCity.GamePlay.Explorer
         {
             GameActionContext context = new(this, this, null);
             var currentActionPointAction = new CurrentActionPointChangeAction(context, i);
+
             ActionManager.Instance.Perform(currentActionPointAction);
         }
         /// <summary>
@@ -260,19 +261,14 @@ namespace BetCity.GamePlay.Explorer
         {
             List<PlayerDTO> saveData = new List<PlayerDTO>();
             PlayerDTO playerDTO = new PlayerDTO(
-                PlayerData.MaxSanity,
-                PlayerData.CurrentSanity,
-                PlayerData.MaxActionPoints,
-                PlayerData.CurrentActionPoints,
-                PlayerData.CurrentNodeNum,
-                PlayerData.Coin
+                playerData.MaxSanity,
+                playerData.CurrentSanity,
+                playerData.MaxActionPoints,
+                playerData.CurrentActionPoints,
+                playerData.CurrentNodeNum,
+                playerData.Coin,
+                playerData.MapID
                 );
-            //PlayerDTO playerDTO = new PlayerDTO();
-            //playerDTO.MaxSanity = PlayerData.MaxSanity;
-            //playerDTO.CurrentSanity= PlayerData.CurrentSanity;
-            //playerDTO.MaxActionPoints = PlayerData.MaxActionPoints;
-            //playerDTO.CurrentActionPoints = PlayerData.CurrentActionPoints;
-            //playerDTO.CurrentNodeNum= PlayerData.CurrentNodeNum;
             saveData.Add(playerDTO);
             SubmitArchive(saveData);
         }

@@ -12,6 +12,8 @@ namespace BetCity.data
         public int CurrentActionPoints;
         public int CurrentNodeNum;
         public int Coin;
+        public int MapID;
+
         protected override void Awake()
         {
             base.Awake();

@@ -7,19 +7,26 @@ using UnityEngine;
 
 namespace BetCity.GamePlay.Explorer
 {
-    public class CurrentSanityChangeAction : ResourceChangeAction
+    public class CurrentSanityChangeAction : GameAction
     {
-        public CurrentSanityChangeAction(GameActionContext context, int changeAmount)
-            : base(context, ResourceType.CurrentSanity, changeAmount) { }
-
         public override async UniTask Perform()
         {
-            if (Context.Target is IHasCurrentSanity target)
+            if (Context.Target is ExplorerPlayerController playerController)
             {
-                if (target.ChangeCurrentSanity(ChangeAmount, this))
-                    HasChanged = true;
+                playerController.ChangeCurrentSanity(ChangeAmount, this);
             }
             await UniTask.CompletedTask;
+        }
+
+        /// <summary>
+        /// 变化量（正数增加，负数减少）
+        /// </summary>
+        public int ChangeAmount { get; }
+
+        public CurrentSanityChangeAction(GameActionContext context, int changeAmount)
+            : base(context)
+        {
+            ChangeAmount = changeAmount;
         }
     }
 }
