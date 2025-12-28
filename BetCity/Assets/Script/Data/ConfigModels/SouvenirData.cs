@@ -27,7 +27,7 @@ namespace BetCity.Data.ConfigModels
         /// <summary>
         /// 纪念品的效果（都是被动）
         /// </summary>
-        [field: SerializeField] public List<PassiveEffectConfig> Effects { get; private set; }
+        [field: SerializeField] public List<EffectConfig> Effects { get; private set; }
     }
 
     public enum SouvenirCategory

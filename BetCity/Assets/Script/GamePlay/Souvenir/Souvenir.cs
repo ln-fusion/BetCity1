@@ -58,7 +58,7 @@ public class Souvenir
     /// <summary>
     /// 效果配置
     /// </summary>
-    public List<PassiveEffectConfig> Effects  => souvenirData.Effects;
+    public List<EffectConfig> Effects  => souvenirData.Effects;
     /// <summary>
     /// 额外信息
     /// </summary>

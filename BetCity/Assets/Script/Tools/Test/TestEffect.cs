@@ -60,7 +60,7 @@ namespace BetCity.Tools.Test
         }
         [SerializeField] private Button button1;
         [SerializeField] private Button button2;
-        [SerializeField] private PassiveEffectConfig config;
+        [SerializeField] private EffectConfig config;
         public void Pause()
         {
             ActionManager.Instance.PauseAllActions();

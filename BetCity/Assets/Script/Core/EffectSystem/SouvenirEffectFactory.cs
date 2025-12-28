@@ -25,11 +25,19 @@ namespace BetCity.Core.EffectSystem
             }
         }
 
+        public static bool ActivateOneShotEffect(string effectName)
+        {
+            switch (effectName)
+            {
+                default:
+                    return false;
+            }
+        }
+
         private static void Test(GameAction action)
         {
             Debug.Log("Test已执行！");
         }
-
     }
 }
 

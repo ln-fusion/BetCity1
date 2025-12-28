@@ -16,15 +16,15 @@ using BetCity.Core.EffectSystem;
 /// </summary>
 public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, ISubmitArchive<OwnedSouvenirDTO>
 {
-    public SouvenirDataManager SouvenirDataManager => SouvenirDataManager.Instance;
-    public StorageManager StorageManager => StorageManager.Instance;
-
+    private SouvenirDataManager SouvenirDataManager => SouvenirDataManager.Instance;
+    private StorageManager StorageManager => StorageManager.Instance;
     // 所有藏品原型
-    private IReadOnlyList<SouvenirData> allSouvenirDatas => SouvenirDataManager.Data;
+    private IReadOnlyList<SouvenirData> AllSouvenirDatas => SouvenirDataManager.Data;
     //仅已拥有的藏品实例（Key=藏品ID）
     private Dictionary<int, Souvenir> ownedSouvenirs = new Dictionary<int, Souvenir>();
-    //全部藏品实例
-    private  Dictionary<int, Souvenir> allSouvenirs = new Dictionary<int, Souvenir>();
+    //未拥有藏品id列表
+    private List<int> notOwnedSouvenirs = new List<int>();
+    //存档数据
     private ArchiveContainer ArchiveData => StorageManager.ArchiveData;
     private IReadOnlyList<OwnedSouvenirDTO> OwnedSouvenirDTOs => ArchiveData.OwnedSouvenirDTOs;
     /// <summary>
@@ -34,14 +34,14 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     /// <summary>
     /// 所有纪念品只读字典
     /// </summary>
-    public IReadOnlyDictionary<int, Souvenir> AllSouvenirs => allSouvenirs;
+    public IReadOnlyList<int> NotOwnedSouvenirs => NotOwnedSouvenirs;
 
     protected override void Awake()
     {
         base.Awake();
         DontDestroyOnLoad(gameObject);
         CacheOwnedSouvenirInstances();
-        LoadNotOwnedData();
+        LoadNotOwnedSouvenirs();
     }
 
     /// <summary>
@@ -57,6 +57,14 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     }
 
     #region 初始化/保存相关
+    /// <summary>
+    /// 加载未拥有纪念品id列表
+    /// </summary>
+    private void LoadNotOwnedSouvenirs()
+    {
+        notOwnedSouvenirs = AllSouvenirDatas.Where(s => !ownedSouvenirs.ContainsKey(s.Id)).Select(s => s.Id).ToList();
+    }
+
     /// <summary>
     /// 缓存已拥有的藏品实例（从存档数据创建）
     /// </summary>
@@ -81,7 +89,6 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
             //注册效果
             RegisterEffect(souvenir);
             ownedSouvenirs.Add(dto.Id, souvenir);
-            allSouvenirs.Add(dto.Id, souvenir);
         }
     }
 
@@ -90,9 +97,12 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     /// </summary>
     private void RegisterEffect(Souvenir souvenir)
     {
-        foreach (PassiveEffectConfig effect in souvenir.Effects)
+        foreach (EffectConfig effect in souvenir.Effects)
         {
-            effect.Activate();
+            if(effect.Lifetime != EffectLifetime.OneShot)
+            {
+                effect.Activate();
+            }
             effect.Source = souvenir;
         }
     }
@@ -113,30 +123,11 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     }
 
     /// <summary>
-    /// 加载所有未获得的收藏品实例
-    /// </summary>
-    private void LoadNotOwnedData()
-    {
-        // 找出“未拥有”且“还没实例化”的 ID
-        var missingIds = allSouvenirDatas
-            .Select(d => d.Id)               // 全部配表ID
-            .Except(ownedSouvenirs.Keys)     // 去掉已拥有
-            .Except(allSouvenirs.Keys);      // 去掉已实例化（保险）
-
-        foreach (int id in missingIds)
-        {
-            SouvenirData data = SouvenirDataManager.GetDataById(id);
-            var souvenir = new Souvenir(data);
-            allSouvenirs[id] = souvenir;
-        }
-    }
-
-    /// <summary>
     /// 将效果取消注册
     /// </summary>
     private void UnregisterEffect(Souvenir souvenir)
     {
-        foreach (PassiveEffectConfig config in souvenir.Effects)
+        foreach (EffectConfig config in souvenir.Effects)
         {
             config.Deactivate();
         }
@@ -161,20 +152,21 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     /// <returns>操作成功与否</returns>
     public bool OwnSouvenirById(int id, out Souvenir souvenir, out string errorMsg)
     {
-        if (!allSouvenirs.ContainsKey(id))
-        {
-            errorMsg = "该id所对应的纪念品不存在";
-            souvenir = null;
-            return false;
-        }
-        else if (ownedSouvenirs.ContainsKey(id))
+        if (ownedSouvenirs.ContainsKey(id))
         {
             errorMsg = "该id所对应的纪念品已拥有";
             souvenir = ownedSouvenirs[id];
             return false;
         }
-        souvenir = allSouvenirs[id];
+        else if (!notOwnedSouvenirs.Contains(id))
+        {
+            errorMsg = "该id所对应的纪念品不存在";;
+            souvenir = null;
+            return false;
+        }
+        souvenir = new Souvenir(AllSouvenirDatas.Where(s => s.Id == id).First());
         ownedSouvenirs[id] = souvenir;
+        notOwnedSouvenirs.Remove(id);
         souvenir.SetIsOwned(true, this);
         RegisterEffect(souvenir);
         errorMsg = null;
@@ -182,7 +174,7 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     }
 
     /// <summary>
-    /// 根据纪念品的Id来失去对应的纪念品，如果是未拥有的纪念品会返回false但是会输出对应的纪念品
+    /// 根据纪念品的Id来失去对应的纪念品
     /// </summary>
     /// <param name="id"></param>
     /// <param name="souvenir">返回纪念品</param>
@@ -190,21 +182,17 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     /// <returns>操作成功与否</returns>
     public bool LoseSouvenirById(int id, out Souvenir souvenir, out string errorMsg)
     {
-        if (!allSouvenirs.ContainsKey(id))
+        if (!ownedSouvenirs.ContainsKey(id))
         {
-            errorMsg = "该id所对应的纪念品不存在";
+            errorMsg = "该id所对应的纪念品未拥有";
             souvenir = null;
             return false;
         }
-        else if (!ownedSouvenirs.ContainsKey(id))
-        {
-            errorMsg = "该id所对应的纪念品未拥有";
-            souvenir = ownedSouvenirs[id];
-            return false;
-        }
-        souvenir = allSouvenirs[id];
+
+        souvenir = ownedSouvenirs[id];
         UnregisterEffect(souvenir);
         ownedSouvenirs.Remove(id);
+        notOwnedSouvenirs.Add(id);
         souvenir.SetIsOwned(false, this);
         errorMsg = null;
         return true;
@@ -218,20 +206,6 @@ public class SouvenirManager : MonoSingleton<SouvenirManager>, IModifySouvenir, 
     public bool IsOwned(int id)
     {
         return ownedSouvenirs.ContainsKey(id);
-    }
-
-    /// <summary>
-    /// 通过ID查询纪念品
-    /// </summary>
-    /// <param name="id">纪念品ID</param>
-    /// <returns>对应的Souvenir，不存在则返回null</returns>
-    public Souvenir GetSouvenirById(int id)
-    {
-        if (allSouvenirs.TryGetValue(id, out Souvenir result))
-        {
-            return result;
-        }
-        return null;
     }
 
     /// <summary>

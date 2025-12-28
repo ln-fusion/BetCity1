@@ -186,6 +186,12 @@ namespace BetCity.Core.EffectSystem
             return true;
         }
 
+        /// <summary>
+        /// 激活一次性效果
+        /// </summary>
+        /// <param name="id">id</param>
+        /// <param name="carrier">效果持有者</param>
+        /// <returns>成功与否</returns>
         public bool ActivateOneShotPassiveEffect(int id, EffectCarrier carrier)
         {
             bool val = passiveEffectNameDict.TryGetValue(id, out var effectName);
@@ -195,13 +201,19 @@ namespace BetCity.Core.EffectSystem
                 return false;
             }
 
-            //想要使用一次性被动效果，请在factory中实现public static bool GetOneShotEffect(string effectName)
+            //想要使用一次性被动效果，请在factory中实现public static bool ActivateOneShotEffect(string effectName)
             switch (carrier)
             {
                 //纪念品效果
                 case EffectCarrier.Souvenir:
+                    val = SouvenirEffectFactory.ActivateOneShotEffect(effectName);
                     Debug.LogWarning($"[EffectManager]纪念品暂时不支持一次性效果");
                     return false;
+            }
+            if (!val)
+            {
+                Debug.LogWarning($"[EffectManager]执行Id:{id}一次性效果失败，请检查效果Id-执行函数名称映射字典（passiveEffectNameDict）字典是否正确并确保执行函数是否无误");
+                return false;
             }
             return true;
         }

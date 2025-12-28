@@ -1,22 +1,19 @@
-﻿using BetCity.Core.ActionSystem;
-using BetCity.Core.EffectSystem;
+﻿using BetCity.Core.EffectSystem;
 using NaughtyAttributes;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Xml;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
 namespace BetCity.Data.ConfigModels
 {
     /// <summary>
-    /// 通用效果配置基类，可被藏品、Buff、卡牌等复用
+    /// 被动效果配置（自动订阅事件并响应）
     /// </summary>
-    public abstract class EffectConfig : ScriptableObject
+    [CreateAssetMenu(fileName = "Effect", menuName = "Effect/EffectConfig")]
+    public class EffectConfig : ScriptableObject
     {
         /// <summary>
         /// 效果来源
@@ -33,15 +30,61 @@ namespace BetCity.Data.ConfigModels
         /// <summary>
         /// 描述文本
         /// </summary>
-        [field: TextArea][field: SerializeField] public string Description { get; protected set; } 
-        /// <summary>
-        /// 效果类型
-        /// </summary>
-        [field: SerializeField] public EffectType Type { get; protected set; } 
+        [field: TextArea][field: SerializeField] public string Description { get; protected set; }
         /// <summary>
         /// 载体类型（藏品/卡牌/Buff）
         /// </summary>
         [field: SerializeField] public EffectCarrier CarrierType { get; protected set; }
+        /// <summary>
+        /// 触发条件（订阅的事件）
+        /// </summary>
+        [field: SerializeField] public TriggerCondition TriggerCondition { get; private set; }
+        /// <summary>
+        /// 生命周期类型
+        /// </summary>
+        [field: SerializeField] public EffectLifetime Lifetime { get; protected set; }
+        /// <summary>
+        /// 持续时间（回合，根据Lifetime生效）
+        /// </summary>
+        [field: SerializeField] public int Duration { get; protected set; }
+        /// <summary>
+        /// 持续回合结束动作类型
+        /// </summary>
+        [field: SerializeField] public EndTurnReaction EndTurnReaction { get; protected set; }
+
+        /// <summary>
+        /// 激活效果
+        /// </summary>
+        public bool Activate()
+        {
+            switch (Lifetime)
+            {
+                case EffectLifetime.Permanent:
+                    return EffectManager.Instance.ActivatePermanentPassiveEffect(Id, CarrierType, TriggerCondition);
+                case EffectLifetime.Timed:
+                    return EffectManager.Instance.ActivateTimedPassiveEffect(Id, CarrierType, TriggerCondition, Duration, EndTurnReaction);
+                case EffectLifetime.OneShot:
+                    return EffectManager.Instance.ActivateOneShotPassiveEffect(Id, CarrierType);
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// 取消激活效果（一次性效果不需要取消激活）
+        /// </summary>
+        public bool Deactivate()
+        {
+            switch (Lifetime)
+            {
+                case EffectLifetime.Permanent:
+                    return EffectManager.Instance.DeActivatePassiveEffect(Id);
+                case EffectLifetime.Timed:
+                    return EffectManager.Instance.DeActivateTimedEffectEndTurnSubscribe(Id) && EffectManager.Instance.DeActivatePassiveEffect(Id);
+                case EffectLifetime.OneShot:
+                    return true;
+            }
+            return true;
+        }
 
         [Button("检查ID是否重复")]
         private void CheckIdDuplication()
@@ -55,10 +98,10 @@ namespace BetCity.Data.ConfigModels
             }
 
             // 2. 查找所有同类型的PassiveEffectConfig资产
-            var allPassiveEffectGuids = AssetDatabase.FindAssets($"t:{nameof(PassiveEffectConfig)}");
+            var allPassiveEffectGuids = AssetDatabase.FindAssets($"t:{nameof(EffectConfig)}");
             var conflictAssets = allPassiveEffectGuids
                 .Select(guid => AssetDatabase.GUIDToAssetPath(guid)) // 转资产路径
-                .Select(path => AssetDatabase.LoadAssetAtPath<PassiveEffectConfig>(path)) // 加载SO
+                .Select(path => AssetDatabase.LoadAssetAtPath<EffectConfig>(path)) // 加载SO
                 .Where(so => so != null && so != this && so.Id == Id) // 排除自己，匹配相同ID
                 .ToList();
 
@@ -86,28 +129,6 @@ namespace BetCity.Data.ConfigModels
             }
 #endif
         }
-
-        /// <summary>
-        /// 激活效果（由载体调用，如藏品被拾取、Buff被添加、卡牌被使用时）
-        /// </summary>
-        public abstract void Activate();
-
-        /// <summary>
-        /// 取消激活效果
-        /// </summary>
-        public abstract void Deactivate();       
-    }
-
-    public enum EffectType
-    {
-        /// <summary>
-        /// 被动（订阅回调）
-        /// </summary>
-        Passive,
-        /// <summary>
-        /// 主动（发出动作）
-        /// </summary>
-        Active,
     }
 
     /// <summary>
@@ -116,5 +137,15 @@ namespace BetCity.Data.ConfigModels
     public enum EffectCarrier
     {
         Souvenir // 藏品
+    }
+
+    /// <summary>
+    /// 生命周期类型
+    /// </summary>
+    public enum EffectLifetime
+    {
+        Permanent, // 永久生效被动
+        Timed, // 时效型被动
+        OneShot // 一次性（触发后立即失效）可以是被动/也可以是主动
     }
 }
