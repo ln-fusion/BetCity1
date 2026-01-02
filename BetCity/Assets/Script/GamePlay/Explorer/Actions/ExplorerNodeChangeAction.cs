@@ -1,5 +1,6 @@
 ﻿using BetCity.Core.ActionSystem;
 using Cysharp.Threading.Tasks;
+using BetCity.Data.ConfigModels;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;

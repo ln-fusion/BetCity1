@@ -47,6 +47,7 @@ namespace BetCity.GamePlay.Explorer {
                 DiceImage[4] = Resources.Load<Sprite>("Image/Dice/DN4");
                 DiceImage[5] = Resources.Load<Sprite>("Image/Dice/DN5");
                 DiceImage[6] = Resources.Load<Sprite>("Image/Dice/DN6");
+                DiceCurrentImage.sprite = DiceImage[0];
             }
         }
         /// <summary>

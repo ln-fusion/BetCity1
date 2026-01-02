@@ -1104,4 +1104,12 @@ MonoBehaviour:
   BackWidth: 700
   BackHeight: 400
   MapScale: 5
-  NodeNumber: 0
+  NodeNumber: 7
+  MapNode:
+  - {fileID: 11400000, guid: 226cb8a905613f14fa2c8aa528ae8966, type: 2}
+  - {fileID: 11400000, guid: cde49d7eb111f6e4ab87fd225b577d9b, type: 2}
+  - {fileID: 11400000, guid: a3417a54b6434cf4da51f826a686b591, type: 2}
+  - {fileID: 11400000, guid: 0bcf9231b1ca3c74a87b588521f8a28c, type: 2}
+  - {fileID: 11400000, guid: 03bd23293a149394e8e2a9fa25191796, type: 2}
+  - {fileID: 11400000, guid: 88fc911018cb53c43ac566d6fb960f70, type: 2}
+  - {fileID: 11400000, guid: 3ce3ac20827c504409d57fd0832b8454, type: 2}

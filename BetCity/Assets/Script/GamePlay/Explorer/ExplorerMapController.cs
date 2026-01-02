@@ -1,5 +1,6 @@
 ﻿using BetCity.Core.Tools;
 using System.Collections.Generic;
+using BetCity.Data.ConfigModels;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -73,7 +74,7 @@ namespace BetCity.GamePlay.Explorer
             CurrentMapData=currentMap.GetComponent<MapData>();
             CurrentMapData.MapInital(this);
             MapNode = CurrentMapData.MapNode;
-            NodeTransform = CurrentMapData.NodeObject;
+            //NodeTransform = CurrentMapData.NodeObject;
             //player
             GameObject player= Instantiate(resourceController.Player, Vector3.zero, Quaternion.Euler(Vector3.zero));
             player.GetComponent<RectTransform>().SetParent(currentMap.GetComponent<RectTransform>(), false);

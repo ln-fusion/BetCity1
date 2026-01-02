@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,6 +9,7 @@ public class MapEvent
 
 
 }
+[Serializable]
 public enum EventType
 {
     Battle,//Õ½¶·
