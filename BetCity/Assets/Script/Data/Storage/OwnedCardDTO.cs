@@ -1,8 +1,8 @@
-using BetCity.GamePlay.CardOrg;
+﻿using BetCity.GamePlay.CardOrg;
 using Newtonsoft.Json;
 using System;
 
-namespace BetCity.Storage
+namespace BetCity.Data.Storage
 {
     /// <summary>
     /// 存储玩家拥有的卡牌信息

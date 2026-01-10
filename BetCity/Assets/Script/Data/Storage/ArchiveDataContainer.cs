@@ -1,11 +1,11 @@
-using BetCity.Storage;
+﻿using BetCity.Data.Storage;
 using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BetCity.Storage
+namespace BetCity.Data.Storage
 {
     /// <summary>
     /// 需要修改存档的Manager（如纪念品Manager）提交给StorageManager处理时需要继承此接口
@@ -33,7 +33,7 @@ namespace BetCity.Storage
     /// 存档容器
     /// </summary>
     [Serializable]
-    public class ArchiveContainer
+    public class ArchiveDataContainer
     {
         /// <summary>
         /// 玩家纪念品数据
@@ -43,11 +43,12 @@ namespace BetCity.Storage
         [SerializeField]
         [JsonProperty("OwnedSouvenirDTOs")]
         private List<OwnedSouvenirDTO> ownedSouvenirDTOs = new List<OwnedSouvenirDTO>();
-        //[JsonIgnore]
-        //public PlayerDTO PlayerDTO => playerDTO;
-        //[SerializeField]
-        //[JsonProperty("PlayerDTO")]
-        public PlayerDTO PlayerDTO;
+
+        /// <summary>
+        /// 玩家数据
+        /// </summary>
+        public PlayerDTO PlayerDTO { get; private set; }
+
         /// <summary>
         /// 玩家拥有的卡牌数据
         /// </summary>
@@ -56,10 +57,6 @@ namespace BetCity.Storage
         [SerializeField]
         [JsonProperty("OwnedCardDTOs")]
         private List<OwnedCardDTO> ownedCardDTOs = new List<OwnedCardDTO>();
-        /// <summary>
-        /// 版本兼容
-        /// </summary>
-        public string SaveVersion { get; private set; } = "v0.1";
 
         /// <summary>
         /// 修改玩家拥有纪念品存档信息，仅供StorageManager使用
@@ -75,6 +72,10 @@ namespace BetCity.Storage
             }
             this.ownedSouvenirDTOs = ownedSouvenirDTOs;
         }
+
+        /// <summary>
+        /// 修改玩家信息
+        /// </summary>
         public void ModifyExplorerPlayerData(List<PlayerDTO> playerDTO, IModifyArchive caller)
         {
             if (caller is not StorageManager)
@@ -83,6 +84,7 @@ namespace BetCity.Storage
             }
             this.PlayerDTO = playerDTO[0];
         }
+
         /// <summary>
         /// 修改玩家拥有的卡牌存档信息
         /// </summary>

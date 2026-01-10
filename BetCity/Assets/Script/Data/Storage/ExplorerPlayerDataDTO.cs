@@ -1,32 +1,24 @@
-using Newtonsoft.Json;
+锘縰sing Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-namespace BetCity.Storage
+
+namespace BetCity.Data.Storage
 {
     /// <summary>
-    /// 地图系统中玩家的数值
+    /// 鐜╁鍩虹淇℃伅
     /// </summary>
     [Serializable]
     public class PlayerDTO
     {
-
-        /// <summary>
-        /// 关联原型ID
-        /// </summary>
-        //public int MaxSanity { get; private set; }
-        //public int CurrentSanity { get; private set; }
-        //public int MaxActionPoints { get; private set; }
-        //public int CurrentActionPoints { get; private set; }
-        //public int CurrentNodeNum { get; private set; }
-        public int MaxSanity { get; set; }
-        public int CurrentSanity { get; set; }
-        public int MaxActionPoints { get; set; }
-        public int CurrentActionPoints { get;set; }
-        public int CurrentNodeNum { get; set; }
-        public int Coin { get; set; }
-        public int MapID { get; set; }
+        public int MaxSanity { get;}
+        public int CurrentSanity { get; }
+        public int MaxActionPoints { get;}
+        public int CurrentActionPoints { get; }
+        public int CurrentNodeNum { get;}
+        public int Coin { get; }
+        public int MapID { get;}
 
 
         public PlayerDTO() { }

@@ -331,7 +331,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   bagData: {fileID: 555309893}
-  inventoryStores: {fileID: 1604950471}
   popupPrefab: {fileID: 2481733342094865379, guid: dbb58ef4f4939a84491d671265b02e18, type: 3}
   canvasTransform: {fileID: 1570287287}
 --- !u!4 &233751089
@@ -749,7 +748,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b89d82be267f1a740a4f6d9f9870e04f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InventoryStores: {fileID: 1604950471}
   BagItemData: {fileID: 4900000, guid: 60629cb0625ab8a4dab919ac58f08f0d, type: 3}
   InventoryItemData: {fileID: 4900000, guid: 72981d51e6900194a84d234a11304ba4, type: 3}
   bagMaxTotal: 20
@@ -2299,6 +2297,7 @@ MonoBehaviour:
   InventoryPrefab: {fileID: 8259021859903778253, guid: ac168d025232f4b4b91a23b14d17e1b1, type: 3}
   InventoryPool: {fileID: 503671705}
   BagPool: {fileID: 630389860}
+  souvenirDataManager: {fileID: 0}
   BagData: {fileID: 555309893}
   descriptionDisplayText: {fileID: 1188409782}
   selectedItemDisplay: {fileID: 754941071556073147, guid: ac168d025232f4b4b91a23b14d17e1b1, type: 3}
@@ -2699,8 +2698,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 796365737}
   m_HandleRect: {fileID: 796365736}
   m_Direction: 2
-  m_Value: 1.0000001
-  m_Size: 0.68125415
+  m_Value: 1
+  m_Size: 0.6812541
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

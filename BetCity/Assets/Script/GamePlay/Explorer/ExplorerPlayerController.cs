@@ -1,7 +1,7 @@
-using BetCity.Core.ActionSystem;
+﻿using BetCity.Core.ActionSystem;
 using BetCity.Data.ConfigModels;
 using BetCity.Core.Tools;
-using BetCity.Storage;
+using BetCity.Data.Storage;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -69,13 +69,13 @@ namespace BetCity.GamePlay.Explorer
             else
             {
                 //强制设置初值，不用事件系统
-                playerData.MaxSanity = storageManager.ArchiveData.PlayerDTO.MaxSanity;
-                playerData.CurrentSanity = storageManager.ArchiveData.PlayerDTO.CurrentSanity;
-                playerData.MaxActionPoints = storageManager.ArchiveData.PlayerDTO.MaxActionPoints;
-                playerData.CurrentActionPoints = storageManager.ArchiveData.PlayerDTO.CurrentActionPoints;
-                playerData.CurrentNodeNum = storageManager.ArchiveData.PlayerDTO.CurrentNodeNum;
-                playerData.Coin = storageManager.ArchiveData.PlayerDTO.Coin;
-                playerData.MapID = storageManager.ArchiveData.PlayerDTO.MapID;
+                playerData.MaxSanity = storageManager.ArchiveDataContainer.PlayerDTO.MaxSanity;
+                playerData.CurrentSanity = storageManager.ArchiveDataContainer.PlayerDTO.CurrentSanity;
+                playerData.MaxActionPoints = storageManager.ArchiveDataContainer.PlayerDTO.MaxActionPoints;
+                playerData.CurrentActionPoints = storageManager.ArchiveDataContainer.PlayerDTO.CurrentActionPoints;
+                playerData.CurrentNodeNum = storageManager.ArchiveDataContainer.PlayerDTO.CurrentNodeNum;
+                playerData.Coin = storageManager.ArchiveDataContainer.PlayerDTO.Coin;
+                playerData.MapID = storageManager.ArchiveDataContainer.PlayerDTO.MapID;
                 screenController.printPlayerNature();
                 RefreshPlayerPosition();
             }
@@ -89,13 +89,13 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void Lode()
         {
-            playerData.MaxSanity = storageManager.ArchiveData.PlayerDTO.MaxSanity;
-            playerData.CurrentSanity = storageManager.ArchiveData.PlayerDTO.CurrentSanity;
-            playerData.MaxActionPoints = storageManager.ArchiveData.PlayerDTO.MaxActionPoints;
-            playerData.CurrentActionPoints = storageManager.ArchiveData.PlayerDTO.CurrentActionPoints;
-            playerData.CurrentNodeNum = storageManager.ArchiveData.PlayerDTO.CurrentNodeNum;
-            playerData.Coin = storageManager.ArchiveData.PlayerDTO.Coin;
-            playerData.MapID=storageManager.ArchiveData.PlayerDTO.MapID;
+            playerData.MaxSanity = storageManager.ArchiveDataContainer.PlayerDTO.MaxSanity;
+            playerData.CurrentSanity = storageManager.ArchiveDataContainer.PlayerDTO.CurrentSanity;
+            playerData.MaxActionPoints = storageManager.ArchiveDataContainer.PlayerDTO.MaxActionPoints;
+            playerData.CurrentActionPoints = storageManager.ArchiveDataContainer.PlayerDTO.CurrentActionPoints;
+            playerData.CurrentNodeNum = storageManager.ArchiveDataContainer.PlayerDTO.CurrentNodeNum;
+            playerData.Coin = storageManager.ArchiveDataContainer.PlayerDTO.Coin;
+            playerData.MapID=storageManager.ArchiveDataContainer.PlayerDTO.MapID;
             screenController.printPlayerNature();
             RefreshPlayerPosition() ;
         }

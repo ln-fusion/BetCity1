@@ -32,5 +32,13 @@ namespace BetCity.Core.ActionSystem
             Target = target;
             SourceAction = sourceAction;
         }
+
+        public GameActionContext(object source, object target, GameAction sourceAction, Dictionary<string, object> extraData)
+        {
+            Source = source;
+            Target = target;
+            SourceAction = sourceAction;
+            ExtraData = extraData;
+        }
     }
 }

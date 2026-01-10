@@ -15,11 +15,18 @@ namespace BetCity.Data.ConfigModels
         /// </summary>
         [field: SerializeField] public int Id { get; private set; }
         [field: SerializeField] public string Name { get; private set; }
-        [field: TextArea]
-        [field: SerializeField] public string Info { get; private set; }
+        [field: SerializeField, TextArea] public string Info { get; private set; }
         [field: SerializeField] public int ArtworkID { get; private set; }
         [field: SerializeField] public Sprite Image { get; private set; }
         [field: SerializeField] public int Price { get; private set; }
+        /// <summary>
+        /// 槽数
+        /// </summary>
+        [field: SerializeField] public int Slot { get; private set; }
+        /// <summary>
+        /// 纪念品稀有度
+        /// </summary>
+        [field: SerializeField] public SouvenirQuality Quality {  get; private set; }
         /// <summary>
         /// 纪念品分类，战斗类/探索类
         /// </summary>
@@ -33,5 +40,28 @@ namespace BetCity.Data.ConfigModels
     public enum SouvenirCategory
     {
         battle, explorer
+    }
+
+    /// <summary>
+    /// 纪念品稀有度
+    /// </summary>
+    public enum SouvenirQuality
+    {
+        /// <summary>
+        /// 普通
+        /// </summary>
+        Common,
+        /// <summary>
+        /// 稀有
+        /// </summary>
+        Rare,
+        /// <summary>
+        /// 史诗
+        /// </summary>
+        Epic,
+        /// <summary>
+        /// 特殊，剧情纪念品
+        /// </summary>
+        Special
     }
 }

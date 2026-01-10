@@ -1,3 +1,4 @@
+﻿using BetCity.GamePlay.Souvenir;
 using UnityEngine;
 
 public class ItemPopupManager : MonoBehaviour

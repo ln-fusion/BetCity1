@@ -1,4 +1,4 @@
-using BetCity.Core.Tools;
+﻿using BetCity.Core.Tools;
 using BetCity.GamePlay.Explorer;
 using Newtonsoft.Json;
 using System;
@@ -10,7 +10,9 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using UnityEngine;
 using BetCity.Card;
-namespace BetCity.Storage
+using BetCity.GamePlay.Souvenir;
+
+namespace BetCity.Data.Storage
 {
     /// <summary>
     /// 管理所有存储内容，目前包含存档数据（后续可以增加其他json文件如配置文件）
@@ -18,26 +20,73 @@ namespace BetCity.Storage
     public class StorageManager : MonoSingleton<StorageManager>, IModifyArchive
     {
         /// <summary>
-        /// 存档路径，后续更改实现多存档
+        /// 当前选择的存档路径
         /// </summary>
-        public string ArchiveSavePath => Path.Combine(Application.persistentDataPath, "PlayerArchive.json");
+        public string ArchiveDataSavePath => CurrentArchiveMeta?.SavePath;
+        /// <summary>
+        /// 存档元数据路径
+        /// </summary>
+        public string ArchiveMetaSavePath => Path.Combine(Application.persistentDataPath, "ArchiveMetaContainer.json");
         /// <summary>
         /// 存档数据
         /// </summary>
-        public ArchiveContainer ArchiveData { get; private set; }
+        public ArchiveDataContainer ArchiveDataContainer { get; private set; } = new ArchiveDataContainer();
+        /// <summary>
+        /// 当前选择的存档的元数据
+        /// </summary>
+        public ArchiveMeta CurrentArchiveMeta {  get; private set; }
+        /// <summary>
+        /// 存档元数据
+        /// </summary>
+        public ArchiveMetaContainer ArchiveMetaContainer { get; private set; }
 
         protected override void Awake()
         {
             base.Awake();
             DontDestroyOnLoad(gameObject);
+            LoadArchiveMeta();
             LoadArchiveData();
         }
 
         //暂时用来存档的地方
         private void OnDisable()
         {
-            SaveArchiveData();
+            SaveArchive();
         }
+
+        /// <summary>
+        /// 从ArchiveMetaSavePath加载存档元数据,并将
+        /// </summary>
+        private void LoadArchiveMeta()
+        {
+            try
+            {
+                if (File.Exists(ArchiveMetaSavePath))
+                {
+                    ArchiveMetaContainer = new ArchiveMetaContainer();
+                    string json = File.ReadAllText(ArchiveMetaSavePath);
+                    ArchiveMetaContainer = JsonConvert.DeserializeObject<ArchiveMetaContainer>(json);
+                    if (ArchiveMetaContainer == null)
+                    {
+                        ArchiveMetaContainer = new ArchiveMetaContainer();
+                    }
+                    else
+                    {
+                        CurrentArchiveMeta = ArchiveMetaContainer.ArchiveMetaList.Find(meta => meta.Id == ArchiveMetaContainer.CurrentArchiveId);
+                    }
+                }
+                else
+                {
+                    ArchiveMetaContainer = new ArchiveMetaContainer();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"加载存档失败，重置：{e.Message}");
+                ArchiveDataContainer = new ArchiveDataContainer();
+            }
+        }
+
         /// <summary>
         /// 加载存档（无存档则初始化空数据）
         /// </summary>
@@ -45,45 +94,48 @@ namespace BetCity.Storage
         {
             try
             {
-                if (File.Exists(ArchiveSavePath))
+                if (ArchiveDataSavePath != null && File.Exists(ArchiveDataSavePath))
                 {
-                    ArchiveData = new ArchiveContainer();
-                    string json = File.ReadAllText(ArchiveSavePath);
-                    ArchiveData = JsonConvert.DeserializeObject<ArchiveContainer>(json);
-                    if (ArchiveData == null)
+                    string json = File.ReadAllText(ArchiveDataSavePath);
+                    ArchiveDataContainer = JsonConvert.DeserializeObject<ArchiveDataContainer>(json);
+                    if (ArchiveDataContainer == null)
                     {
-                        ArchiveData = new ArchiveContainer();
-
-                        Debug.Log("1");
+                        ArchiveDataContainer = new ArchiveDataContainer();
                     }
                 }
                 else
                 {
-                    ArchiveData = new ArchiveContainer();
+                    CurrentArchiveMeta = new ArchiveMeta("PlayerArchive");
+                    ArchiveMetaContainer.ArchiveMetaList.Add(CurrentArchiveMeta);
                 }
             }
             catch (Exception e)
             {
                 Debug.LogError($"加载存档失败，重置：{e.Message}");
-                ArchiveData = new ArchiveContainer();
+                ArchiveDataContainer = new ArchiveDataContainer();
             }
         }
 
         /// <summary>
-        /// 保存存档到本地文件（内部逻辑）重新改写ArchiveData
+        /// 保存存档包括存档元数据
         /// </summary>
-        private void SaveArchiveData()
+        private void SaveArchive()
         {
             try
             {
-                string json = JsonConvert.SerializeObject(ArchiveData, Formatting.Indented);
+                string json = JsonConvert.SerializeObject(ArchiveDataContainer, Formatting.Indented);
                 // 写入持久化路径
-                File.WriteAllText(ArchiveSavePath, json);
-                Debug.Log($"存档保存成功 → 路径：{ArchiveSavePath}");
+                File.WriteAllText(ArchiveDataSavePath, json);
+                CurrentArchiveMeta.LastModifyTime = DateTime.Now;
+                
+                Debug.Log($"[StorageManager]存档保存成功 → 路径：{ArchiveDataSavePath}");
+                ArchiveMetaContainer.CurrentArchiveId = CurrentArchiveMeta.Id;
+                json = JsonConvert.SerializeObject(ArchiveMetaContainer, Formatting.Indented);
+                File.WriteAllText(ArchiveMetaSavePath, json);
             }
             catch (Exception e)
             {
-                Debug.LogError($"存档保存失败：{e.Message}");
+                Debug.LogError($"[StorageManager]存档保存失败：{e.Message}");
             }
         }
 
@@ -92,7 +144,7 @@ namespace BetCity.Storage
         /// </summary>
         public void ManualSave()
         {
-            SaveArchiveData();
+            SaveArchive();
         }
 
         /// <summary>
@@ -104,7 +156,7 @@ namespace BetCity.Storage
             {
                 if (typeof(T) == typeof(OwnedSouvenirDTO))
                 {
-                    ArchiveData.ModifyOwnedSouvenir(t.Cast<OwnedSouvenirDTO>().ToList(), this);
+                    ArchiveDataContainer.ModifyOwnedSouvenir(t.Cast<OwnedSouvenirDTO>().ToList(), this);
                 }
                 else
                 {
@@ -116,7 +168,7 @@ namespace BetCity.Storage
                 if (typeof(T) == typeof(PlayerDTO))
                 {
 
-                    ArchiveData.ModifyExplorerPlayerData(t.Cast<PlayerDTO>().ToList(), this);
+                    ArchiveDataContainer.ModifyExplorerPlayerData(t.Cast<PlayerDTO>().ToList(), this);
                 }
                 else
                 {
@@ -127,7 +179,7 @@ namespace BetCity.Storage
             {
                 if (typeof(T) == typeof(OwnedCardDTO))
                 {
-                    ArchiveData.ModifyOwnedCard(t.Cast<OwnedCardDTO>().ToList(), this);
+                    ArchiveDataContainer.ModifyOwnedCard(t.Cast<OwnedCardDTO>().ToList(), this);
                 }
                 else
                 {

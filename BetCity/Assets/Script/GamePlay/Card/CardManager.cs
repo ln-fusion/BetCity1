@@ -1,9 +1,9 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using BetCity.Core.Tools;
 using BetCity.Card;
-using BetCity.Storage;
+using BetCity.Data.Storage;
 using BetCity.Data.ConfigModels;
 
 
@@ -27,7 +27,7 @@ namespace BetCity.Card
         /// </summary>
         private void LoadCardsFromArchive()
         {
-            var dtos = StorageManager.Instance.ArchiveData.OwnedCardDTOs;
+            var dtos = StorageManager.Instance.ArchiveDataContainer.OwnedCardDTOs;
             foreach (var dto in dtos)
             {
                 var cardData = CardDataManager.Instance.GetDataById(dto.Id);
