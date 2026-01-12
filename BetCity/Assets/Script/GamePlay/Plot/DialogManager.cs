@@ -19,7 +19,7 @@ public class DialogManager : MonoBehaviour
     public Button next;
     public GameObject optionButton;
     public Transform buttonGroup;
-    private SanityManager sanityManager;
+   // private SanityManager sanityManager;
     public TMP_FontAsset chineseFont;
 
     private void Awake()
@@ -32,8 +32,8 @@ public class DialogManager : MonoBehaviour
             imageDic["player"] = sprites.Count > 2 ? sprites[2] : null;
         }
 
-        sanityManager = FindObjectOfType<SanityManager>();
-        if (sanityManager == null)
+      //  sanityManager = FindObjectOfType<SanityManager>();
+     //   if (sanityManager == null)
         {
             Debug.LogError("场景中未找到SanityManager实例，请确保已添加该组件！");
         }
@@ -240,18 +240,18 @@ public class DialogManager : MonoBehaviour
 
     private void ProcessSanityEffect(string effect, string target)
     {
-        if (sanityManager == null || string.IsNullOrEmpty(effect) || target != "player")
-            return;
+      //  if (sanityManager == null || string.IsNullOrEmpty(effect) || target != "player")
+       //     return;
 
         if (effect.Contains("加@"))
         {
             int amount = ParseEffectValue(effect, "加@");
-            if (amount > 0) sanityManager.IncreaseSanity(amount);
+       //     if (amount > 0) sanityManager.IncreaseSanity(amount);
         }
         else if (effect.Contains("@"))
         {
             int amount = ParseEffectValue(effect, "@");
-            if (amount > 0) sanityManager.DecreaseSanity(amount);
+      //      if (amount > 0) sanityManager.DecreaseSanity(amount);
         }
     }
 
