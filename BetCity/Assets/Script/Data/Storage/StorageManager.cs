@@ -11,6 +11,7 @@ using System.Runtime.InteropServices;
 using UnityEngine;
 using BetCity.Card;
 using BetCity.GamePlay.Souvenir;
+using BetCity.Core.ProgressSystem;
 
 namespace BetCity.Data.Storage
 {
@@ -123,6 +124,9 @@ namespace BetCity.Data.Storage
         {
             try
             {
+                //先写入再保存
+                SouvenirManager.Instance.ManualSave();
+
                 string json = JsonConvert.SerializeObject(ArchiveDataContainer, Formatting.Indented);
                 // 写入持久化路径
                 File.WriteAllText(ArchiveDataSavePath, json);
@@ -180,6 +184,17 @@ namespace BetCity.Data.Storage
                 if (typeof(T) == typeof(OwnedCardDTO))
                 {
                     ArchiveDataContainer.ModifyOwnedCard(t.Cast<OwnedCardDTO>().ToList(), this);
+                }
+                else
+                {
+                    throw new InvalidOperationException(caller + "传入错误类型信息" + typeof(T));
+                }
+            }
+            else if(caller is ProgressManager)
+            {
+                if (typeof(T) == typeof(ArchiveProgressDTO))
+                {
+                    ArchiveDataContainer.ModifyArchiveProgress(t.Cast<ArchiveProgressDTO>().ToList(), this);
                 }
                 else
                 {

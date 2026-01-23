@@ -1,7 +1,8 @@
-using BetCity.Core.Tools;
+﻿using BetCity.Core.Tools;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 namespace BetCity.data
 {
     public class PlayerData : MonoSingleton<PlayerData>

@@ -91,6 +91,7 @@ namespace BetCity.GamePlay.Souvenir
             this.souvenirData = souvenirData;
             this.Price = souvenirData.Price;
             this.IsOwned = false;
+            this.IsInBag = false;
         }
 
         /// <summary>
@@ -105,6 +106,20 @@ namespace BetCity.GamePlay.Souvenir
                 throw new InvalidOperationException("仅SouvenirManager类可修改Souvenir的Price属性");
             }
             this.IsOwned = isOwned;
+        }
+
+        /// <summary>
+        /// 修改IsInBag属性，只限实现IModifySouvenir的SouvenirManger访问
+        /// <param name="caller">允许修改Souvenir的接口</param>
+        /// </summary>
+        public void SetIsInBag(bool isInBag, IModifySouvenir caller)
+        {
+            // 关键：校验调用者必须是SouvenirManager的实例（防止其他类伪造接口）
+            if (caller is not SouvenirManager)
+            {
+                throw new InvalidOperationException("仅SouvenirManager类可修改Souvenir的Price属性");
+            }
+            this.IsInBag = isInBag;
         }
 
         /// <summary>

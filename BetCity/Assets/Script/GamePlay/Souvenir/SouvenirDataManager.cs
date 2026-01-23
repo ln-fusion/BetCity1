@@ -17,12 +17,14 @@ namespace BetCity.GamePlay.Souvenir
         /// 所有纪念品数据列表（只读对外暴露）
         /// </summary>
         public IReadOnlyList<SouvenirData> Data => _data;
+        /// <summary>
+        /// 纪念品资源路径
+        /// </summary>
+        public const string SOUVENIR_DATA_RESOURCES_PATH = "Souvenir";
+
         private List<SouvenirData> _data = new List<SouvenirData>();
         // 数据字典（用于快速通过ID查询）
         private Dictionary<int, SouvenirData> _dataDict = new Dictionary<int, SouvenirData>();
-
-        [Header("数据配置")]
-        [SerializeField] private string souvenirDataResourcesPath;
 
         /// <summary>
         /// 初始化数据
@@ -47,11 +49,11 @@ namespace BetCity.GamePlay.Souvenir
             try
             {
                 // 暂时采用同步LoadAll
-                SouvenirData[] loadedDatas = Resources.LoadAll<SouvenirData>(souvenirDataResourcesPath);
+                SouvenirData[] loadedDatas = Resources.LoadAll<SouvenirData>(SOUVENIR_DATA_RESOURCES_PATH);
 
                 if (loadedDatas == null || loadedDatas.Length == 0)
                 {
-                    Debug.LogWarning($"[SouvenirDataManager] 未在Resources/{souvenirDataResourcesPath}路径下找到任何SouvenirData资源");
+                    Debug.LogWarning($"[SouvenirDataManager] 未在Resources/{SOUVENIR_DATA_RESOURCES_PATH}路径下找到任何SouvenirData资源");
                     return;
                 }
 

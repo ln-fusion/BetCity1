@@ -14,11 +14,11 @@ namespace BetCity.Data.ConfigModels
     public class Node : ScriptableObject
     {
         [Header("填写id")]
-        public NodeID ID;
+        public NodeID Id;
         [Header("连接节点")]
         public int[] connectedNodes;
         [Header("节点类型")]
-        public EventType eventType;
+        public TypeOfEvent eventType;
         public float Xposition => NodePosition.anchoredPosition.x;
         public float Yposition => NodePosition.anchoredPosition.y;
         [Header("这个不需要填写")]

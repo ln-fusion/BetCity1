@@ -50,6 +50,11 @@ namespace BetCity.Data.Storage
         public PlayerDTO PlayerDTO { get; private set; }
 
         /// <summary>
+        /// 玩家进度数据
+        /// </summary>
+        public ArchiveProgressDTO ArchiveProgressDTO { get; private set; }
+
+        /// <summary>
         /// 玩家拥有的卡牌数据
         /// </summary>
         [JsonIgnore]
@@ -95,6 +100,15 @@ namespace BetCity.Data.Storage
                 throw new InvalidOperationException("仅StorageManager类可修改存档信息");
             }
             this.ownedCardDTOs = ownedCardDTOs;
+        }
+
+        public void ModifyArchiveProgress(List<ArchiveProgressDTO> archiveProgressDTO, IModifyArchive caller)
+        {
+            if (caller is not StorageManager)
+            {
+                throw new InvalidOperationException("仅StorageManager类可修改存档信息");
+            }
+            this.ArchiveProgressDTO = archiveProgressDTO[0];
         }
     }
 }

@@ -125,7 +125,7 @@ namespace BetCity.GamePlay.Explorer
             }
             Node currentnode = ExplorerMapController.MapNode[playerData.CurrentNodeNum];
             //判断目标节点是否可到达
-            if (!mapController.CheckNode(currentnode.ID.ID,targetnode.ID.ID))
+            if (!mapController.CheckNode(currentnode.Id.ID,targetnode.Id.ID))
             {
                 ExplorerScreenController.CreateMessage("无法到达");
                 yield break;
@@ -133,7 +133,7 @@ namespace BetCity.GamePlay.Explorer
             screenController.ScreenFocus(targetnode);
 
             UseActionPointChange(-1);
-            playerData.CurrentNodeNum=targetnode.ID.ID;
+            playerData.CurrentNodeNum=targetnode.Id.ID;
             PLAYER_STATUS = 1;
             animator.SetBool("move", true);
 
@@ -158,7 +158,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void ToNodeInstant(Node targetnode)
         {
-            playerData.CurrentNodeNum = targetnode.ID.ID;
+            playerData.CurrentNodeNum = targetnode.Id.ID;
             playerTransform.anchoredPosition = new Vector2(targetnode.Xposition, targetnode.Yposition)+showPosition;
             screenController.ScreenFocusInstant(targetnode);
         }

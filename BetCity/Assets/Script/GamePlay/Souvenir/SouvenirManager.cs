@@ -37,11 +37,11 @@ namespace BetCity.GamePlay.Souvenir
         /// <summary>
         /// 当前最大槽数（待改动
         /// </summary>
-        public int Max_Slots { get; private set; } = 10;
+        public int MaxSlots { get; private set; } = 10;
         /// <summary>
         /// 当前槽数
         /// </summary>
-        public int Current_Slots {  get; private set; }
+        public int CurrentSlots {  get; private set; }
         /// <summary>
         /// 所有已拥有纪念品
         /// </summary>
@@ -65,7 +65,6 @@ namespace BetCity.GamePlay.Souvenir
         protected override void Awake()
         {
             base.Awake();
-            DontDestroyOnLoad(gameObject);
             CacheOwnedSouvenirInstances();
             LoadNotOwnedSouvenirs();
         }
@@ -75,7 +74,6 @@ namespace BetCity.GamePlay.Souvenir
         /// </summary>
         private void OnDisable()
         {
-            SaveArchive();
             foreach (var id in bagSouvenirs)
             {
                 UnregisterEffect(ownedSouvenirs[id]);
@@ -126,14 +124,14 @@ namespace BetCity.GamePlay.Souvenir
                     RegisterEffect(souvenir);
                     ownedSouvenirs.Add(dto.Id, souvenir);
                     bagSouvenirs.Add(dto.Id);
-                    Current_Slots += souvenir.Slot;
+                    CurrentSlots += souvenir.Slot;
                     continue;
                 }
                 ownedSouvenirs.Add(dto.Id, souvenir);
                 warehouseSouvenirs.Add(dto.Id);
             }
 
-            if(Current_Slots > Max_Slots)
+            if(CurrentSlots > MaxSlots)
             {
                 Debug.LogWarning("存档内拥有的槽数>最大槽数!");
             }
@@ -216,14 +214,16 @@ namespace BetCity.GamePlay.Souvenir
             {
                 ownedSouvenirs[id] = souvenir;
                 specialSouvenirs.Add(id);
+                souvenir.SetIsInBag(true, this);
             }
             else
             {
                 ownedSouvenirs[id] = souvenir;
-                if (Current_Slots + souvenir.Slot <= Max_Slots)
+                if (CurrentSlots + souvenir.Slot <= MaxSlots)
                 {
                     bagSouvenirs.Add(id);
-                    Current_Slots += souvenir.Slot;
+                    CurrentSlots += souvenir.Slot;
+                    souvenir.SetIsInBag(true, this);
                 }
                 else warehouseSouvenirs.Add(id);
             }
@@ -253,13 +253,17 @@ namespace BetCity.GamePlay.Souvenir
             souvenir = ownedSouvenirs[id];
             UnregisterEffect(souvenir);
             ownedSouvenirs.Remove(id);
-            if (souvenir.Quality == SouvenirQuality.Special) specialSouvenirs.Remove(id);
+            if (souvenir.Quality == SouvenirQuality.Special)
+            {
+                specialSouvenirs.Remove(id);
+            }
             else
             {
                 bagSouvenirs.Remove(id);
-                Current_Slots -= souvenir.Slot;
+                CurrentSlots -= souvenir.Slot;
             }
 
+            souvenir.SetIsInBag(false, this);
             notOwnedSouvenirs.Add(id);
             souvenir.SetIsOwned(false, this);
             errorMsg = null;
@@ -300,14 +304,14 @@ namespace BetCity.GamePlay.Souvenir
             if (warehouseSouvenirs.Contains(id))
             {
                 int slot = ownedSouvenirs[id].Slot;
-                if(Current_Slots + slot > Max_Slots)
+                if(CurrentSlots + slot > MaxSlots)
                 {
                     Debug.LogWarning("[SouvenirManager]槽数超过上限！");
                     return false;
                 }
                 bagSouvenirs.Add(id);
                 warehouseSouvenirs.Remove(id);
-                Current_Slots += slot;
+                CurrentSlots += slot;
                 return true;
             }
             Debug.LogWarning($"[SouvenirManager]对应id为{id}的纪念品不在仓库中");
@@ -329,7 +333,7 @@ namespace BetCity.GamePlay.Souvenir
                     Debug.LogWarning($"[SouvenirManager]对应id为{id}的纪念品不能放入仓库，因为其为特殊纪念品");
                     return false;
                 }
-                Current_Slots -= ownedSouvenirs[id].Slot;
+                CurrentSlots -= ownedSouvenirs[id].Slot;
                 warehouseSouvenirs.Add(id);
                 bagSouvenirs.Remove(id);
                 return true;

@@ -32,14 +32,14 @@ namespace BetCity.Data.ConfigModels
         /// </summary>
         [field: SerializeField] public SouvenirCategory Category { get; private set; }
         /// <summary>
-        /// 纪念品的效果（都是被动）
+        /// 纪念品的效果
         /// </summary>
         [field: SerializeField] public List<EffectConfig> Effects { get; private set; }
     }
 
     public enum SouvenirCategory
     {
-        battle, explorer
+        Battle, Explorer
     }
 
     /// <summary>
