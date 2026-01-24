@@ -21,7 +21,11 @@ namespace BetCity.Data.ConfigModels
         /// <summary>
         /// 一次上架商品数量
         /// </summary>
-        [field: SerializeField] public int Amount { get; private set; }
+        [field: SerializeField] public int Amount { get; private set; } 
+        /// <summary>
+        /// 一次上架商品数量
+        /// </summary>
+        [field: SerializeField] public int SanityPurchaseAmount {  get; private set; }
     }
 
     /// <summary>
@@ -46,5 +50,9 @@ namespace BetCity.Data.ConfigModels
         /// 商品出现条件
         /// </summary>
         [field: SerializeField] public SerializableDictionary<string, List<string>> Conditions { get; private set; }
+        /// <summary>
+        /// 用理智的价格
+        /// </summary>
+        [field: SerializeField] public int SanityPrice { get; private set; }
     }
 }

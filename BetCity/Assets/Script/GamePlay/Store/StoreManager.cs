@@ -29,11 +29,14 @@ namespace BetCity.GamePlay.Store
         /// 商店事件
         /// </summary>
         public IReadOnlyDictionary<int, StoreEvent> storeEvents => EventLoader.Instance.StoreEvents;
-
         /// <summary>
         /// 当前上架商品
         /// </summary>
-        public List<Product> CurrentListedProducts {  get; private set; }
+        public Product[] CurrentListedProducts { get; private set; }
+        /// <summary>
+        /// 用理智购买商品的索引
+        /// </summary>
+        public int[] SanityPurchaseIndexs { get; private set; }
 
         private List<Product> CheckCondition()
         {
@@ -61,6 +64,15 @@ namespace BetCity.GamePlay.Store
             return legalProducts;
         }
 
+        //加载商品
+        private void LoadProducts()
+        {
+            List<Product> legalProducts = CheckCondition();
+            List<int> selectedIndexs = RandomTool.GetWeightRandomIndexNoRepeat(legalProducts.Select(l => l.Weight).ToList(), CurrentEvent.Amount);
+            CurrentListedProducts = selectedIndexs.Select(i => legalProducts[i]).ToArray();
+            SanityPurchaseIndexs = RandomTool.GetWeightRandomIndexNoRepeat(Enumerable.Repeat(1, CurrentEvent.Amount).ToList(), CurrentEvent.SanityPurchaseAmount).ToArray();
+        }
+
         #region 接口
         /// <summary>
         /// 进入商店节点动作触发该函数
@@ -76,11 +88,10 @@ namespace BetCity.GamePlay.Store
             else
             {
                 Debug.LogWarning($"[StoreManager]对应Id为{id}的商店事件不存在！");
+                CurrentEventState = "None";
                 return UniTask.CompletedTask;
             }
-            List<Product> legalProducts = CheckCondition();
-            List<int> selectedIndexs = RandomTool.GetWeightRandomIndexNoRepeat(legalProducts.Select(l => l.Weight).ToList(), CurrentEvent.Amount);
-            CurrentListedProducts = selectedIndexs.Select(i => legalProducts[i]).ToList();
+            LoadProducts();
             return UniTask.CompletedTask;
         }
         #endregion

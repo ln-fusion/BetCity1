@@ -216,7 +216,7 @@ namespace BetCity.Core.ActionSystem
                 return;
             }
 
-            await PerfromSubscribers(action, preSubs, cancellationToken);
+            await PerfromSubscribers(action, postSubs, cancellationToken);
             reactions = action.PostReactions;
 
             while (reactions.Count > 0 && action.IsValid && !cancellationToken.IsCancellationRequested)

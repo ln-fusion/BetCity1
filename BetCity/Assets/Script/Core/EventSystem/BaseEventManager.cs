@@ -46,10 +46,6 @@ namespace BetCity.Core.EventSystem
             {
                 throw new NotImplementedException();
             }
-            else if(CurrentEventState == "End")
-            {
-                CurrentEventState = "None";
-            }
             return;
         }
 
@@ -58,9 +54,9 @@ namespace BetCity.Core.EventSystem
         /// </summary>
         public virtual UniTask EnterEvent(CancellationToken cancellationToken, int id)
         {
-            if(CurrentEventState != "None")
+            if(CurrentEventState != "None" || CurrentEvent != null)
             {
-                Debug.LogWarning("[EventManager]在一个事件未结束试图触发一个相同类型的事件!");
+                Debug.LogWarning("[EventManager]在一个事件未结束时试图触发一个相同类型的事件!");
                 return UniTask.CompletedTask;
             }
             ProgressManager.Instance.EnterEvent(id);
@@ -69,15 +65,30 @@ namespace BetCity.Core.EventSystem
         }
 
         /// <summary>
-        /// 结束当前事件,将状态转换为None
+        /// 将当前事件状态转换为End
         /// </summary>
-        public virtual UniTask ExitEvent(CancellationToken cancellationToken)
+        public virtual UniTask EndEvent(CancellationToken cancellationToken)
         {
-            if (CurrentEventState == "None")
+            if (CurrentEventState == "None" || CurrentEvent == null)
             {
                 Debug.LogWarning("[EventManager]当前无事件需要被结束!");
                 return UniTask.CompletedTask;
             }
+            CurrentEventState = "End";
+            return UniTask.CompletedTask;
+        }
+
+        /// <summary>
+        /// 离开当前事件,将状态转换为None
+        /// </summary>
+        public virtual UniTask ExitEvent(CancellationToken cancellationToken)
+        {
+            if (CurrentEventState == "None" || CurrentEvent == null)
+            {
+                Debug.LogWarning("[EventManager]当前无事件需要被结束!");
+                return UniTask.CompletedTask;
+            }
+            CurrentEvent = null;
             CurrentEventState = "None";
             return UniTask.CompletedTask;
         }
