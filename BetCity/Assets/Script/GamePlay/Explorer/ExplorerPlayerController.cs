@@ -8,10 +8,12 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cysharp.Threading.Tasks;
+using System.Threading;
 
 namespace BetCity.GamePlay.Explorer
 {
-    public class ExplorerPlayerController :MonoSingleton<ExplorerPlayerController>,ISubmitArchive<PlayerDTO>,IHasCoin
+    public class ExplorerPlayerController :MonoSingleton<ExplorerPlayerController>,ISubmitArchive<PlayerDataDTO>
     {
         /// <summary>
         /// 玩家物体，用于获取位置信息
@@ -28,14 +30,14 @@ namespace BetCity.GamePlay.Explorer
         /// <summary>
         /// 接口，返回当前金币值
         /// </summary>
-        public int Coin=>playerData.Coin;
+        public int Coin=>playerData.CurrentCoin;
 
         private ExplorerScreenController screenController;
         private ExplorerDiceController diceController;
         private ExplorerMapController mapController;
         private StorageManager storageManager;
         private ActionManager actionManager;
-        private data.PlayerData playerData;
+        public data.PlayerData playerData;
 
 
         private float MoveSpeed =300f;//玩家移动速度
@@ -45,6 +47,7 @@ namespace BetCity.GamePlay.Explorer
         protected override void Awake()
         {
             base.Awake();
+            playerData = new data.PlayerData();
         }
         void Start()
         {
@@ -53,51 +56,44 @@ namespace BetCity.GamePlay.Explorer
             storageManager=StorageManager.Instance;
             actionManager=ActionManager.Instance;
             mapController=ExplorerMapController.Instance;
-            playerData = data.PlayerData.Instance;
+            
             if (!_initial)
             {
                 //强制设置初值，不用事件系统
                 _initial = true;
-                playerData.MaxSanity = 20;
-                playerData.CurrentSanity = 10;
-                playerData.MaxActionPoints = 6;
-                playerData.CurrentActionPoints = 0;
-                playerData.CurrentNodeNum = 0;
-                playerData.Coin = 10;
-                playerData.MapID = 1;
+                
             }
             else
             {
+                
                 //强制设置初值，不用事件系统
-                playerData.MaxSanity = storageManager.ArchiveDataContainer.PlayerDTO.MaxSanity;
-                playerData.CurrentSanity = storageManager.ArchiveDataContainer.PlayerDTO.CurrentSanity;
-                playerData.MaxActionPoints = storageManager.ArchiveDataContainer.PlayerDTO.MaxActionPoints;
-                playerData.CurrentActionPoints = storageManager.ArchiveDataContainer.PlayerDTO.CurrentActionPoints;
-                playerData.CurrentNodeNum = storageManager.ArchiveDataContainer.PlayerDTO.CurrentNodeNum;
-                playerData.Coin = storageManager.ArchiveDataContainer.PlayerDTO.Coin;
-                playerData.MapID = storageManager.ArchiveDataContainer.PlayerDTO.MapID;
+                playerData.Load(storageManager.ArchiveDataContainer.PlayerDataDTO);
                 screenController.printPlayerNature();
                 RefreshPlayerPosition();
             }
+            
             mapController.MapCreate();
             playerTransform = Player.GetComponent<RectTransform>();
             animator = Player.GetComponent<Animator>();
             ToNodeInstant(ExplorerMapController.MapNode[playerData.CurrentNodeNum]);
+            SaveArchive();
         }
         /// <summary>
         /// 从storagemanager中读取数据
         /// </summary>
         public void Lode()
         {
-            playerData.MaxSanity = storageManager.ArchiveDataContainer.PlayerDTO.MaxSanity;
-            playerData.CurrentSanity = storageManager.ArchiveDataContainer.PlayerDTO.CurrentSanity;
-            playerData.MaxActionPoints = storageManager.ArchiveDataContainer.PlayerDTO.MaxActionPoints;
-            playerData.CurrentActionPoints = storageManager.ArchiveDataContainer.PlayerDTO.CurrentActionPoints;
-            playerData.CurrentNodeNum = storageManager.ArchiveDataContainer.PlayerDTO.CurrentNodeNum;
-            playerData.Coin = storageManager.ArchiveDataContainer.PlayerDTO.Coin;
-            playerData.MapID=storageManager.ArchiveDataContainer.PlayerDTO.MapID;
+            playerData.Load(storageManager.ArchiveDataContainer.PlayerDataDTO);
             screenController.printPlayerNature();
             RefreshPlayerPosition() ;
+        }
+        /// <summary>
+        /// 刷新面板显示
+        /// </summary>
+        public void RenewScreen()
+        {
+            screenController.printPlayerNature();
+            diceController.APRefresh();
         }
         /// <summary>
         /// 立刻更新玩家位置，用于存档读取
@@ -107,112 +103,141 @@ namespace BetCity.GamePlay.Explorer
             ToNodeInstant(ExplorerMapController.MapNode[ playerData.CurrentNodeNum]);
         }
         /// <summary>
-        /// 玩家移动Action的实际逻辑
+        /// 玩家移动Action的判断逻辑
         /// </summary>
-        public IEnumerator Move(Node targetnode)
+        public async UniTask MoveJudge(Node sourcenode, Node targetnode)
         {
-            //判断当前是否能进行操作
+            //CancellationTokenSource cts=new CancellationTokenSource();
+            // 判断当前是否能进行操作
             if (PLAYER_STATUS != 0)
             {
-                ExplorerScreenController.CreateMessage("当前无法操作");
-                yield break;
+                //当前无法操作
+                return; // 替代协程的yield break
             }
-            //判断玩家AP点
+
+            // 判断玩家AP点
             if (playerData.CurrentActionPoints <= 0)
             {
-                ExplorerScreenController.CreateMessage("AP点不足");
-                yield break;
+                //AP点不足
+                return; // 替代协程的yield break
             }
+
             Node currentnode = ExplorerMapController.MapNode[playerData.CurrentNodeNum];
             //判断目标节点是否可到达
             if (!mapController.CheckNode(currentnode.Id.ID,targetnode.Id.ID))
             {
-                ExplorerScreenController.CreateMessage("无法到达");
-                yield break;
+                //无法到达
+                
+                return; // 替代协程的yield break
             }
+            await UniTask.Yield();
+
+            GameActionContext context = new(sourcenode, targetnode, null);
+            var currentNodeChange = new ExplorerNodeChangeAction(context);
+            ActionManager.Instance.Perform(currentNodeChange);
+
+            
+
+        }
+        /// <summary>
+        /// 玩家移动Action的实际逻辑
+        /// </summary>
+        public async UniTask ExitNode(Node sourcenode)
+        {
+            PLAYER_STATUS = 1;
+            await UniTask.Yield();
+
+        }
+        /// <summary>
+        /// 玩家移动Action的实际逻辑
+        /// </summary>
+        public async UniTask EnterNode(Node targetnode)
+        {
             screenController.ScreenFocus(targetnode);
 
             UseActionPointChange(-1);
-            playerData.CurrentNodeNum=targetnode.Id.ID;
+            UseNodeNumChange(targetnode.Id.ID);
             PLAYER_STATUS = 1;
             animator.SetBool("move", true);
 
+            UseNodeNumChange(targetnode.Id.ID);
+            PLAYER_STATUS = 0;
+            await UniTask.Yield();
+
+        }
+
+        /// <summary>
+        /// 玩家移动Action的实际逻辑
+        /// </summary>
+        public async UniTask Move(Node targetnode)
+        {
+            animator.SetBool("move", true);
 
             Vector2 movetarget = new Vector2(targetnode.Xposition, targetnode.Yposition) + showPosition;
-            Vector2 moveframe = (movetarget- playerTransform.anchoredPosition).normalized;
-            float distance = Vector2.Distance(playerTransform.anchoredPosition, new Vector2(targetnode.Xposition, targetnode.Yposition) + showPosition);
+            Vector2 moveframe = (movetarget - playerTransform.anchoredPosition).normalized;
+            float distance = Vector2.Distance(playerTransform.anchoredPosition, movetarget); // 优化：复用movetarget，减少重复计算
+
+            // 移动循环逻辑
             while (distance > 10)
             {
                 playerTransform.anchoredPosition += moveframe * MoveSpeed * Time.deltaTime;
-                distance = Vector2.Distance(playerTransform.anchoredPosition, new Vector2(targetnode.Xposition, targetnode.Yposition) + showPosition);
-                yield return null;
+                distance = Vector2.Distance(playerTransform.anchoredPosition, movetarget); // 优化：复用movetarget
+                await UniTask.Yield(); // 替代yield return null，等待下一帧
             }
-            playerTransform.anchoredPosition = new Vector2(targetnode.Xposition, targetnode.Yposition) + showPosition;
+
+            // 修正位置到目标点
+            playerTransform.anchoredPosition = movetarget;
             animator.SetBool("move", false);
-            screenController.printPlayerNature();
-            yield return null;
-            PLAYER_STATUS = 0;
+            
+
+            await UniTask.Yield(); // 替代yield return null，等待下一帧
+            
         }
         /// <summary>
         /// 立刻更新玩家位置到指定Node
         /// </summary>
         public void ToNodeInstant(Node targetnode)
         {
-            playerData.CurrentNodeNum = targetnode.Id.ID;
+            UseNodeNumChange(targetnode.Id.ID);
             playerTransform.anchoredPosition = new Vector2(targetnode.Xposition, targetnode.Yposition)+showPosition;
             screenController.ScreenFocusInstant(targetnode);
         }
-        #region 接口
+
+        #region 存储
         /// <summary>
-        /// 更改当前理智值接口
+        ///提交保存申请
         /// </summary>
-        public bool ChangeCurrentSanity(int Sanity, CurrentSanityChangeAction currentSanityChangeAction)
+        private void SaveArchive()
         {
-            if (playerData.CurrentSanity >= playerData.MaxSanity)
-            {
-                ExplorerScreenController.CreateMessage("理智值已满");
-                playerData.CurrentSanity = playerData.MaxSanity;
-                screenController.printPlayerNature();
-            }
-            else if (playerData.CurrentSanity >playerData.MaxSanity - Sanity)
-            {
-                playerData.CurrentSanity = playerData.MaxSanity;
-                screenController.printPlayerNature();
-            }
-            else
-            {
-                playerData.CurrentSanity += Sanity;
-                screenController.printPlayerNature();
-            }
-            return true;
-        }
-        /// <summary>
-        /// 更改当前金币值接口
-        /// </summary>
-        public bool ChangeCoin(int coin, CoinChangeAction coinChangeAction)
-        {
-            playerData.Coin += coin;
-            screenController.printPlayerNature();
-            return true;
-        }
-        /// <summary>
-        /// 更改当前AP点接口
-        /// </summary>
-        public bool ChangeCurrentActionPoint(int actionPoint, CurrentActionPointChangeAction currentActionPointChangeAction)
-        {
-            playerData.CurrentActionPoints += actionPoint;
+            List<PlayerDataDTO> saveData = new List<PlayerDataDTO>();
+            PlayerDataDTO playerDTO = new PlayerDataDTO(
+                playerData.MaxSanity,
+                playerData.CurrentSanity,
+                playerData.MaxActionPoints,
+                playerData.CurrentActionPoints,
+                playerData.CurrentNodeNum,
+                playerData.Coin,
+                playerData.MapID,
+                playerData.SouvenirMaxSlot,
+                (int[])playerData.Dice.Clone()
             
-            if (playerData.CurrentActionPoints >= playerData.MaxActionPoints)
-            {
-                playerData.CurrentActionPoints = playerData.MaxActionPoints;
-            }
-            else if (playerData.CurrentActionPoints < 0)
-            {
-                playerData.CurrentActionPoints = 0;
-            }
-            screenController.printPlayerNature();
-            diceController.APRefresh();
-            return true;
+                );
+            saveData.Add(playerDTO);
+            SubmitArchive(saveData);
+        }
+        /// <summary>
+        /// 【公开接口】手动触发保存（外部可调用，比如游戏退出/存档点）
+        /// </summary>
+        public void ManualSave()
+        {
+            SaveArchive();
+        }
+        /// <summary>
+        /// 提交存档申请到storagemanager
+        /// </summary>
+        public void SubmitArchive(List<PlayerDataDTO> dTOs)
+        {
+            storageManager.ModifyArchive(dTOs, this);
         }
         #endregion
         #region 调用接口函数
@@ -231,7 +256,7 @@ namespace BetCity.GamePlay.Explorer
         public void UseSanityChange(int i)
         {
             GameActionContext context = new(this, this, null);
-            var currentSanityAction=new CurrentSanityChangeAction(context,i);
+            var currentSanityAction = new CurrentSanityChangeAction(context, i);
             ActionManager.Instance.Perform(currentSanityAction);
         }
         /// <summary>
@@ -245,47 +270,33 @@ namespace BetCity.GamePlay.Explorer
             ActionManager.Instance.Perform(currentActionPointAction);
         }
         /// <summary>
-        /// 创建更改当前节点位置动作
+        /// 更改当前结点编号接口
         /// </summary>
-        public void UseNodeChange( Node targetnode)
+        public void UseNodeNumChange(int i)
         {
             GameActionContext context = new(this, this, null);
-            var currentNodeChange = new ExplorerNodeChangeAction(context,targetnode);
+            var currentNodeNumAction = new CurrentNodeNumChangeAction(context, i);
+
+            ActionManager.Instance.Perform(currentNodeNumAction);
+        }
+        /// <summary>
+        /// 创建更改当前节点位置动作
+        /// </summary>
+        public void UseNodeChange(Node sourcenode, Node targetnode)
+        {
+            GameActionContext context = new(sourcenode, targetnode, null);
+            var currentNodeChange = new JudgeNodeAction(context);
             ActionManager.Instance.Perform(currentNodeChange);
         }
-        #endregion
-        #region 存储
         /// <summary>
-        ///提交保存申请
+        /// 创建更改当前最大纪念品动作
         /// </summary>
-        private void SaveArchive()
+        public void UseSouvenirMaxChange(int i)
         {
-            List<PlayerDTO> saveData = new List<PlayerDTO>();
-            PlayerDTO playerDTO = new PlayerDTO(
-                playerData.MaxSanity,
-                playerData.CurrentSanity,
-                playerData.MaxActionPoints,
-                playerData.CurrentActionPoints,
-                playerData.CurrentNodeNum,
-                playerData.Coin,
-                playerData.MapID
-                );
-            saveData.Add(playerDTO);
-            SubmitArchive(saveData);
-        }
-        /// <summary>
-        /// 【公开接口】手动触发保存（外部可调用，比如游戏退出/存档点）
-        /// </summary>
-        public void ManualSave()
-        {
-            SaveArchive();
-        }
-        /// <summary>
-        /// 提交存档申请到storagemanager
-        /// </summary>
-        public void SubmitArchive(List<PlayerDTO> dTOs)
-        {
-            storageManager.ModifyArchive(dTOs, this);
+            GameActionContext context = new(this, this, null);
+            var soucenirMaxSlotAction = new SouvenirMaxSlotChangeAction(context, i);
+
+            ActionManager.Instance.Perform(soucenirMaxSlotAction);
         }
         #endregion
     }

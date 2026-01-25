@@ -1,21 +1,20 @@
 ﻿using BetCity.Core.ActionSystem;
-using BetCity.Core.Tools;
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-
 namespace BetCity.GamePlay.Explorer
 {
-    public class CurrentActionPointChangeAction : GameAction
+    public class ChangeDiceAction : GameAction
     {
         public override async UniTask Perform(CancellationToken cancellationToken)
         {
-            if (Context.Target is  ExplorerPlayerController playerController)
+            if (Context.Target is int i)
             {
-                playerController.playerData.ChangeCurrentActionPoint(ChangeAmount, this);
-                playerController.RenewScreen();
+                ExplorerPlayerController.Instance.playerData.ChangeDiceNum(i, ChangeNum);
+                ExplorerDiceController.Instance.DisplayDice();
+                //playerController.RenewScreen();
             }
             await UniTask.CompletedTask;
         }
@@ -23,12 +22,12 @@ namespace BetCity.GamePlay.Explorer
         /// <summary>
         /// 变化量（正数增加，负数减少）
         /// </summary>
-        public int ChangeAmount { get; }
+        public int ChangeNum { get; }
 
-        public CurrentActionPointChangeAction(GameActionContext context,int changeAmount)
+        public ChangeDiceAction(GameActionContext context, int changeNum)
             : base(context)
         {
-            ChangeAmount = changeAmount;
+            ChangeNum = changeNum;
         }
     }
 }

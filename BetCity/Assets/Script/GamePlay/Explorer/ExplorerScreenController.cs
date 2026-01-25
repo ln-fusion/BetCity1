@@ -39,19 +39,6 @@ namespace BetCity.GamePlay.Explorer
         private bool mousePress;
         private Vector2 MapMoveLimitX;
         private Vector2 MapMoveLimitY;
-        //Message
-        /// <summary>
-        /// 获取预制体，用于处理玩家提示信息
-        /// </summary>
-        public static GameObject MessagePrefab;
-        /// <summary>
-        /// 用于处理玩家提示信息
-        /// </summary>
-        public static GameObject MessageTransform;
-        /// <summary>
-        /// 用于处理玩家提示信息
-        /// </summary>
-        public static float MessagePos;
         private data.PlayerData playerData;
         private ExplorerPlayerController playerController;
         /// <summary>
@@ -90,36 +77,24 @@ namespace BetCity.GamePlay.Explorer
 
                 //MessagePos = _screenHeight * 3 / 10;
             }
-            //Message
-            MessagePrefab = Resources.Load<GameObject>("Prefab/Message");
             GameObject emptyObj = new GameObject("messagetransform");
             emptyObj.AddComponent<RectTransform>();
-            emptyObj.transform.SetParent(canvas.transform, false);
-            MessageTransform = emptyObj;
         }
         private void Start()
         {
-            playerData = data.PlayerData.Instance;
             playerController = ExplorerPlayerController.Instance;
-            printPlayerNature();
-        }
-
-        /// <summary>
-        /// 打印玩家提示信息
-        /// </summary>
-        public static void CreateMessage(string Content)
-        {
-            GameObject NewMessage = Instantiate(MessagePrefab, Vector3.zero, Quaternion.identity);
-            NewMessage.GetComponent<RectTransform>().SetParent(MessageTransform.GetComponent<RectTransform>(), false);
-            NewMessage.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, MessagePos);
-            NewMessage.GetComponent<Message>().MessageContent.text = Content;
-
+            playerData = playerController.playerData;
         }
         /// <summary>
         /// 打印玩家数据
         /// </summary>
         public void printPlayerNature()
         {
+            if(playerController == null)
+            {
+                playerController=ExplorerPlayerController.Instance;
+                playerData = playerController.playerData;
+            }
             Texts[0].text = "" + playerData.MaxSanity;
             Texts[1].text = "" + playerData.CurrentSanity;
             Texts[2].text = "" + playerData.MaxActionPoints;
@@ -205,11 +180,11 @@ namespace BetCity.GamePlay.Explorer
             {
                 CurrentMap.anchoredPosition += moveFrame;
                 remainMoveDirection = movePosition - CurrentMap.anchoredPosition;
-                Debug.Log(remainMoveDirection.sqrMagnitude);
+                //Debug.Log(remainMoveDirection.sqrMagnitude);
                 yield return null;
             }
             CurrentMap.anchoredPosition = movePosition;
-            Debug.Log(movePosition - CurrentMap.anchoredPosition);
+            //Debug.Log(movePosition - CurrentMap.anchoredPosition);
         }
     }
 }

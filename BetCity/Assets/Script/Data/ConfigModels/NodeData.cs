@@ -21,7 +21,13 @@ namespace BetCity.Data.ConfigModels
         public TypeOfEvent eventType;
         public float Xposition => NodePosition.anchoredPosition.x;
         public float Yposition => NodePosition.anchoredPosition.y;
-        [Header("这个不需要填写")]
+        [NonSerialized]
         public RectTransform NodePosition;
+        [Serializable]
+        public class NodeID
+        {
+            public int MapID;
+            public int ID;
+        }
     }
 }

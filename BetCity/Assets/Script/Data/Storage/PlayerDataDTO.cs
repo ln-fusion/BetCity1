@@ -10,7 +10,7 @@ namespace BetCity.Data.Storage
     /// 玩家基础信息
     /// </summary>
     [Serializable]
-    public class PlayerDTO
+    public class PlayerDataDTO
     {
         public int MaxSanity { get;}
         public int CurrentSanity { get; }
@@ -19,12 +19,14 @@ namespace BetCity.Data.Storage
         public int CurrentNodeNum { get;}
         public int Coin { get; }
         public int MapID { get;}
+        public int SouvenirMaxSlot { get; }
+        public int[] Dice { get;}
 
 
-        public PlayerDTO() { }
+        public PlayerDataDTO() { }
 
         [JsonConstructor]
-        public PlayerDTO(int maxsanity, int currentsanity, int maxactionpoints, int currentactionpoints, int currentnodenum, int coin,int mapid)
+        public PlayerDataDTO(int maxsanity, int currentsanity, int maxactionpoints, int currentactionpoints, int currentnodenum, int coin,int mapid, int souvenirMaxSlot, int[] dice)
         {
             MaxSanity = maxsanity;
             CurrentSanity = currentsanity;
@@ -33,6 +35,8 @@ namespace BetCity.Data.Storage
             CurrentNodeNum = currentnodenum;
             Coin = coin;
             MapID = mapid;
+            SouvenirMaxSlot = souvenirMaxSlot;
+            Dice = dice;
         }
     }
 }

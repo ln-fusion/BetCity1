@@ -47,7 +47,7 @@ namespace BetCity.Data.Storage
         /// <summary>
         /// 玩家数据
         /// </summary>
-        public PlayerDTO PlayerDTO { get; private set; }
+        public PlayerDataDTO PlayerDataDTO { get; private set; }
 
         /// <summary>
         /// 玩家进度数据
@@ -81,13 +81,13 @@ namespace BetCity.Data.Storage
         /// <summary>
         /// 修改玩家信息
         /// </summary>
-        public void ModifyExplorerPlayerData(List<PlayerDTO> playerDTO, IModifyArchive caller)
+        public void ModifyExplorerPlayerData(List<PlayerDataDTO> playerDataDTO, IModifyArchive caller)
         {
             if (caller is not StorageManager)
             {
                 throw new InvalidOperationException("仅StorageManager类可修改存档信息");
             }
-            this.PlayerDTO = playerDTO[0];
+            this.PlayerDataDTO = playerDataDTO[0];
         }
 
         /// <summary>

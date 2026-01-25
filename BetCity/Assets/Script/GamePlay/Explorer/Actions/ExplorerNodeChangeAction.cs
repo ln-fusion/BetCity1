@@ -18,21 +18,18 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public bool HasChanged { get; protected set; } = false;
 
-        /// <summary>
-        /// 目标结点
-        /// </summary>
-        public Node TargetNode { get; }
 
-        public ExplorerNodeChangeAction(GameActionContext context, Node targetNode)
+        public ExplorerNodeChangeAction(GameActionContext context)
             : base(context)
         {
-            TargetNode=targetNode;
+            EnqueueReaction(new OnExitNodeAction(context),ReactionTiming.PRE);
+            EnqueueReaction(new OnEnterNodeAction(context),ReactionTiming.POST);
         }
         public override async UniTask Perform(CancellationToken cancellationToken)
         {
-            if (Context.Target is ExplorerPlayerController playerController)
+            if(Context.Target is Node a)
             {
-                await playerController.Move(TargetNode);
+                await ExplorerPlayerController.Instance.Move(a);
             }
             return;
         }

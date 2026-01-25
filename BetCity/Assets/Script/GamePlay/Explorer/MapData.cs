@@ -6,12 +6,7 @@ using UnityEngine.UI;
 
 namespace BetCity.GamePlay.Explorer
 {
-    [Serializable]
-    public class NodeID
-    { 
-        public int MapID;
-        public int ID;
-    }
+
 
     [Serializable]
     public class MapData:MonoBehaviour

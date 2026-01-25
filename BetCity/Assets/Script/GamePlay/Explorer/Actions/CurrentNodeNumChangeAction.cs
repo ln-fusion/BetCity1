@@ -1,20 +1,18 @@
-锘縰sing BetCity.Core.ActionSystem;
-using BetCity.Core.Tools;
+using BetCity.Core.ActionSystem;
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
-
 namespace BetCity.GamePlay.Explorer
 {
-    public class CurrentSanityChangeAction : GameAction
+    public class CurrentNodeNumChangeAction : GameAction
     {
         public override async UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is ExplorerPlayerController playerController)
             {
-                playerController.playerData. ChangeCurrentSanity(ChangeAmount, this);
+                playerController.playerData.ChangeCurrentNodeNum(TargetNum, this);
                 playerController.RenewScreen();
 
             }
@@ -22,14 +20,14 @@ namespace BetCity.GamePlay.Explorer
         }
 
         /// <summary>
-        /// 鍙樺寲閲忥紙姝ｆ暟澧炲姞锛岃礋鏁板噺灏戯級
+        /// 变化量（正数增加，负数减少）
         /// </summary>
-        public int ChangeAmount { get; }
+        public int TargetNum { get; }
 
-        public CurrentSanityChangeAction(GameActionContext context, int changeAmount)
+        public CurrentNodeNumChangeAction(GameActionContext context, int targetNum)
             : base(context)
         {
-            ChangeAmount = changeAmount;
+            TargetNum = targetNum;
         }
     }
 }

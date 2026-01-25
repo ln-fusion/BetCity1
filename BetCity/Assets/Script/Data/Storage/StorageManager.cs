@@ -128,12 +128,15 @@ namespace BetCity.Data.Storage
                 SouvenirManager.Instance.ManualSave();
 
                 string json = JsonConvert.SerializeObject(ArchiveDataContainer, Formatting.Indented);
+
                 // 写入持久化路径
                 File.WriteAllText(ArchiveDataSavePath, json);
+
                 CurrentArchiveMeta.LastModifyTime = DateTime.Now;
-                
+
                 Debug.Log($"[StorageManager]存档保存成功 → 路径：{ArchiveDataSavePath}");
                 ArchiveMetaContainer.CurrentArchiveId = CurrentArchiveMeta.Id;
+
                 json = JsonConvert.SerializeObject(ArchiveMetaContainer, Formatting.Indented);
                 File.WriteAllText(ArchiveMetaSavePath, json);
             }
@@ -169,10 +172,10 @@ namespace BetCity.Data.Storage
             }
             else if (caller is ExplorerPlayerController)
             {
-                if (typeof(T) == typeof(PlayerDTO))
+                if (typeof(T) == typeof(PlayerDataDTO))
                 {
 
-                    ArchiveDataContainer.ModifyExplorerPlayerData(t.Cast<PlayerDTO>().ToList(), this);
+                    ArchiveDataContainer.ModifyExplorerPlayerData(t.Cast<PlayerDataDTO>().ToList(), this);
                 }
                 else
                 {

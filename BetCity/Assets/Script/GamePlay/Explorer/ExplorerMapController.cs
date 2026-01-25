@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using BetCity.Data.ConfigModels;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Diagnostics;
 
 namespace BetCity.GamePlay.Explorer
 {
@@ -50,7 +51,7 @@ namespace BetCity.GamePlay.Explorer
             playerController=ExplorerPlayerController.Instance;
             resourceController=ExplorerResourceController.Instance;
             screenController=ExplorerScreenController.Instance;
-            PlayerData = data.PlayerData.Instance;
+            PlayerData = playerController.playerData;
             if (!_initial)
             {
                 _initial = true;
@@ -86,7 +87,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void ToNode(int nodenum)
         {
-            playerController.UseNodeChange(MapNode[nodenum]);
+            playerController.UseNodeChange(MapNode[PlayerData.CurrentNodeNum] ,MapNode[nodenum]);
         }
         /// <summary>
         /// 检查结点是否可到达
@@ -100,7 +101,7 @@ namespace BetCity.GamePlay.Explorer
                     return true;
                 }
             }
-            ExplorerScreenController.CreateMessage("无法到达");
+            //无法到达
             return false;
         }
         /// <summary>
