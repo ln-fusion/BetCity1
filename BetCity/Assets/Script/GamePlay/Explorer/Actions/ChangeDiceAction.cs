@@ -8,15 +8,14 @@ namespace BetCity.GamePlay.Explorer
 {
     public class ChangeDiceAction : GameAction
     {
-        public override async UniTask Perform(CancellationToken cancellationToken)
+        public override UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is int i)
             {
-                ExplorerPlayerController.Instance.playerData.ChangeDiceNum(i, ChangeNum);
+                ExplorerPlayerController.Instance.PlayerData.ChangeDiceNum(i, ChangeNum);
                 ExplorerDiceController.Instance.DisplayDice();
-                //playerController.RenewScreen();
             }
-            await UniTask.CompletedTask;
+            return UniTask.CompletedTask;
         }
 
         /// <summary>

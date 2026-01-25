@@ -20,24 +20,24 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public GameObject Player;
         private RectTransform playerTransform;
-        private static bool _initial = false;
+        private bool _initial = false;
         private Animator animator;
         [Header("玩家状态")]
         /// <summary>
         /// 地图状态，也可以用枚举结构
         /// </summary>
-        public static int PLAYER_STATUS = 0;//0空闲 1行走 2 丢骰子
+        public int PLAYER_STATUS = 0;//0空闲 1行走 2 丢骰子
         /// <summary>
         /// 接口，返回当前金币值
         /// </summary>
-        public int Coin=>playerData.CurrentCoin;
+        public int Coin=>PlayerData.CurrentCoin;
 
         private ExplorerScreenController screenController;
         private ExplorerDiceController diceController;
         private ExplorerMapController mapController;
         private StorageManager storageManager;
         private ActionManager actionManager;
-        public data.PlayerData playerData;
+        public PlayerData PlayerData {  get; private set; }
 
 
         private float MoveSpeed =300f;//玩家移动速度
@@ -47,7 +47,7 @@ namespace BetCity.GamePlay.Explorer
         protected override void Awake()
         {
             base.Awake();
-            playerData = new data.PlayerData();
+            PlayerData = new PlayerData();
         }
         void Start()
         {
@@ -67,7 +67,7 @@ namespace BetCity.GamePlay.Explorer
             {
                 
                 //强制设置初值，不用事件系统
-                playerData.Load(storageManager.ArchiveDataContainer.PlayerDataDTO);
+                PlayerData.Load(storageManager.ArchiveDataContainer.PlayerDataDTO);
                 screenController.printPlayerNature();
                 RefreshPlayerPosition();
             }
@@ -75,7 +75,7 @@ namespace BetCity.GamePlay.Explorer
             mapController.MapCreate();
             playerTransform = Player.GetComponent<RectTransform>();
             animator = Player.GetComponent<Animator>();
-            ToNodeInstant(ExplorerMapController.MapNode[playerData.CurrentNodeNum]);
+            ToNodeInstant(mapController.MapNode[PlayerData.CurrentNodeNum]);
             SaveArchive();
         }
         /// <summary>
@@ -83,7 +83,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void Lode()
         {
-            playerData.Load(storageManager.ArchiveDataContainer.PlayerDataDTO);
+            PlayerData.Load(storageManager.ArchiveDataContainer.PlayerDataDTO);
             screenController.printPlayerNature();
             RefreshPlayerPosition() ;
         }
@@ -100,58 +100,60 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void RefreshPlayerPosition()
         {
-            ToNodeInstant(ExplorerMapController.MapNode[ playerData.CurrentNodeNum]);
+            ToNodeInstant(mapController.MapNode[ PlayerData.CurrentNodeNum]);
         }
         /// <summary>
         /// 玩家移动Action的判断逻辑
         /// </summary>
-        public async UniTask MoveJudge(Node sourcenode, Node targetnode)
+        public UniTask MoveJudge(Node sourcenode, Node targetnode)
         {
+
             //CancellationTokenSource cts=new CancellationTokenSource();
             // 判断当前是否能进行操作
             if (PLAYER_STATUS != 0)
             {
                 //当前无法操作
-                return; // 替代协程的yield break
+                return UniTask.CompletedTask; // 替代协程的yield break
             }
 
             // 判断玩家AP点
-            if (playerData.CurrentActionPoints <= 0)
+            if (PlayerData.CurrentActionPoints <= 0)
             {
                 //AP点不足
-                return; // 替代协程的yield break
+                return UniTask.CompletedTask; // 替代协程的yield break
             }
 
-            Node currentnode = ExplorerMapController.MapNode[playerData.CurrentNodeNum];
+            Node currentnode = mapController.MapNode[PlayerData.CurrentNodeNum];
             //判断目标节点是否可到达
             if (!mapController.CheckNode(currentnode.Id.ID,targetnode.Id.ID))
             {
-                //无法到达
-                
-                return; // 替代协程的yield break
-            }
-            await UniTask.Yield();
 
+                //无法到达
+
+                return UniTask.CompletedTask; // 替代协程的yield break
+            }
             GameActionContext context = new(sourcenode, targetnode, null);
             var currentNodeChange = new ExplorerNodeChangeAction(context);
             ActionManager.Instance.Perform(currentNodeChange);
 
-            
+            return UniTask.CompletedTask;
 
         }
         /// <summary>
         /// 玩家移动Action的实际逻辑
         /// </summary>
-        public async UniTask ExitNode(Node sourcenode)
+        public  UniTask ExitNode(Node sourcenode)
         {
+            Debug.Log("2");
+
             PLAYER_STATUS = 1;
-            await UniTask.Yield();
+            return UniTask.CompletedTask;
 
         }
         /// <summary>
         /// 玩家移动Action的实际逻辑
         /// </summary>
-        public async UniTask EnterNode(Node targetnode)
+        public UniTask EnterNode(Node targetnode)
         {
             screenController.ScreenFocus(targetnode);
 
@@ -162,7 +164,7 @@ namespace BetCity.GamePlay.Explorer
 
             UseNodeNumChange(targetnode.Id.ID);
             PLAYER_STATUS = 0;
-            await UniTask.Yield();
+            return UniTask.CompletedTask;
 
         }
 
@@ -211,15 +213,15 @@ namespace BetCity.GamePlay.Explorer
         {
             List<PlayerDataDTO> saveData = new List<PlayerDataDTO>();
             PlayerDataDTO playerDTO = new PlayerDataDTO(
-                playerData.MaxSanity,
-                playerData.CurrentSanity,
-                playerData.MaxActionPoints,
-                playerData.CurrentActionPoints,
-                playerData.CurrentNodeNum,
-                playerData.Coin,
-                playerData.MapID,
-                playerData.SouvenirMaxSlot,
-                (int[])playerData.Dice.Clone()
+                PlayerData.MaxSanity,
+                PlayerData.CurrentSanity,
+                PlayerData.MaxActionPoints,
+                PlayerData.CurrentActionPoints,
+                PlayerData.CurrentNodeNum,
+                PlayerData.Coin,
+                PlayerData.MapID,
+                PlayerData.SouvenirMaxSlot,
+                (int[])PlayerData.Dice.Clone()
             
                 );
             saveData.Add(playerDTO);

@@ -7,7 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BetCity.GamePlay.Souvenir;
-namespace BetCity.data
+namespace BetCity.GamePlay.Explorer
 {
     public class PlayerData:IHasCoin
     {

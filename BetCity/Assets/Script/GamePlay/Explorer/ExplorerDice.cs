@@ -11,7 +11,7 @@ public class ExplorerDice : MonoBehaviour
     /// </summary>
     public Image DiceCurrentImage;
     //骰子信息
-    public int[] Num => ExplorerPlayerController.Instance.playerData.Dice;
+    public int[] Num => ExplorerPlayerController.Instance.PlayerData.Dice;
     /// <summary>
     /// 骰子图片
     /// </summary>

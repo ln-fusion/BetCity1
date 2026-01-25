@@ -1,4 +1,4 @@
-using BetCity.Core.ActionSystem;
+锘縰sing BetCity.Core.ActionSystem;
 using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,19 +8,19 @@ namespace BetCity.GamePlay.Explorer
 {
     public class CurrentNodeNumChangeAction : GameAction
     {
-        public override async UniTask Perform(CancellationToken cancellationToken)
+        public override UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is ExplorerPlayerController playerController)
             {
-                playerController.playerData.ChangeCurrentNodeNum(TargetNum, this);
+                playerController.PlayerData.ChangeCurrentNodeNum(TargetNum, this);
                 playerController.RenewScreen();
 
             }
-            await UniTask.CompletedTask;
+            return UniTask.CompletedTask;
         }
 
         /// <summary>
-        /// 变化量（正数增加，负数减少）
+        /// 鍙樺寲閲忥紙姝ｆ暟澧炲姞锛岃礋鏁板噺灏戯級
         /// </summary>
         public int TargetNum { get; }
 

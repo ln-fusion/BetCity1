@@ -8,15 +8,15 @@ namespace BetCity.GamePlay.Explorer
 {
     public class SouvenirMaxSlotChangeAction : GameAction
     {
-        public override async UniTask Perform(CancellationToken cancellationToken)
+        public override  UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is ExplorerPlayerController playerController)
             {
-                playerController.playerData.ChangeSouvenirMaxSlot(TargetNum, this);
+                playerController.PlayerData.ChangeSouvenirMaxSlot(TargetNum, this);
                 playerController.RenewScreen();
 
             }
-            await UniTask.CompletedTask;
+            return UniTask.CompletedTask;
         }
 
         /// <summary>

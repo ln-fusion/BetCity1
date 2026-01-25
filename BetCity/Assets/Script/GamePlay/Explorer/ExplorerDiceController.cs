@@ -13,30 +13,30 @@ namespace BetCity.GamePlay.Explorer {
         /// <summary>
         /// 获取玩家数据
         /// </summary>
-        private data.PlayerData PlayerData;
+        private PlayerData playerData => playerController.PlayerData;
         private ExplorerScreenController ScreenController;
         private ExplorerPlayerController playerController;
 
         /// <summary>
         /// 骰子
         /// </summary>
-        public ExplorerDice Dice;
+        public ExplorerDice Dice {  get; private set; }
         /// <summary>
         /// 骰子位置
         /// </summary>
         public Transform DiceTransform;
 
         [Header("资源初始化标志")]
-        private static bool _initial = false;
+        private bool _initial = false;
         [Header("骰子参数")]
         /// <summary>
         /// 骰子动画播放时间
         /// </summary>
-        public float DiceTime;
+        private float DiceTime=1;
         /// <summary>
         /// 使用骰子的理智值消耗
         /// </summary>
-        public int SanityCost;
+        private int SanityCost=2;
 
         protected override void Awake()
         {
@@ -58,7 +58,6 @@ namespace BetCity.GamePlay.Explorer {
         {
             playerController=ExplorerPlayerController.Instance;
             ScreenController=ExplorerScreenController.Instance;
-            PlayerData = playerController.playerData;
         }
         /// <summary>
         /// 创建投掷骰子动作函数
@@ -74,22 +73,22 @@ namespace BetCity.GamePlay.Explorer {
         /// </summary>
         public async UniTask DiceThrow()
         {
-            if (ExplorerPlayerController.PLAYER_STATUS != 0)
+            if (playerController.PLAYER_STATUS != 0)
             {
                 //当前无法操作
                 return;
             }
-            if (PlayerData.CurrentSanity < SanityCost)
+            if (playerData.CurrentSanity < SanityCost)
             {
                 //理智值不足
                 return;
             }
-            if (PlayerData.CurrentActionPoints != 0)
+            if (playerData.CurrentActionPoints != 0)
             {
                 //AP点不为0
                 return;
             }
-            ExplorerPlayerController.PLAYER_STATUS = 2;
+            playerController.PLAYER_STATUS = 2;
             playerController.UseSanityChange(-1 * SanityCost);
             //找到当前最大的骰子面数，动画使用
             int MaxDiceNum = 0;
@@ -116,7 +115,7 @@ namespace BetCity.GamePlay.Explorer {
             randomInt=Dice.Num[randomInt];
             Dice.ChangeSprite(randomInt);
             playerController.UseActionPointChange(randomInt);
-            ExplorerPlayerController.PLAYER_STATUS = 0;
+            playerController.PLAYER_STATUS = 0;
             await UniTask.Yield();
         }
         /// <summary>
@@ -127,9 +126,8 @@ namespace BetCity.GamePlay.Explorer {
             if(playerController == null)
             {
                 playerController = ExplorerPlayerController.Instance;
-                PlayerData = playerController.playerData;
             }
-            Dice. DiceCurrentImage.sprite =Dice. DiceImage[PlayerData.CurrentActionPoints];
+            Dice. DiceCurrentImage.sprite =Dice. DiceImage[playerData.CurrentActionPoints];
         }
         /// <summary>
         /// 创建骰子升级/降级的事件

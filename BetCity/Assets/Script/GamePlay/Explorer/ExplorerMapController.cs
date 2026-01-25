@@ -15,7 +15,7 @@ namespace BetCity.GamePlay.Explorer
         /// <summary>
         /// 静态属性，存入当前所有结点的类信息
         /// </summary>
-        public static Node[] MapNode;
+        public Node[] MapNode;
         /// <summary>
         /// 静态属性，存入当前所有结点的位置信息
         /// </summary>
@@ -28,11 +28,11 @@ namespace BetCity.GamePlay.Explorer
         /// 静态属性，存入当前所有结点的位置信息
         /// </summary>
         public RectTransform MapTransform;
-        private static bool _initial = false;
+        private bool _initial = false;
         private ExplorerPlayerController playerController;
         private ExplorerResourceController resourceController;
         private ExplorerScreenController screenController;
-        private data.PlayerData PlayerData;
+        private PlayerData PlayerData=>playerController.PlayerData;
         /// <summary>
         /// 实例化后的地图
         /// </summary>
@@ -51,7 +51,6 @@ namespace BetCity.GamePlay.Explorer
             playerController=ExplorerPlayerController.Instance;
             resourceController=ExplorerResourceController.Instance;
             screenController=ExplorerScreenController.Instance;
-            PlayerData = playerController.playerData;
             if (!_initial)
             {
                 _initial = true;

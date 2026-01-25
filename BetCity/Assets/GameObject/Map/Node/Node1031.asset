@@ -12,9 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 290303736af2a6d4db584dbf1269a881, type: 3}
   m_Name: Node1031
   m_EditorClassIdentifier: 
-  ID:
+  Id:
     MapID: 1
     ID: 31
   connectedNodes: 20000000
   eventType: 0
-  NodePosition: {fileID: 0}

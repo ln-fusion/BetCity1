@@ -12,15 +12,12 @@ public class OnExitNodeAction : GameAction
     {
 
     }
-    public override async UniTask Perform(CancellationToken cancellationToken)
+    public override UniTask Perform(CancellationToken cancellationToken)
     {
         if(Context.Source is Node a)
         {
-            await ExplorerPlayerController.Instance .ExitNode(a);
+            ExplorerPlayerController.Instance .ExitNode(a);
         }
-        
-
-        await UniTask.Yield();
-        return;
+        return UniTask.CompletedTask;
     }
 }

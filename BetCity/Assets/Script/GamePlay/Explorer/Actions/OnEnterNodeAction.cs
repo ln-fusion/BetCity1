@@ -12,13 +12,12 @@ public class OnEnterNodeAction :GameAction
     {
 
     }
-    public override async UniTask Perform(CancellationToken cancellationToken)
+    public override UniTask Perform(CancellationToken cancellationToken)
     {
         if (Context.Target is Node a)
         {
-            await ExplorerPlayerController.Instance.EnterNode(a);
-            await UniTask.Yield();
+            ExplorerPlayerController.Instance.EnterNode(a);
         }
-        return;
+        return UniTask.CompletedTask;
     }
 }

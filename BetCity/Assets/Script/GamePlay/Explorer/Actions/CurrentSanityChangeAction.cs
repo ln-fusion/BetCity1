@@ -10,15 +10,15 @@ namespace BetCity.GamePlay.Explorer
 {
     public class CurrentSanityChangeAction : GameAction
     {
-        public override async UniTask Perform(CancellationToken cancellationToken)
+        public override UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is ExplorerPlayerController playerController)
             {
-                playerController.playerData. ChangeCurrentSanity(ChangeAmount, this);
+                playerController.PlayerData. ChangeCurrentSanity(ChangeAmount, this);
                 playerController.RenewScreen();
 
             }
-            await UniTask.CompletedTask;
+            return UniTask.CompletedTask;
         }
 
         /// <summary>

@@ -13,15 +13,14 @@ public class JudgeNodeAction : GameAction
     {
 
     }
-    public override async UniTask Perform(CancellationToken cancellationToken)
+    public override UniTask Perform(CancellationToken cancellationToken)
     {
         if (Context.Source is Node a&& Context.Target is Node b)
         {
-            await ExplorerPlayerController.Instance.MoveJudge(a,b);
+            ExplorerPlayerController.Instance.MoveJudge(a,b);
 
-            //await ExplorerPlayerController.Instance.Move(a);
         }
-        return;
+        return UniTask.CompletedTask;
     }
 
 

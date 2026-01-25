@@ -39,7 +39,7 @@ namespace BetCity.GamePlay.Explorer
         private bool mousePress;
         private Vector2 MapMoveLimitX;
         private Vector2 MapMoveLimitY;
-        private data.PlayerData playerData;
+        private PlayerData playerData=>playerController.PlayerData;
         private ExplorerPlayerController playerController;
         /// <summary>
         /// 打印玩家的信息，临时系统
@@ -83,7 +83,6 @@ namespace BetCity.GamePlay.Explorer
         private void Start()
         {
             playerController = ExplorerPlayerController.Instance;
-            playerData = playerController.playerData;
         }
         /// <summary>
         /// 打印玩家数据
@@ -93,7 +92,6 @@ namespace BetCity.GamePlay.Explorer
             if(playerController == null)
             {
                 playerController=ExplorerPlayerController.Instance;
-                playerData = playerController.playerData;
             }
             Texts[0].text = "" + playerData.MaxSanity;
             Texts[1].text = "" + playerData.CurrentSanity;
@@ -105,7 +103,7 @@ namespace BetCity.GamePlay.Explorer
         // Update is called once per frame
         void Update()
         {
-            if (ExplorerPlayerController.PLAYER_STATUS!=0)
+            if (ExplorerPlayerController.Instance.PLAYER_STATUS!=0)
             {
                 mousePress =false;
                 return;
