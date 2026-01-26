@@ -1,5 +1,6 @@
 ﻿using BetCity.Core.CheckSystem;
 using BetCity.Core.EventSystem;
+using BetCity.Core.ProgressSystem;
 using BetCity.Core.Tools;
 using BetCity.Data.ConfigModels;
 using BetCity.Data.Storage;
@@ -24,7 +25,14 @@ namespace BetCity.GamePlay.Store
         //商店系统中不会刷新已拥有纪念品，此条不用写在condition里
         private IReadOnlyDictionary<int, Souvenir.Souvenir> ownedSouvenirs => SouvenirManager.Instance.OwnedSouvenirs;
         private ConditionChecker conditionChecker => ConditionChecker.Instance;
+        private ProgressManager progressManager => ProgressManager.Instance;
 
+        [Header("骰子升级次数-价格字典")] 
+        public SerializableDictionary<int, int> UpgradeDicePriceDict;
+        /// <summary>
+        /// 商店升级骰子次数
+        /// </summary>
+        public int UpgradeDiceCount { get; set; }
         /// <summary>
         /// 商店事件
         /// </summary>
@@ -37,6 +45,20 @@ namespace BetCity.GamePlay.Store
         /// 用理智购买商品的索引
         /// </summary>
         public int[] SanityPurchaseIndexs { get; private set; }
+
+        protected override void Awake()
+        {
+            base.Awake();
+            if(progressManager.GetKVData<int>("UpgradeDiceCount", out int value))
+            {
+                UpgradeDiceCount = value;
+            }
+            else
+            {
+                UpgradeDiceCount = 0;
+                progressManager.SetKVData("UpgradeDiceCount", 0);
+            }
+        }
 
         private List<Product> CheckCondition()
         {

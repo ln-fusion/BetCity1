@@ -12,11 +12,12 @@ using UnityEngine;
 using BetCity.Card;
 using BetCity.GamePlay.Souvenir;
 using BetCity.Core.ProgressSystem;
+using BetCity.GamePlay.Task;
 
 namespace BetCity.Data.Storage
 {
     /// <summary>
-    /// 管理所有存储内容，目前包含存档数据（后续可以增加其他json文件如配置文件）
+    /// 管理所有存储内容，存档元数据查看，选择-读取存档
     /// </summary>
     public class StorageManager : MonoSingleton<StorageManager>, IModifyArchive
     {
@@ -198,6 +199,17 @@ namespace BetCity.Data.Storage
                 if (typeof(T) == typeof(ArchiveProgressDTO))
                 {
                     ArchiveDataContainer.ModifyArchiveProgress(t.Cast<ArchiveProgressDTO>().ToList(), this);
+                }
+                else
+                {
+                    throw new InvalidOperationException(caller + "传入错误类型信息" + typeof(T));
+                }
+            }
+            else if(caller is TaskManager)
+            {
+                if (typeof(T) == typeof(AcceptedTaskDTO))
+                {
+                    ArchiveDataContainer.ModifyAcceptedTask(t.Cast<AcceptedTaskDTO>().ToList(), this);
                 }
                 else
                 {

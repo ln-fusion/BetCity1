@@ -14,14 +14,13 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public bool HasChanged { get; protected set; } = false;
         public DiceThrowAction(GameActionContext context)
-            : base(context)
-        {
-        }
+            : base(context) { }
+
         public override async UniTask Perform(CancellationToken cancellationToken)
         {
             if (Context.Target is ExplorerDiceController diceController)
             {
-                await diceController.DiceThrow();
+                await diceController.DiceThrow(cancellationToken);
             }
             return;
         }

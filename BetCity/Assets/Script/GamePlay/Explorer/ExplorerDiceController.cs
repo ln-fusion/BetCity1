@@ -1,11 +1,13 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections;
-using System.Runtime.InteropServices;
+﻿using BetCity.Core.ActionSystem;
 using BetCity.Core.Tools;
-using BetCity.Core.ActionSystem;
 using Cysharp.Threading.Tasks;
 using System;
+using System.Collections;
+using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
+using UnityEngine;
+using UnityEngine.UI;
 namespace BetCity.GamePlay.Explorer {
 
     public class ExplorerDiceController : MonoSingleton<ExplorerDiceController> 
@@ -28,7 +30,7 @@ namespace BetCity.GamePlay.Explorer {
         /// <summary>
         /// 使用骰子的理智值消耗
         /// </summary>
-        private const int SANITY_COST=2;
+        private const int SANITY_COST = 2;
 
         protected override void Awake()
         {
@@ -37,17 +39,12 @@ namespace BetCity.GamePlay.Explorer {
             {
                 _initial = true;
                 GameObject dice = Instantiate(Resources.Load<GameObject>("Prefab/Dice"), Vector3.zero, Quaternion.Euler(Vector3.zero));
+                dice.SetActive(false);
                 Dice = dice.GetComponent<ExplorerDice>();
             }
             
         }
-        /// <summary>
-        /// 获取场景中的实例
-        /// </summary>
-        void Start()
-        {
-
-        }
+        
         /// <summary>
         /// 创建投掷骰子动作函数
         /// </summary>
@@ -80,26 +77,16 @@ namespace BetCity.GamePlay.Explorer {
         /// <summary>
         /// 投掷骰子的实际逻辑
         /// </summary>
-        public  UniTask DiceThrow()
+        public async UniTask DiceThrow(CancellationToken cancellationToken)
         {
             PlayerController.PlayerStatus = 2;
             PlayerController.UseSanityChange(-1 * SANITY_COST);
-            //找到当前最大的骰子面数，动画使用
-            int MaxDiceNum = 0;
-            for(int i = 0; i < 6; i++)
-            {
-                if (MaxDiceNum < Dice.Num[i])
-                {
-                    MaxDiceNum=Dice.Num[i];
-                }
-            }
 
-            int randomInt = UnityEngine. Random.Range(0, 100);
-            randomInt = randomInt % 6;
-            randomInt=Dice.Num[randomInt];
+            int randomInt = await Dice.Throw(cancellationToken);
+
             PlayerController.UseActionPointChange(randomInt);
             PlayerController.PlayerStatus = 0;
-            return UniTask.CompletedTask;
+            return;
         }
         /// <summary>
         /// 创建骰子升级/降级的事件

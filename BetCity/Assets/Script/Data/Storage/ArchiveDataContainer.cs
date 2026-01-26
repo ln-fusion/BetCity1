@@ -40,8 +40,7 @@ namespace BetCity.Data.Storage
         /// </summary>
         [JsonIgnore]
         public IReadOnlyList<OwnedSouvenirDTO> OwnedSouvenirDTOs => ownedSouvenirDTOs;
-        [SerializeField]
-        [JsonProperty("OwnedSouvenirDTOs")]
+        [SerializeField, JsonProperty("OwnedSouvenirDTOs")]
         private List<OwnedSouvenirDTO> ownedSouvenirDTOs = new List<OwnedSouvenirDTO>();
 
         /// <summary>
@@ -59,9 +58,13 @@ namespace BetCity.Data.Storage
         /// </summary>
         [JsonIgnore]
         public IReadOnlyList<OwnedCardDTO> OwnedCardDTOs => ownedCardDTOs;
-        [SerializeField]
-        [JsonProperty("OwnedCardDTOs")]
+        [SerializeField, JsonProperty("OwnedCardDTOs")]
         private List<OwnedCardDTO> ownedCardDTOs = new List<OwnedCardDTO>();
+
+        [JsonIgnore]
+        public IReadOnlyList<AcceptedTaskDTO> AcceptedTaskDTOs => acceptedTaskDTOs;
+        [SerializeField, JsonProperty("AcceptedTaskDTOs")]
+        private List<AcceptedTaskDTO> acceptedTaskDTOs = new List<AcceptedTaskDTO>();
 
         /// <summary>
         /// 修改玩家拥有纪念品存档信息，仅供StorageManager使用
@@ -102,6 +105,9 @@ namespace BetCity.Data.Storage
             this.ownedCardDTOs = ownedCardDTOs;
         }
 
+        /// <summary>
+        /// 修改存档进度信息
+        /// </summary>
         public void ModifyArchiveProgress(List<ArchiveProgressDTO> archiveProgressDTO, IModifyArchive caller)
         {
             if (caller is not StorageManager)
@@ -109,6 +115,18 @@ namespace BetCity.Data.Storage
                 throw new InvalidOperationException("仅StorageManager类可修改存档信息");
             }
             this.ArchiveProgressDTO = archiveProgressDTO[0];
+        }
+
+        /// <summary>
+        /// 修改玩家接受任务列表
+        /// </summary>
+        public void ModifyAcceptedTask(List<AcceptedTaskDTO> acceptedTaskDTOs, IModifyArchive caller)
+        {
+            if (caller is not StorageManager)
+            {
+                throw new InvalidOperationException("仅StorageManager类可修改存档信息");
+            }
+            this.acceptedTaskDTOs = acceptedTaskDTOs;
         }
     }
 }
