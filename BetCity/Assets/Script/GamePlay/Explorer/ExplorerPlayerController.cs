@@ -93,7 +93,6 @@ namespace BetCity.GamePlay.Explorer
         public void RenewScreen()
         {
             ScreenController.printPlayerNature();
-            DiceController.APRefresh();
         }
         /// <summary>
         /// 立刻更新玩家位置，用于存档读取

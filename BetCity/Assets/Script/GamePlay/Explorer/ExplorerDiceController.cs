@@ -21,18 +21,10 @@ namespace BetCity.GamePlay.Explorer {
         /// 骰子
         /// </summary>
         public ExplorerDice Dice {  get; private set; }
-        /// <summary>
-        /// 骰子位置
-        /// </summary>
-        public Transform DiceTransform;
 
         [Header("资源初始化标志")]
         private bool _initial = false;
         [Header("骰子参数")]
-        /// <summary>
-        /// 骰子动画播放时间
-        /// </summary>
-        private const float DICE_TIME=1;
         /// <summary>
         /// 使用骰子的理智值消耗
         /// </summary>
@@ -45,9 +37,7 @@ namespace BetCity.GamePlay.Explorer {
             {
                 _initial = true;
                 GameObject dice = Instantiate(Resources.Load<GameObject>("Prefab/Dice"), Vector3.zero, Quaternion.Euler(Vector3.zero));
-                dice.GetComponent<RectTransform>().SetParent(DiceTransform, false);
                 Dice = dice.GetComponent<ExplorerDice>();
-                Dice.Initial();
             }
             
         }
@@ -90,7 +80,7 @@ namespace BetCity.GamePlay.Explorer {
         /// <summary>
         /// 投掷骰子的实际逻辑
         /// </summary>
-        public async UniTask DiceThrow()
+        public  UniTask DiceThrow()
         {
             PlayerController.PlayerStatus = 2;
             PlayerController.UseSanityChange(-1 * SANITY_COST);
@@ -104,29 +94,12 @@ namespace BetCity.GamePlay.Explorer {
                 }
             }
 
-            float currentdicetime = DICE_TIME;
-            int imagenum = 0;
-            while (currentdicetime > 0)
-            {
-                imagenum = (imagenum + 1) % MaxDiceNum;
-                Dice. DiceCurrentImage.sprite = Dice.DiceImage[imagenum];
-                currentdicetime -= 0.3f;
-                await UniTask.Delay(TimeSpan.FromSeconds(0.3f));
-            }
             int randomInt = UnityEngine. Random.Range(0, 100);
             randomInt = randomInt % 6;
             randomInt=Dice.Num[randomInt];
-            Dice.ChangeSprite(randomInt);
             PlayerController.UseActionPointChange(randomInt);
             PlayerController.PlayerStatus = 0;
-            await UniTask.Yield();
-        }
-        /// <summary>
-        /// 在消耗AP点后更新骰子的UI显示
-        /// </summary>
-        public void APRefresh()
-        {
-            Dice. DiceCurrentImage.sprite =Dice. DiceImage[PlayerData.CurrentActionPoints];
+            return UniTask.CompletedTask;
         }
         /// <summary>
         /// 创建骰子升级/降级的事件
