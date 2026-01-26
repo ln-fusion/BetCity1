@@ -13,9 +13,9 @@ namespace BetCity.GamePlay.Explorer {
         /// <summary>
         /// 获取玩家数据
         /// </summary>
-        private PlayerData playerData => playerController.PlayerData;
-        private ExplorerScreenController ScreenController;
-        private ExplorerPlayerController playerController;
+        private PlayerData PlayerData => PlayerController.PlayerData;
+        private ExplorerScreenController ScreenController=>ExplorerScreenController.Instance;
+        private ExplorerPlayerController PlayerController=>ExplorerPlayerController.Instance;
 
         /// <summary>
         /// 骰子
@@ -32,11 +32,11 @@ namespace BetCity.GamePlay.Explorer {
         /// <summary>
         /// 骰子动画播放时间
         /// </summary>
-        private float DiceTime=1;
+        private const float DICE_TIME=1;
         /// <summary>
         /// 使用骰子的理智值消耗
         /// </summary>
-        private int SanityCost=2;
+        private const int SANITY_COST=2;
 
         protected override void Awake()
         {
@@ -56,14 +56,33 @@ namespace BetCity.GamePlay.Explorer {
         /// </summary>
         void Start()
         {
-            playerController=ExplorerPlayerController.Instance;
-            ScreenController=ExplorerScreenController.Instance;
+
         }
         /// <summary>
         /// 创建投掷骰子动作函数
         /// </summary>
         public void UseDiceThrow()
         {
+            if (PlayerController.PlayerStatus != 0)
+            {
+                //当前无法操作
+                Debug.LogWarning("["+this.name + "]当前无法操作，无法投掷骰子");
+                return;
+            }
+            if (PlayerData.CurrentSanity < SANITY_COST)
+            {
+                //理智值不足
+                Debug.LogWarning("[" + this.name + "]理智值不足，无法投掷骰子");
+
+                return;
+            }
+            if (PlayerData.CurrentActionPoints != 0)
+            {
+                //AP点不为0
+                Debug.LogWarning("[" + this.name + "]AP点不为0，无法投掷骰子");
+
+                return;
+            }
             GameActionContext context = new(this, this, null);
             var DiceAction = new DiceThrowAction(context);
             ActionManager.Instance.Perform(DiceAction);
@@ -73,23 +92,8 @@ namespace BetCity.GamePlay.Explorer {
         /// </summary>
         public async UniTask DiceThrow()
         {
-            if (playerController.PLAYER_STATUS != 0)
-            {
-                //当前无法操作
-                return;
-            }
-            if (playerData.CurrentSanity < SanityCost)
-            {
-                //理智值不足
-                return;
-            }
-            if (playerData.CurrentActionPoints != 0)
-            {
-                //AP点不为0
-                return;
-            }
-            playerController.PLAYER_STATUS = 2;
-            playerController.UseSanityChange(-1 * SanityCost);
+            PlayerController.PlayerStatus = 2;
+            PlayerController.UseSanityChange(-1 * SANITY_COST);
             //找到当前最大的骰子面数，动画使用
             int MaxDiceNum = 0;
             for(int i = 0; i < 6; i++)
@@ -100,7 +104,7 @@ namespace BetCity.GamePlay.Explorer {
                 }
             }
 
-            float currentdicetime = DiceTime;
+            float currentdicetime = DICE_TIME;
             int imagenum = 0;
             while (currentdicetime > 0)
             {
@@ -111,11 +115,10 @@ namespace BetCity.GamePlay.Explorer {
             }
             int randomInt = UnityEngine. Random.Range(0, 100);
             randomInt = randomInt % 6;
-            Debug.Log("?:"+randomInt);
             randomInt=Dice.Num[randomInt];
             Dice.ChangeSprite(randomInt);
-            playerController.UseActionPointChange(randomInt);
-            playerController.PLAYER_STATUS = 0;
+            PlayerController.UseActionPointChange(randomInt);
+            PlayerController.PlayerStatus = 0;
             await UniTask.Yield();
         }
         /// <summary>
@@ -123,11 +126,7 @@ namespace BetCity.GamePlay.Explorer {
         /// </summary>
         public void APRefresh()
         {
-            if(playerController == null)
-            {
-                playerController = ExplorerPlayerController.Instance;
-            }
-            Dice. DiceCurrentImage.sprite =Dice. DiceImage[playerData.CurrentActionPoints];
+            Dice. DiceCurrentImage.sprite =Dice. DiceImage[PlayerData.CurrentActionPoints];
         }
         /// <summary>
         /// 创建骰子升级/降级的事件

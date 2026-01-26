@@ -7,15 +7,28 @@ namespace BetCity.GamePlay.Explorer
 {
     public class ExplorerResourceController : MonoSingleton<ExplorerResourceController>
     {
-        [Header("可序列化的字典,但是好像用不到")]
-        public SerializableDictionary<int, MapData> Map;
-        [SerializeField]
-        public List<GameObject> MapPrefab;
-        public GameObject Player;
+        /// <summary>
+        /// 可序列化字典，暂时用不到
+        /// </summary>
+        [field: SerializeField]
+        public SerializableDictionary<int, MapData> Map { get; private set; }
+        /// <summary>
+        /// 存入地图的预制体
+        /// </summary>
+        [field: SerializeField]
+        public List<GameObject> MapPrefab { get; private set; }
+        /// <summary>
+        /// 存入玩家gameobject的预制体
+        /// </summary>
+        [field: SerializeField]
+        public GameObject Player { get; private set; }
         protected override void Awake()
         {
             base.Awake();
         }
+        /// <summary>
+        /// 获取对应地图的接口
+        /// </summary>
         public GameObject GetMap(int i)
         {
             return (MapPrefab[i]);

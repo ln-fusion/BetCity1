@@ -18,7 +18,7 @@ namespace BetCity.GamePlay.Explorer
         /// <summary>
         /// 玩家物体，用于获取位置信息
         /// </summary>
-        public GameObject Player;
+        public GameObject Player {  get; private set; }
         private RectTransform playerTransform;
         private bool _initial = false;
         private Animator animator;
@@ -26,23 +26,23 @@ namespace BetCity.GamePlay.Explorer
         /// <summary>
         /// 地图状态，也可以用枚举结构
         /// </summary>
-        public int PLAYER_STATUS = 0;//0空闲 1行走 2 丢骰子
+        public int PlayerStatus = 0;//0空闲 1行走 2 丢骰子
         /// <summary>
         /// 接口，返回当前金币值
         /// </summary>
         public int Coin=>PlayerData.CurrentCoin;
 
-        private ExplorerScreenController screenController;
-        private ExplorerDiceController diceController;
-        private ExplorerMapController mapController;
-        private StorageManager storageManager;
-        private ActionManager actionManager;
+        private ExplorerScreenController ScreenController => ExplorerScreenController.Instance;
+        private ExplorerDiceController DiceController=>ExplorerDiceController.Instance;
+        private ExplorerMapController MapController=>ExplorerMapController.Instance;
+        private StorageManager StorageManager => StorageManager.Instance;
+        private ActionManager ActionManager=>ActionManager.Instance;
         public PlayerData PlayerData {  get; private set; }
 
 
-        private float MoveSpeed =300f;//玩家移动速度
+        private const float MOVE_SPEED=300f;//玩家移动速度
         // 玩家显示点位
-        Vector2 showPosition = new Vector2(-20, 20);
+        Vector2 showPosition { get; set; } = new Vector2(-20, 20);
 
         protected override void Awake()
         {
@@ -51,11 +51,7 @@ namespace BetCity.GamePlay.Explorer
         }
         void Start()
         {
-            screenController=ExplorerScreenController.Instance;
-            diceController=ExplorerDiceController.Instance;
-            storageManager=StorageManager.Instance;
-            actionManager=ActionManager.Instance;
-            mapController=ExplorerMapController.Instance;
+
             
             if (!_initial)
             {
@@ -67,24 +63,28 @@ namespace BetCity.GamePlay.Explorer
             {
                 
                 //强制设置初值，不用事件系统
-                PlayerData.Load(storageManager.ArchiveDataContainer.PlayerDataDTO);
-                screenController.printPlayerNature();
+                PlayerData.Load(StorageManager.ArchiveDataContainer.PlayerDataDTO);
+                ScreenController.printPlayerNature();
                 RefreshPlayerPosition();
             }
             
-            mapController.MapCreate();
+            MapController.MapCreate();
             playerTransform = Player.GetComponent<RectTransform>();
             animator = Player.GetComponent<Animator>();
-            ToNodeInstant(mapController.MapNode[PlayerData.CurrentNodeNum]);
+            ToNodeInstant(MapController.MapNode[PlayerData.CurrentNodeNum]);
             SaveArchive();
+        }
+        public void SetPlayer(GameObject player)
+        {
+            Player= player;
         }
         /// <summary>
         /// 从storagemanager中读取数据
         /// </summary>
         public void Lode()
         {
-            PlayerData.Load(storageManager.ArchiveDataContainer.PlayerDataDTO);
-            screenController.printPlayerNature();
+            PlayerData.Load(StorageManager.ArchiveDataContainer.PlayerDataDTO);
+            ScreenController.printPlayerNature();
             RefreshPlayerPosition() ;
         }
         /// <summary>
@@ -92,61 +92,23 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void RenewScreen()
         {
-            screenController.printPlayerNature();
-            diceController.APRefresh();
+            ScreenController.printPlayerNature();
+            DiceController.APRefresh();
         }
         /// <summary>
         /// 立刻更新玩家位置，用于存档读取
         /// </summary>
         public void RefreshPlayerPosition()
         {
-            ToNodeInstant(mapController.MapNode[ PlayerData.CurrentNodeNum]);
-        }
-        /// <summary>
-        /// 玩家移动Action的判断逻辑
-        /// </summary>
-        public UniTask MoveJudge(Node sourcenode, Node targetnode)
-        {
-
-            //CancellationTokenSource cts=new CancellationTokenSource();
-            // 判断当前是否能进行操作
-            if (PLAYER_STATUS != 0)
-            {
-                //当前无法操作
-                return UniTask.CompletedTask; // 替代协程的yield break
-            }
-
-            // 判断玩家AP点
-            if (PlayerData.CurrentActionPoints <= 0)
-            {
-                //AP点不足
-                return UniTask.CompletedTask; // 替代协程的yield break
-            }
-
-            Node currentnode = mapController.MapNode[PlayerData.CurrentNodeNum];
-            //判断目标节点是否可到达
-            if (!mapController.CheckNode(currentnode.Id.ID,targetnode.Id.ID))
-            {
-
-                //无法到达
-
-                return UniTask.CompletedTask; // 替代协程的yield break
-            }
-            GameActionContext context = new(sourcenode, targetnode, null);
-            var currentNodeChange = new ExplorerNodeChangeAction(context);
-            ActionManager.Instance.Perform(currentNodeChange);
-
-            return UniTask.CompletedTask;
-
+            ToNodeInstant(MapController.MapNode[ PlayerData.CurrentNodeNum]);
         }
         /// <summary>
         /// 玩家移动Action的实际逻辑
         /// </summary>
         public  UniTask ExitNode(Node sourcenode)
         {
-            Debug.Log("2");
 
-            PLAYER_STATUS = 1;
+            PlayerStatus = 1;
             return UniTask.CompletedTask;
 
         }
@@ -155,15 +117,15 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public UniTask EnterNode(Node targetnode)
         {
-            screenController.ScreenFocus(targetnode);
+            ScreenController.ScreenFocus(targetnode);
 
             UseActionPointChange(-1);
             UseNodeNumChange(targetnode.Id.ID);
-            PLAYER_STATUS = 1;
+            PlayerStatus = 1;
             animator.SetBool("move", true);
 
             UseNodeNumChange(targetnode.Id.ID);
-            PLAYER_STATUS = 0;
+            PlayerStatus = 0;
             return UniTask.CompletedTask;
 
         }
@@ -182,7 +144,7 @@ namespace BetCity.GamePlay.Explorer
             // 移动循环逻辑
             while (distance > 10)
             {
-                playerTransform.anchoredPosition += moveframe * MoveSpeed * Time.deltaTime;
+                playerTransform.anchoredPosition += moveframe * MOVE_SPEED * Time.deltaTime;
                 distance = Vector2.Distance(playerTransform.anchoredPosition, movetarget); // 优化：复用movetarget
                 await UniTask.Yield(); // 替代yield return null，等待下一帧
             }
@@ -202,7 +164,7 @@ namespace BetCity.GamePlay.Explorer
         {
             UseNodeNumChange(targetnode.Id.ID);
             playerTransform.anchoredPosition = new Vector2(targetnode.Xposition, targetnode.Yposition)+showPosition;
-            screenController.ScreenFocusInstant(targetnode);
+            ScreenController.ScreenFocusInstant(targetnode);
         }
 
         #region 存储
@@ -239,7 +201,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void SubmitArchive(List<PlayerDataDTO> dTOs)
         {
-            storageManager.ModifyArchive(dTOs, this);
+            StorageManager.ModifyArchive(dTOs, this);
         }
         #endregion
         #region 调用接口函数
@@ -286,9 +248,36 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void UseNodeChange(Node sourcenode, Node targetnode)
         {
+
+            // 判断当前是否能进行操作
+            if (PlayerStatus != 0)
+            {
+                //当前无法操作
+                Debug.LogWarning("[" + this.name + "]当前无法操作，无法进行结点移动");
+                return;
+            }
+
+            // 判断玩家AP点
+            if (PlayerData.CurrentActionPoints <= 0)
+            {
+                //AP点不足
+                Debug.LogWarning("[" + this.name + "]AP点不足，无法进行结点移动");
+                return;
+            }
+
+            Node currentnode = MapController.MapNode[PlayerData.CurrentNodeNum];
+            //判断目标节点是否可到达
+            if (!MapController.CheckNode(currentnode.Id.ID, targetnode.Id.ID))
+            {
+
+                //无法到达
+                Debug.LogWarning("[" + this.name + "]目标结点与当前结点不连接，无法进行结点移动");
+                return;
+            }
             GameActionContext context = new(sourcenode, targetnode, null);
-            var currentNodeChange = new JudgeNodeAction(context);
+            var currentNodeChange = new ExplorerNodeChangeAction(context);
             ActionManager.Instance.Perform(currentNodeChange);
+
         }
         /// <summary>
         /// 创建更改当前最大纪念品动作

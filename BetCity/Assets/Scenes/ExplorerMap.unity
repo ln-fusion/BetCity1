@@ -245,10 +245,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28f680b470740f642bdaee350b972fbc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NodeTransform: []
-  Canvas: {fileID: 99830950}
-  MapTransform: {fileID: 918042567}
-  CurrentMapData: {fileID: 0}
+  <Canvas>k__BackingField: {fileID: 99830950}
+  <MapTransform>k__BackingField: {fileID: 918042567}
 --- !u!1 &42161048
 GameObject:
   m_ObjectHideFlags: 0
@@ -965,7 +963,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8355820e6a28fe247911bf14c0a249ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Player: {fileID: 0}
+  PlayerStatus: 0
 --- !u!1 &392275872
 GameObject:
   m_ObjectHideFlags: 0
@@ -3678,8 +3676,6 @@ MonoBehaviour:
   - {fileID: 48036413}
   - {fileID: 1429461805}
   - {fileID: 237336356}
-  FocusSpeed: 10
-  temp: 2000
 --- !u!1 &1953201429
 GameObject:
   m_ObjectHideFlags: 0
@@ -3957,10 +3953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cf33e5f8ca47ec46b9e83660c140d56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Dice: {fileID: 0}
   DiceTransform: {fileID: 2034249418}
-  DiceTime: 1
-  SanityCost: 2
 --- !u!1 &2031099415
 GameObject:
   m_ObjectHideFlags: 0

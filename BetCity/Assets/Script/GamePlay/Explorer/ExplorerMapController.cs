@@ -13,31 +13,32 @@ namespace BetCity.GamePlay.Explorer
     public class ExplorerMapController : MonoSingleton<ExplorerMapController>
     {
         /// <summary>
-        /// 静态属性，存入当前所有结点的类信息
+        /// 存入当前所有结点的类信息
         /// </summary>
-        public Node[] MapNode;
+        public Node[] MapNode { get; private set; }
         /// <summary>
-        /// 静态属性，存入当前所有结点的位置信息
+        /// 存入所有结点的位置信息
         /// </summary>
-        public RectTransform[] NodeTransform;
+        public RectTransform[] NodeTransform { get; private set; }
         /// <summary>
-        /// 静态属性，存入当前所有结点的位置信息
+        /// 获取场景中的画布
         /// </summary>
-        public RectTransform Canvas;
+        [field: SerializeField]
+        public RectTransform Canvas { get; private set; }
         /// <summary>
-        /// 静态属性，存入当前所有结点的位置信息
+        /// 获取场景中的地图父物体
         /// </summary>
-        public RectTransform MapTransform;
+        [field: SerializeField] 
+        public RectTransform MapTransform { get; private set; }
         private bool _initial = false;
-        private ExplorerPlayerController playerController;
-        private ExplorerResourceController resourceController;
-        private ExplorerScreenController screenController;
-        private PlayerData PlayerData=>playerController.PlayerData;
+        private ExplorerPlayerController PlayerController => ExplorerPlayerController.Instance;
+        private ExplorerResourceController ResourceController => ExplorerResourceController.Instance;
+        private ExplorerScreenController ScreenController => ExplorerScreenController.Instance;
+        private PlayerData PlayerData=>PlayerController.PlayerData;
         /// <summary>
         /// 实例化后的地图
         /// </summary>
-        [Header("不用赋值")]
-        public MapData CurrentMapData;
+        private MapData CurrentMapData { get; set; }
         private GameObject currentMap;
 
 
@@ -48,9 +49,6 @@ namespace BetCity.GamePlay.Explorer
         }
         private void Start()
         {
-            playerController=ExplorerPlayerController.Instance;
-            resourceController=ExplorerResourceController.Instance;
-            screenController=ExplorerScreenController.Instance;
             if (!_initial)
             {
                 _initial = true;
@@ -65,7 +63,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void MapCreate()
         {
-            GameObject mapPrefab = resourceController.GetMap(PlayerData.MapID);
+            GameObject mapPrefab = ResourceController.GetMap(PlayerData.MapID);
 
             currentMap = Instantiate(mapPrefab, Vector3.zero, Quaternion.Euler(Vector3.zero));
             currentMap.GetComponent<RectTransform>().SetParent(MapTransform.GetComponent<RectTransform>(), false);
@@ -76,17 +74,17 @@ namespace BetCity.GamePlay.Explorer
             MapNode = CurrentMapData.MapNode;
             //NodeTransform = CurrentMapData.NodeObject;
             //player
-            GameObject player= Instantiate(resourceController.Player, Vector3.zero, Quaternion.Euler(Vector3.zero));
+            GameObject player= Instantiate(ResourceController.Player, Vector3.zero, Quaternion.Euler(Vector3.zero));
             player.GetComponent<RectTransform>().SetParent(currentMap.GetComponent<RectTransform>(), false);
-            playerController.Player=player;
-            screenController.Mapintial(currentMap);
+            PlayerController.SetPlayer(player);
+            ScreenController.Mapintial(currentMap);
         }
         /// <summary>
         /// 按钮绑定函数，前往对应结点
         /// </summary>
         public void ToNode(int nodenum)
         {
-            playerController.UseNodeChange(MapNode[PlayerData.CurrentNodeNum] ,MapNode[nodenum]);
+            PlayerController.UseNodeChange(MapNode[PlayerData.CurrentNodeNum] ,MapNode[nodenum]);
         }
         /// <summary>
         /// 检查结点是否可到达
@@ -109,8 +107,7 @@ namespace BetCity.GamePlay.Explorer
         public void Travel(string scenename)
         {
             Debug.Log($"切换到空白场景");
-
-            playerController.ManualSave();
+            PlayerController.ManualSave();
             SceneManager.LoadScene(scenename);
         }
     }

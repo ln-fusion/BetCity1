@@ -48,8 +48,8 @@ namespace BetCity.GamePlay.Explorer
         /// <summary>
         /// 打印玩家的信息，临时系统
         /// </summary>
-        public float FocusSpeed;
-        public float temp;
+        private const float FOCUS_SPEED=10;
+        private const float NEAR_DISTANCE=2000;
 
 
 
@@ -103,7 +103,7 @@ namespace BetCity.GamePlay.Explorer
         // Update is called once per frame
         void Update()
         {
-            if (ExplorerPlayerController.Instance.PLAYER_STATUS!=0)
+            if (ExplorerPlayerController.Instance.PlayerStatus!=0)
             {
                 mousePress =false;
                 return;
@@ -173,8 +173,8 @@ namespace BetCity.GamePlay.Explorer
             Vector2 movePosition=ClampMapPosition(-1 * CurrentMapData.MapScale * new Vector2(targetNode.Xposition, targetNode.Yposition));
             Vector2 moveDirection =movePosition- CurrentMap.anchoredPosition;
             Vector2 remainMoveDirection =moveDirection;
-            Vector2 moveFrame = moveDirection.normalized*FocusSpeed;
-            while (remainMoveDirection.sqrMagnitude>temp)
+            Vector2 moveFrame = moveDirection.normalized*FOCUS_SPEED;
+            while (remainMoveDirection.sqrMagnitude>NEAR_DISTANCE)
             {
                 CurrentMap.anchoredPosition += moveFrame;
                 remainMoveDirection = movePosition - CurrentMap.anchoredPosition;

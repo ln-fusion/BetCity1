@@ -119,11 +119,15 @@ namespace BetCity.GamePlay.Explorer
             if (num < 0 || num > 6)
             {
                 //报错越界
+                Debug.LogWarning("[" + this + "]骰子编号越界，无法进行骰子升级");
+
                 return false;
             }
             if (Dice[num] + changeNum > 9|| Dice[num] + changeNum<0)
             {
                 //报错越界
+                Debug.LogWarning("[" + this + "]骰子升级量报错越界，无法进行骰子升级");
+
                 return false;
             }
             Dice[num] += changeNum;

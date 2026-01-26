@@ -9,13 +9,15 @@ public class ExplorerDice : MonoBehaviour
     /// <summary>
     /// 骰子当前的图片
     /// </summary>
-    public Image DiceCurrentImage;
+    [field: SerializeField]
+    public Image DiceCurrentImage {  get; private set; }
     //骰子信息
     public int[] Num => ExplorerPlayerController.Instance.PlayerData.Dice;
     /// <summary>
     /// 骰子图片
     /// </summary>
-    public Sprite[] DiceImage;
+    [field: SerializeField]
+    public Sprite[] DiceImage { get; private set; }
     private void Start()
     {
 
