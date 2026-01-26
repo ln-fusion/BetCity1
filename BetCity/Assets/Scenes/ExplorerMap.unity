@@ -4187,14 +4187,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b815b5aed467b94eaa4689159e2a7c3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Map:
-    list:
-    - key: 0
-      value: {fileID: 0}
-  MapPrefab:
+  <Map>k__BackingField:
+    list: []
+  <MapPrefab>k__BackingField:
   - {fileID: 8952823479871483143, guid: dc9ea5aff8312804988e17d65f1c90ce, type: 3}
   - {fileID: 6786955200632326555, guid: 795a96d19a1c6544e97f57ba4ff50069, type: 3}
-  Player: {fileID: 5441827419154595053, guid: f45c752975af9054eb817c6859bf49fb, type: 3}
+  <Player>k__BackingField: {fileID: 5441827419154595053, guid: f45c752975af9054eb817c6859bf49fb, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
