@@ -20,7 +20,7 @@ namespace BetCity.GamePlay.Store
     /// <summary>
     /// 商店事件管理器
     /// </summary>
-    public class StoreManager : BaseEventManager<StoreEvent>
+    public class StoreEventManager : BaseEventManager<StoreEvent>
     {
         //商店系统中不会刷新已拥有纪念品，此条不用写在condition里
         private IReadOnlyDictionary<int, Souvenir.Souvenir> ownedSouvenirs => SouvenirManager.Instance.OwnedSouvenirs;
@@ -116,6 +116,8 @@ namespace BetCity.GamePlay.Store
             LoadProducts();
             return UniTask.CompletedTask;
         }
+
+        
         #endregion
     }
 }

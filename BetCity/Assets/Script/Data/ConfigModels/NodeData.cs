@@ -19,6 +19,8 @@ namespace BetCity.Data.ConfigModels
         public int[] connectedNodes;
         [Header("节点类型")]
         public TypeOfEvent eventType;
+        [field: SerializeField, Header("节点事件Id若无固定事件设为-1")]
+        public int EventId { get; private set; } = -1;
         public float Xposition => NodePosition.anchoredPosition.x;
         public float Yposition => NodePosition.anchoredPosition.y;
         [NonSerialized]

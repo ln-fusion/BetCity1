@@ -14,7 +14,7 @@ namespace BetCity.GamePlay.Explorer
         {
             if (Context.Target is ExplorerPlayerController playerController)
             {
-                playerController.PlayerData. ChangeCurrentSanity(ChangeAmount, this);
+                playerController.PlayerData.ChangeCurrentSanity(ChangeAmount, this);
                 playerController.RenewScreen();
 
             }
