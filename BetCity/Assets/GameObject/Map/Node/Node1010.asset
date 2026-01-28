@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: Node1010
   m_EditorClassIdentifier: 
   Id:
-    MapID: 1
-    ID: 10
-  connectedNodes: 0b000000
-  eventType: 0
+    MapId: 1
+    Id: 10
+  ConnectedNodes: 0b000000
+  EventType: 0
+  <EventId>k__BackingField: -1

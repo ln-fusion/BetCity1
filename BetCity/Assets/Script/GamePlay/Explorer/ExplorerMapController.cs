@@ -91,7 +91,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public bool CheckNode(int currentnodenum,int targetnodenum)
         {
-            foreach (int j in MapNode[currentnodenum].connectedNodes)
+            foreach (int j in MapNode[currentnodenum].ConnectedNodes)
             {
                 if (j == targetnodenum)
                 {

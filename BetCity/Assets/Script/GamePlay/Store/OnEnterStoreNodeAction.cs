@@ -21,7 +21,7 @@ namespace BetCity.GamePlay.Store
             base.Perform(cancellationToken);
             if(Context.Target is Node node)
             {
-                if(node.eventType != TypeOfEvent.City)
+                if(node.EventType != TypeOfEvent.City)
                 {
                     StoreEventManager.Instance.EnterEvent(cancellationToken, node.EventId);
                 }

@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 290303736af2a6d4db584dbf1269a881, type: 3}
   m_Name: Node0001
   m_EditorClassIdentifier: 
-  ID:
-    MapID: 0
-    ID: 1
-  connectedNodes: 02000000
-  eventType: 0
-  NodePosition: {fileID: 0}
+  Id:
+    MapId: 0
+    Id: 1
+  ConnectedNodes: 02000000
+  EventType: 0
+  <EventId>k__BackingField: -1

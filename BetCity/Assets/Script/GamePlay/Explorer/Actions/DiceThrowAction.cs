@@ -18,6 +18,12 @@ namespace BetCity.GamePlay.Explorer
 
         public override async UniTask Perform(CancellationToken cancellationToken)
         {
+            if (!ExplorerDiceController.Instance.JudgeDiceThrow())
+            {
+                IsValid = false;
+                return;
+
+            }
             if (Context.Target is ExplorerDiceController diceController)
             {
                 await diceController.DiceThrow(cancellationToken);

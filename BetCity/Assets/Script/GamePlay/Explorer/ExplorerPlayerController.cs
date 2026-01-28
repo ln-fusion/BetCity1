@@ -101,12 +101,44 @@ namespace BetCity.GamePlay.Explorer
         {
             ToNodeInstant(MapController.MapNode[ PlayerData.CurrentNodeNum]);
         }
+        public bool NodeJudge(Node sourcenode, Node targetnode)
+        {
+            Debug.LogWarning("Judge");
+            // 判断当前是否能进行操作
+            if (PlayerStatus != 0)
+            {
+                //当前无法操作
+                Debug.LogWarning("[" + this.name + "]当前无法操作，无法进行结点移动");
+                return false ;
+            }
+
+            // 判断玩家AP点
+            if (PlayerData.CurrentActionPoints <= 0)
+            {
+                //AP点不足
+                Debug.LogWarning("[" + this.name + "]AP点不足，无法进行结点移动");
+                return false;
+            }
+
+            Node currentnode = MapController.MapNode[PlayerData.CurrentNodeNum];
+            //判断目标节点是否可到达
+            if (!MapController.CheckNode(currentnode.Id.Id, targetnode.Id.Id))
+            {
+
+                //无法到达
+                Debug.LogWarning("[" + this.name + "]目标结点与当前结点不连接，无法进行结点移动");
+                return false;
+            }
+
+
+            return true;
+        }
         /// <summary>
         /// 玩家移动Action的实际逻辑
         /// </summary>
-        public  UniTask ExitNode(Node sourcenode)
+        public  UniTask ExitNode(Node targetNode)
         {
-
+            Debug.LogWarning("Exit");
             PlayerStatus = 1;
             return UniTask.CompletedTask;
 
@@ -116,14 +148,16 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public UniTask EnterNode(Node targetnode)
         {
+            Debug.LogWarning("Enter");
+
             ScreenController.ScreenFocus(targetnode);
 
             UseActionPointChange(-1);
-            UseNodeNumChange(targetnode.Id.ID);
+            UseNodeNumChange(targetnode.Id.Id);
             PlayerStatus = 1;
             animator.SetBool("move", true);
 
-            UseNodeNumChange(targetnode.Id.ID);
+            UseNodeNumChange(targetnode.Id.Id);
             PlayerStatus = 0;
             return UniTask.CompletedTask;
 
@@ -134,6 +168,8 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public async UniTask Move(Node targetnode)
         {
+            Debug.LogWarning("move");
+
             animator.SetBool("move", true);
 
             Vector2 movetarget = new Vector2(targetnode.Xposition, targetnode.Yposition) + showPosition;
@@ -161,7 +197,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void ToNodeInstant(Node targetnode)
         {
-            UseNodeNumChange(targetnode.Id.ID);
+            UseNodeNumChange(targetnode.Id.Id);
             playerTransform.anchoredPosition = new Vector2(targetnode.Xposition, targetnode.Yposition)+showPosition;
             ScreenController.ScreenFocusInstant(targetnode);
         }
@@ -247,32 +283,6 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void UseNodeChange(Node sourcenode, Node targetnode)
         {
-
-            // 判断当前是否能进行操作
-            if (PlayerStatus != 0)
-            {
-                //当前无法操作
-                Debug.LogWarning("[" + this.name + "]当前无法操作，无法进行结点移动");
-                return;
-            }
-
-            // 判断玩家AP点
-            if (PlayerData.CurrentActionPoints <= 0)
-            {
-                //AP点不足
-                Debug.LogWarning("[" + this.name + "]AP点不足，无法进行结点移动");
-                return;
-            }
-
-            Node currentnode = MapController.MapNode[PlayerData.CurrentNodeNum];
-            //判断目标节点是否可到达
-            if (!MapController.CheckNode(currentnode.Id.ID, targetnode.Id.ID))
-            {
-
-                //无法到达
-                Debug.LogWarning("[" + this.name + "]目标结点与当前结点不连接，无法进行结点移动");
-                return;
-            }
             GameActionContext context = new(sourcenode, targetnode, null);
             var currentNodeChange = new ExplorerNodeChangeAction(context);
             ActionManager.Instance.Perform(currentNodeChange);

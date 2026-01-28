@@ -50,35 +50,41 @@ namespace BetCity.GamePlay.Explorer {
         /// </summary>
         public void UseDiceThrow()
         {
+            GameActionContext context = new(this, this, null);
+            var DiceAction = new DiceThrowAction(context);
+            ActionManager.Instance.Perform(DiceAction);
+        }
+        public bool JudgeDiceThrow()
+        {
+            Debug.LogWarning("JudgeDiceThrow");
             if (PlayerController.PlayerStatus != 0)
             {
                 //当前无法操作
-                Debug.LogWarning("["+this.name + "]当前无法操作，无法投掷骰子");
-                return;
+                Debug.LogWarning("[" + this.name + "]当前无法操作，无法投掷骰子");
+                return false ;
             }
             if (PlayerData.CurrentSanity < SANITY_COST)
             {
                 //理智值不足
                 Debug.LogWarning("[" + this.name + "]理智值不足，无法投掷骰子");
 
-                return;
+                return false;
             }
             if (PlayerData.CurrentActionPoints != 0)
             {
                 //AP点不为0
                 Debug.LogWarning("[" + this.name + "]AP点不为0，无法投掷骰子");
 
-                return;
+                return false;
             }
-            GameActionContext context = new(this, this, null);
-            var DiceAction = new DiceThrowAction(context);
-            ActionManager.Instance.Perform(DiceAction);
+            return true ;
         }
         /// <summary>
         /// 投掷骰子的实际逻辑
         /// </summary>
         public async UniTask DiceThrow(CancellationToken cancellationToken)
         {
+            Debug.LogWarning("DiceThrow");
             PlayerController.PlayerStatus = 2;
             PlayerController.UseSanityChange(-1 * SANITY_COST);
 

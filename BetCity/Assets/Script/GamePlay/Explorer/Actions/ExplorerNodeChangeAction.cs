@@ -22,11 +22,24 @@ namespace BetCity.GamePlay.Explorer
         public ExplorerNodeChangeAction(GameActionContext context)
             : base(context)
         {
-            EnqueueReaction(new OnExitNodeAction(context),ReactionTiming.PRE);
-            EnqueueReaction(new OnEnterNodeAction(context),ReactionTiming.POST);
+            if (context.Target is not Node||context.Source is not Node)
+            {
+                Debug.LogError("ExplorerNodeChangeAction:Context.Target/Source不是一个节点！");
+                IsValid = false;
+                return;
+            }
+
+            if (!ExplorerPlayerController.Instance.NodeJudge((Node)context.Source, (Node)context.Target))
+            {
+                IsValid = false;
+                return;
+            }
+            EnqueueReaction(new OnExitNodeAction(context), ReactionTiming.PRE);
+            EnqueueReaction(new OnEnterNodeAction(context), ReactionTiming.POST);
         }
         public override async UniTask Perform(CancellationToken cancellationToken)
         {
+
             if(Context.Target is Node a)
             {
                 await ExplorerPlayerController.Instance.Move(a);
