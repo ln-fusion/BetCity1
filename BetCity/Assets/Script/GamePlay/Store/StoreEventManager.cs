@@ -32,7 +32,7 @@ namespace BetCity.GamePlay.Store
         /// <summary>
         /// 商店升级骰子次数
         /// </summary>
-        public int UpgradeDiceCount { get; set; }
+        public int UpgradeDiceCount { get; private set; }
         /// <summary>
         /// 商店事件
         /// </summary>

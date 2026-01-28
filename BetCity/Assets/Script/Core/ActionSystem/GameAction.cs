@@ -24,10 +24,6 @@ namespace BetCity.Core.ActionSystem
         /// </summary>
         public PriorityQueue<GameAction, int> PostReactions { get; private set; } = new();
         /// <summary>
-        /// 该行为逻辑内带的连锁行为
-        /// </summary>
-        public PriorityQueue<GameAction, int> PerformReactions { get; private set; } = new();
-        /// <summary>
         /// 上下文信息
         /// </summary>
         public GameActionContext Context { get; protected set; }

@@ -121,8 +121,9 @@ namespace BetCity.Core.ActionSystem
         /// 行为演出
         /// </summary>
         /// <param name="action">行为</param>
+        /// <param name="isParallel">是否并行</param>
         /// <param name="OnPerformFinished">完成执行委托</param>
-        public void Perform(GameAction action, System.Action OnPerformFinished = null)
+        public void Perform(GameAction action, System.Action OnPerformFinished = null, bool isParallel = false)
         {
             if (action == null)
             {
@@ -130,6 +131,20 @@ namespace BetCity.Core.ActionSystem
                 OnPerformFinished?.Invoke();
                 return;
             }
+
+            // 并行执行
+            if (isParallel)
+            {
+                Flow(action, () =>
+                {
+                    OnPerformFinished?.Invoke();
+                }, 0, actionCts.Token).Forget(e =>
+                {
+                    Debug.LogError($"并行Flow执行异常: {e}");
+                });
+                return;
+            }
+
             if (IsPerforming)
             {
                 actionQueue.Enqueue((action, OnPerformFinished), action.Priority);
@@ -179,7 +194,7 @@ namespace BetCity.Core.ActionSystem
                 return;
             }
 
-            await PerfromSubscribers(action, preSubs, cancellationToken);
+            await PerformSubscribers(action, preSubs, cancellationToken);
             reactions = action.PreReactions;
             GameAction reaction;
 
@@ -198,15 +213,8 @@ namespace BetCity.Core.ActionSystem
                 return;
             }
 
-            reactions = action.PerformReactions;
             await action.Perform(cancellationToken); // 等待主行为执行
             await PerformPerformer(action);
-
-            while (reactions.Count > 0 && action.IsValid && !cancellationToken.IsCancellationRequested)
-            {
-                reaction = reactions.Dequeue();
-                await Flow(reaction, null, depth + 1, cancellationToken);
-            }
 
             await WaitIfPaused(cancellationToken);
             if (cancellationToken.IsCancellationRequested) return;
@@ -216,11 +224,12 @@ namespace BetCity.Core.ActionSystem
                 return;
             }
 
-            await PerfromSubscribers(action, postSubs, cancellationToken);
+            await PerformSubscribers(action, postSubs, cancellationToken);
             reactions = action.PostReactions;
 
             while (reactions.Count > 0 && action.IsValid && !cancellationToken.IsCancellationRequested)
             {
+                await WaitIfPaused(cancellationToken);
                 reaction = reactions.Dequeue();
                 await Flow(reaction, null, depth + 1, cancellationToken);
             }
@@ -228,8 +237,6 @@ namespace BetCity.Core.ActionSystem
             Debug.Log($"[ActionManager] 完成执行: {action.GetType().Name}");
             OnFlowFinished?.Invoke();
         }
-
-
 
         private async UniTask PerformPerformer(GameAction action)
         {
@@ -244,7 +251,7 @@ namespace BetCity.Core.ActionSystem
             }
         }
 
-        private async UniTask PerfromSubscribers(GameAction action, Dictionary<Type, List<DelegateWrapper>> subs, CancellationToken cancellationToken)
+        private async UniTask PerformSubscribers(GameAction action, Dictionary<Type, List<DelegateWrapper>> subs, CancellationToken cancellationToken)
         {
             //订阅删除其他订阅无法第一时间生效，只会在下一次生效
             List<Type> inheritChain = GetInheritChain(action.GetType());
@@ -410,7 +417,32 @@ namespace BetCity.Core.ActionSystem
             Debug.LogWarning($"[ActionManager]UnsubscribeReaction<{typeof(T).Name}>: GUID {guid} not found!");
             return false;
         }
-       
+
+        /// <summary>
+        /// 立刻执行子动作，阻塞主动作直到子动作完成（兼容递归深度限制、暂停、取消逻辑）
+        /// </summary>
+        /// <param name="depth">当前深度（不需要+1）</param>
+        /// <param name="childAction">子动作实例</param>
+        /// <param name="cancellationToken">取消令牌（透传主动作的取消信号）</param>
+        /// <returns>异步任务</returns>
+        public async UniTask PerformChildActionAsync(GameAction childAction, int depth, CancellationToken cancellationToken)
+        {
+            if (childAction == null)
+            {
+                Debug.LogError("[ActionManager] ExecuteChildActionAsync: 子动作不能为空！");
+                return;
+            }
+
+            // 合并取消令牌（主动作取消 + 全局动作取消）
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, actionCts.Token);
+            var linkedToken = linkedCts.Token;
+
+            await WaitIfPaused(linkedToken);
+            if (linkedToken.IsCancellationRequested)
+                return;
+
+            await Flow(childAction, null, depth + 1, linkedToken);
+        }
     }
 
 }
