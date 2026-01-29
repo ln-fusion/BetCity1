@@ -16,11 +16,6 @@ namespace BetCity.Core.Tools
         public ResourceType ResourceType { get; }
 
         /// <summary>
-        /// 是否执行完修改，如果修改不合法一直为false
-        /// </summary>
-        public bool HasChanged { get; protected set; } = false;
-
-        /// <summary>
         /// 变化量（正数增加，负数减少）
         /// </summary>
         public int ChangeAmount { get; }

@@ -178,6 +178,7 @@ namespace BetCity.Core.ActionSystem
 
         private async UniTask Flow(GameAction action, Action OnFlowFinished = null, int depth = 0, CancellationToken cancellationToken = default)
         {
+            action.Depth = depth;
             Debug.Log($"[ActionManager] 开始执行: {action.GetType().Name} (Priority: {action.Priority})");
 
             if (depth > MAX_RECURSION_DEPTH)

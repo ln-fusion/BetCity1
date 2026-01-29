@@ -9,7 +9,7 @@ using UnityEngine;
 namespace BetCity.Core.Tools
 {
     /// <summary>
-    /// 钱币变化动作
+    /// 钱币变化动作,Target为拥有钱币的实体
     /// </summary>
     public class CoinChangeAction : ResourceChangeAction
     {
@@ -20,8 +20,11 @@ namespace BetCity.Core.Tools
         {
             if (Context.Target is IHasCoin target)
             {
-                if (target.ChangeCoin(ChangeAmount, this))
-                    HasChanged = true;
+                if (!target.ChangeCoin(ChangeAmount, this))
+                {
+                    IsValid = false;
+                    Debug.LogWarning("[CoinChangeAction]金币不足！");
+                }
             }
             return UniTask.CompletedTask;
         }

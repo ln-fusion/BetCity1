@@ -28,6 +28,10 @@ namespace BetCity.Core.ActionSystem
         /// </summary>
         public GameActionContext Context { get; protected set; }
         /// <summary>
+        /// 递归深度信息，由ActionManager赋值管理，本类无需关注
+        /// </summary>
+        public int Depth {  get; set; }
+        /// <summary>
         /// 该行为的优先级，越低越优先，会影响该行为作为别的行为的前置或是后置连锁行为时的执行顺序
         /// </summary>
         public int Priority { get; private set; }

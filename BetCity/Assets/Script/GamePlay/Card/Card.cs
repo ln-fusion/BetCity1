@@ -1,4 +1,4 @@
-using BetCity.GamePlay.CardOrg;
+﻿using BetCity.GamePlay.CardOrg;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +25,7 @@ namespace BetCity.Card
         public int Id => cardData.Id;
         public string CardName => cardData.CardName;
         public string Description => cardData.Description;
+        public int Price => cardData.Price;
         public int ArtworkID => cardData.ArtworkID;
         public UnityEngine.Sprite Image => cardData.Image;
         public Data.ConfigModels.CardSeries Series => cardData.Series;

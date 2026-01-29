@@ -10,7 +10,7 @@ using UnityEngine;
 namespace BetCity.GamePlay.Store
 {
     /// <summary>
-    /// 进入商店节点动作
+    /// 进入商店节点动作,SourceTarget均为节点
     /// </summary>
     public class OnEnterStoreNodeAction : OnEnterNodeAction
     {
@@ -30,6 +30,11 @@ namespace BetCity.GamePlay.Store
                     //城市加载逻辑
                     throw new NotImplementedException();
                 }
+            }
+            else
+            {
+                IsValid = false;
+                Debug.LogWarning("[OnEnterStoreNodeAction]传入错误Context信息！");
             }
             return UniTask.CompletedTask;
         }

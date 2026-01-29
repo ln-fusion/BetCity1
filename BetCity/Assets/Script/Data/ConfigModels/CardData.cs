@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace BetCity.Data.ConfigModels
 {
@@ -15,6 +15,7 @@ namespace BetCity.Data.ConfigModels
         [field: SerializeField] public string CardName { get; private set; }
         [field: TextArea]
         [field: SerializeField] public string Description { get; private set; }
+        [field: SerializeField] public int Price {  get; private set; }
         [field: SerializeField] public int ArtworkID { get; private set; }
         [field: SerializeField] public Sprite Image { get; private set; }
         [field: SerializeField] public CardSeries Series { get; private set; }
