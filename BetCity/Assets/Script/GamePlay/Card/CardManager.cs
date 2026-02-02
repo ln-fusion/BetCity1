@@ -6,109 +6,144 @@ using BetCity.Card;
 using BetCity.Data.Storage;
 using BetCity.Data.ConfigModels;
 
-
 namespace BetCity.Card
 {
-    public class CardManager : MonoSingleton<CardManager>, ISubmitArchive<OwnedCardDTO>
+    public class CardManager : MonoSingleton<CardManager>, ISubmitArchive<OwnedCardDTO>, IModifyCard
     {
-        private List<Card> _ownedCards = new List<Card>();
+        private CardDataManager CardDataManager => CardDataManager.Instance;
+        private StorageManager StorageManager => StorageManager.Instance;
 
-        /// <summary>
-        /// 初始化时从存档加载卡牌数据
-        /// </summary>
+        // 所有原型（只读）
+        private IReadOnlyList<CardData> AllCardDatas => CardDataManager.Data;
+
+        // 已拥有实例（按 id 映射）
+        private Dictionary<int, Card> ownedCards = new Dictionary<int, Card>();
+
+        // 图书馆/牌组
+        private List<int> deckCards = new List<int>();
+        private List<int> libraryCards = new List<int>();
+        private List<int> notOwnedCards = new List<int>();
+
         protected override void Awake()
         {
             base.Awake();
-            LoadCardsFromArchive();
+            CacheOwnedCardInstances();
+            LoadNotOwnedCards();
         }
 
-        /// <summary>
-        /// 从存档加载卡牌数据
-        /// </summary>
-        private void LoadCardsFromArchive()
+        private void LoadNotOwnedCards()
         {
-            var dtos = StorageManager.Instance.ArchiveDataContainer.OwnedCardDTOs;
+            notOwnedCards = AllCardDatas.Where(d => !ownedCards.ContainsKey(d.Id)).Select(d => d.Id).ToList();
+        }
+
+        private void CacheOwnedCardInstances()
+        {
+            ownedCards.Clear();
+            var dtos = StorageManager.ArchiveDataContainer.OwnedCardDTOs;
+            if (dtos == null) return;
+
             foreach (var dto in dtos)
             {
-                var cardData = CardDataManager.Instance.GetDataById(dto.Id);
-                if (cardData != null)
+                var cardData = CardDataManager.GetDataById(dto.Id);
+                if (cardData == null)
                 {
-                    var card = new Card(cardData, true, dto.Owner)
-                    {
-                        //  实际应通过SetCardState设置
-                    };
-                    _ownedCards.Add(card);
+                    UnityEngine.Debug.LogError($"发现不存在的卡牌，非法Id为：{dto.Id}");
+                    continue;
                 }
+
+                // OwnedCardDTO 构造顺序: (id, owner, customPrice, isInBag, extraData)
+                Card card = new Card(cardData, dto.ExtraData, dto.CustomPrice, dto.IsInBag, true, dto.Owner);
+
+                ownedCards.Add(dto.Id, card);
+                if (dto.IsInBag) deckCards.Add(dto.Id); else libraryCards.Add(dto.Id);
             }
         }
 
-        /// <summary>
-        /// 获得卡牌
-        /// </summary>
+        // 对外接口：以 id 拥有卡牌（遵循 IModifyCard 签名）
         public bool OwnCardById(int id, out Card card, out string errorMsg)
         {
-            errorMsg = string.Empty;
             card = null;
+            errorMsg = string.Empty;
 
-            var cardData = CardDataManager.Instance.GetDataById(id);
+            if (ownedCards.ContainsKey(id))
+            {
+                card = ownedCards[id];
+                errorMsg = $"已拥有ID为{id}的卡牌";
+                return false;
+            }
+
+            var cardData = CardDataManager.GetDataById(id);
             if (cardData == null)
             {
                 errorMsg = $"未找到ID为{id}的卡牌原型";
                 return false;
             }
 
-            if (_ownedCards.Exists(c => c.Id == id))
-            {
-                errorMsg = $"已拥有ID为{id}的卡牌";
-                return false;
-            }
+            // 从原型创建实例
+            card = new Card(cardData);
+            ownedCards[id] = card;
 
-            card = new Card(cardData, true);
-            _ownedCards.Add(card);
+            // 默认放入仓库（或根据规则放入 deck）
+            libraryCards.Add(id);
+
+            // 标记为拥有
+            card.SetIsOwned(true, this);
+
+            // 更新未拥有列表、存档
+            notOwnedCards.Remove(id);
             SubmitArchiveToStorage();
             return true;
         }
 
-        /// <summary>
-        /// 失去卡牌
-        /// </summary>
+        // 对外接口：失去卡牌
         public bool LoseCardById(int id, out Card card, out string errorMsg)
         {
+            card = null;
             errorMsg = string.Empty;
-            card = _ownedCards.Find(c => c.Id == id);
 
-            if (card == null)
+            if (!ownedCards.ContainsKey(id))
             {
                 errorMsg = $"未拥有ID为{id}的卡牌";
                 return false;
             }
 
-            _ownedCards.Remove(card);
+            card = ownedCards[id];
+
+            // 从集合移除并更新状态
+            ownedCards.Remove(id);
+            deckCards.Remove(id);
+            libraryCards.Remove(id);
+            card.SetIsOwned(false, this);
+
+            notOwnedCards.Add(id);
             SubmitArchiveToStorage();
             return true;
         }
 
-        /// <summary>
-        /// 提交存档
-        /// </summary>
-        public void SubmitArchive(List<OwnedCardDTO> t)
+        public bool IsOwned(int id) => ownedCards.ContainsKey(id);
+
+        public Card GetOwnedCardById(int id)
         {
-            StorageManager.Instance.ModifyArchive(t, this);
+            if (ownedCards.TryGetValue(id, out var c)) return c;
+            return null;
         }
 
-        /// <summary>
-        /// 转换为DTO并提交存档
-        /// </summary>
         private void SubmitArchiveToStorage()
         {
-            var dtos = _ownedCards.Select(c => new OwnedCardDTO(
-                c.Id,
-                c.Owner,
-                c.IsActive
+            var dtos = ownedCards.Select(kv => new OwnedCardDTO(
+                kv.Key,
+                kv.Value.Owner,
+                kv.Value.Price,
+                kv.Value.IsInDeck,
+                kv.Value.ExtraData
             )).ToList();
 
             SubmitArchive(dtos);
         }
+
+        public void SubmitArchive(List<OwnedCardDTO> t)
+        {
+            StorageManager.ModifyArchive(t, this);
+        }
     }
 }
-    

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace BetCity.Data.ConfigModels
 {
@@ -20,7 +21,7 @@ namespace BetCity.Data.ConfigModels
         [field: SerializeField] public Sprite Image { get; private set; }
         [field: SerializeField] public CardSeries Series { get; private set; }
         [field: SerializeField] public CardType Type { get; private set; } // 区分怪兽/魔法卡
-
+        [field: SerializeField] public List<EffectConfig> Effects { get; private set; }
         // 怪兽卡特有属性
         [field: SerializeField] public int MonsterScore { get; private set; }
     }

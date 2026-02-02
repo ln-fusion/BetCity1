@@ -1,9 +1,8 @@
 using BetCity.Core.Tools;
+using BetCity.Data.ConfigModels;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using BetCity.Data.ConfigModels;
-using BetCity.Card;
 
 namespace BetCity.Card
 {
@@ -20,8 +19,13 @@ namespace BetCity.Card
         // 数据字典（用于快速通过ID查询）
         private Dictionary<int, CardData> _dataDict = new Dictionary<int, CardData>();
 
+        /// <summary>
+        /// CardData 资源路径（Resources 下的子目录名）
+        /// </summary>
+        public const string CARD_DATA_RESOURCES_PATH = "Card";
+
         [Header("数据配置")]
-        [SerializeField] private string cardDataResourcesPath;
+        [SerializeField] private string cardDataResourcesPath = CARD_DATA_RESOURCES_PATH;
 
         /// <summary>
         /// 初始化数据
@@ -43,11 +47,12 @@ namespace BetCity.Card
         {
             try
             {
-                CardData[] loadedDatas = Resources.LoadAll<CardData>(cardDataResourcesPath);
+                string path = string.IsNullOrEmpty(cardDataResourcesPath) ? CARD_DATA_RESOURCES_PATH : cardDataResourcesPath;
+                CardData[] loadedDatas = Resources.LoadAll<CardData>(path);
 
                 if (loadedDatas == null || loadedDatas.Length == 0)
                 {
-                    Debug.LogWarning($"[CardDataManager] 未在Resources/{cardDataResourcesPath}路径下找到任何CardData资源");
+                    Debug.LogWarning($"[CardDataManager] 未在Resources/{path}路径下找到任何CardData资源");
                     return;
                 }
 
@@ -76,8 +81,10 @@ namespace BetCity.Card
             HashSet<int> idSet = new HashSet<int>();
             List<string> errorMessages = new List<string>();
 
-            foreach (var data in _data)
+            for (int i = 0; i < _data.Count; i++)
             {
+                CardData data = _data[i];
+
                 // 校验ID唯一性
                 if (!idSet.Add(data.Id))
                 {
@@ -90,7 +97,13 @@ namespace BetCity.Card
                     errorMessages.Add($"ID为{data.Id}的卡牌名称为空");
                 }
 
-                // 怪兽卡必须有分数
+                // 价格不能为负
+                if (data.Price < 0)
+                {
+                    errorMessages.Add($"ID为{data.Id}的卡牌价格无效：{data.Price}，价格不能为负数");
+                }
+
+                // 怪兽卡必须有有效分数
                 if (data.Type == CardType.Monster && data.MonsterScore < 0)
                 {
                     errorMessages.Add($"ID为{data.Id}的怪兽卡分数无效：{data.MonsterScore}");
@@ -109,8 +122,12 @@ namespace BetCity.Card
         /// </summary>
         public CardData GetDataById(int id)
         {
-            _dataDict.TryGetValue(id, out var result);
-            return result;
+            if (_dataDict.TryGetValue(id, out CardData result))
+            {
+                return result;
+            }
+
+            return null;
         }
     }
 }
