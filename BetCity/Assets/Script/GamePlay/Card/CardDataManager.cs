@@ -102,12 +102,6 @@ namespace BetCity.Card
                 {
                     errorMessages.Add($"ID为{data.Id}的卡牌价格无效：{data.Price}，价格不能为负数");
                 }
-
-                // 怪兽卡必须有有效分数
-                if (data.Type == CardType.Monster && data.MonsterScore < 0)
-                {
-                    errorMessages.Add($"ID为{data.Id}的怪兽卡分数无效：{data.MonsterScore}");
-                }
             }
 
             if (errorMessages.Count > 0)

@@ -24,7 +24,6 @@ namespace BetCity.Card
         public Sprite Image => cardData.Image;
         public Data.ConfigModels.CardSeries Series => cardData.Series;
         public CardType Type => cardData.Type;
-        public int MonsterScore => cardData.MonsterScore;
         public List<EffectConfig> Effects => cardData.Effects;
 
         // 实例可变状态（可被 CardManager 修改）
