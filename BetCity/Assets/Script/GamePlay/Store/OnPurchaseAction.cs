@@ -11,7 +11,7 @@ using UnityEngine;
 namespace BetCity.GamePlay.Store
 {
     /// <summary>
-    /// 买商品的动作，Target为Product
+    /// 买商品的动作Target为购买商品的Index
     /// </summary>
     public class OnPurchaseAction : GameAction
     {
@@ -27,11 +27,23 @@ namespace BetCity.GamePlay.Store
 
         public override async UniTask Perform(CancellationToken cancellationToken)
         {
-            if(!(Context.Target is Product product))
+            if(!(Context.Target is int index))
             {
-                Debug.LogError("[OnPurchaseAction]传入Target不是Product类的实例");
+                Debug.LogError("[OnPurchaseAction]传入Target不是int类的实例");
                 IsValid = false;
                 return;
+            }
+
+            Product product;
+            if (index > StoreEventManager.Instance.CurrentListedProducts.Length || index < 0)
+            {
+                Debug.LogError("[OnPurchaseAction]传入Target的值index为不合法值");
+                IsValid = false;
+                return;
+            }
+            else
+            {
+                product = StoreEventManager.Instance.CurrentListedProducts[index];
             }
 
             SouvenirData souvenirData = null;

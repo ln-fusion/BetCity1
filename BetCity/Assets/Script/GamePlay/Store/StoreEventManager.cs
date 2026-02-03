@@ -1,4 +1,5 @@
-﻿using BetCity.Core.CheckSystem;
+﻿using BetCity.Card;
+using BetCity.Core.CheckSystem;
 using BetCity.Core.EventSystem;
 using BetCity.Core.ProgressSystem;
 using BetCity.Core.Tools;
@@ -19,8 +20,9 @@ namespace BetCity.GamePlay.Store
 {
     /// <summary>
     /// 商店事件管理器
+    /// CurrentEventState有None, Start, Purchase
     /// </summary>
-    public class StoreEventManager : BaseEventManager<StoreEvent>
+    public class StoreEventManager : BaseEventManager<StoreEvent, StoreEventManager>
     {
         //商店系统中不会刷新已拥有纪念品，此条不用写在condition里
         private IReadOnlyDictionary<int, Souvenir.Souvenir> ownedSouvenirs => SouvenirManager.Instance.OwnedSouvenirs;
@@ -97,7 +99,7 @@ namespace BetCity.GamePlay.Store
 
         #region 接口
         /// <summary>
-        /// 进入商店节点动作触发该函数
+        /// OnEnterStoreNode触发该函数，将CurrentEventState设置为Start
         /// </summary>
         /// <param name="id">id</param>
         public override UniTask EnterEvent(CancellationToken cancellationToken, int id)
@@ -109,7 +111,7 @@ namespace BetCity.GamePlay.Store
             }
             else
             {
-                Debug.LogWarning($"[StoreManager]对应Id为{id}的商店事件不存在！");
+                Debug.LogWarning($"[StoreEventManager]对应Id为{id}的商店事件不存在！");
                 CurrentEventState = "None";
                 return UniTask.CompletedTask;
             }
@@ -117,7 +119,28 @@ namespace BetCity.GamePlay.Store
             return UniTask.CompletedTask;
         }
 
-        
+        /// <summary>
+        /// 购买商品逻辑OnPurchase触发该函数，已扣除金币/理智,将CurrentEventState设置为Purchase
+        /// </summary>
+        public void OwnProduct(int index)
+        {
+            Product product = CurrentListedProducts[index];
+            switch (product.ItemType)
+            {
+                case ItemType.Souvenir:
+                    SouvenirManager.Instance.OwnSouvenirById(product.ProductId, out Souvenir.Souvenir souvenir, out string errorMsg);
+                    if (errorMsg != null)
+                        Debug.LogError("[StoreEventManager]购买商品时发生错误:" + errorMsg);
+                    break;
+                case ItemType.Card:
+                    CardManager.Instance.OwnCardById(product.ProductId, out Card.Card card, out errorMsg);
+                    if (errorMsg != null)
+                        Debug.LogError("[StoreEventManager]购买商品时发生错误:" + errorMsg);
+                    break;
+            }
+            CurrentListedProducts[index] = null;
+            CurrentEventState = "Purchase";
+        }
         #endregion
     }
 }

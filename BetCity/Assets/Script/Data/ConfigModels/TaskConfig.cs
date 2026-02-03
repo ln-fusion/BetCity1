@@ -57,13 +57,9 @@ namespace BetCity.Data.ConfigModels
         /// </summary>
         [field: SerializeField] public TaskGoalType GoalType { get; private set; }
         /// <summary>
-        /// 目标ID（NPCID/怪物ID/物品ID）
+        /// 目标ID（NPCID/怪物ID/物品ID）- 完成目标所需要的数量
         /// </summary>
-        [field: SerializeField] public int TargetId { get; private set; }
-        /// <summary>
-        /// 完成目标所需要的数量
-        /// </summary>
-        [field: SerializeField] public int TargetCount {  get; private set; }
+        [field: SerializeField] public Dictionary<int, int> TargetIdAndCount { get; private set; }
     }
 
     /// <summary>
