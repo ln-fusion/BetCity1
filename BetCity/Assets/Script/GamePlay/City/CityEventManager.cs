@@ -9,7 +9,7 @@ namespace BetCity.GamePlay.City
     /// <summary>
     /// 城市事件管理器
     /// </summary>
-    public class CityEventManager : BaseEventManager<CityEvent>
+    public class CityEventManager : BaseEventManager<CityEvent, CityEventManager>
     {
         
     }

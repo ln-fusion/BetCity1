@@ -72,7 +72,7 @@ namespace BetCity.GamePlay.Souvenir
         /// <summary>
         /// 暂时用来保存/取消注册的地方
         /// </summary>
-        private void OnDisable()
+        private void OnDestroy()
         {
             foreach (var id in bagSouvenirs)
             {
