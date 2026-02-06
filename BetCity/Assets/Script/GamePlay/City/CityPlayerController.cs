@@ -1,46 +1,57 @@
-using BetCity.Core.Tools;
+ï»¿using BetCity.Core.Tools;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-public class CityPlayerController : MonoSingleton<CityPlayerController>
+namespace BetCity.GamePlay.City
 {
-    public GameObject Player;
-    //½Å±¾
-    private CityMapController MapController => CityMapController.Instance;
-    //Ö÷½ÇÊôÐÔ
-    private const float SPEED = 4f;
-    protected override void Awake()
+    public class CityPlayerController : MonoBehaviour
     {
-        base.Awake();
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+        public GameObject Player;
+        //è„šæœ¬
+        private CityMapController MapController => CityMapController.Instance;
+        [field: SerializeField]
+        public CityCameraController CameraController {  get; private set; }
+        //ä¸»è§’å±žæ€§
+        private const float PLAYERMOVESPEED = 4f;
+        public bool CameraStatic { get; private set; }
+        public float CameraPositionMax { get; private set; }
+        public float PlayerPositionMax { get; private set; }
 
-    // Update is called once per frame
-    void Update()
-    {
-        float horizontalInput = 0;
+        // Start is called before the first frame update
+        void Start()
+        {
 
-        if (Input.GetKey(KeyCode.A))
-        {
-            horizontalInput = -1;
         }
-        else if (Input.GetKey(KeyCode.D))
+        public void Initial()
         {
-            horizontalInput = 1;
+            float screenLength = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
+            CameraPositionMax = MapController.StreetLength - screenLength;
+            PlayerPositionMax = MapController.StreetLength;
         }
-        if (horizontalInput == 0)
+        // Update is called once per frame
+        void Update()
         {
-            return;
+
+
         }
-        Vector3 moveDirection = new Vector3(horizontalInput, 0, 0) * SPEED * Time.deltaTime;
-        //Vector3 movePosition = Player.transform.position+moveDirection;
-        //Player.transform.position = movePosition;
-        Player.transform.rotation = Quaternion.Euler(new Vector3(0,90-90*horizontalInput,0));
-        MapController.Renew(moveDirection);
+        public void Input(int horizontalInput)
+        {
+            if (Math.Abs(Player.transform.position.x) > CameraPositionMax)
+            {
+                CameraStatic = true;
+            }
+            else
+            {
+                CameraStatic = false;
+            }
+
+            Vector3 moveDirection = new Vector3(horizontalInput, 0, 0) * PLAYERMOVESPEED * Time.deltaTime;
+            Vector3 movePosition = moveDirection + Player.transform.position;
+            movePosition.x = Math.Clamp(movePosition.x, -PlayerPositionMax, PlayerPositionMax);
+            Player.transform.rotation = Quaternion.Euler(new Vector3(0, 90 - 90 * horizontalInput, 0));
+            Player.transform.position = movePosition;
+            CameraController.Renew(moveDirection);
+        }
     }
 }

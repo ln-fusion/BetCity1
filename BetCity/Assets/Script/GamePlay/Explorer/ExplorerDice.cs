@@ -18,6 +18,6 @@ public class ExplorerDice : MonoBehaviour
     public async UniTask<int> Throw(CancellationToken cancellationToken)
     {
         gameObject.SetActive(true);
-        return 0;
+        return 2;
     }
 }

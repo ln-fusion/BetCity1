@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEditor;
 using UnityEngine;
 namespace BetCity.GamePlay.Explorer
 {
@@ -10,12 +11,7 @@ namespace BetCity.GamePlay.Explorer
     {
         public override UniTask Perform(CancellationToken cancellationToken)
         {
-            if (Context.Target is ExplorerPlayerController playerController)
-            {
-                playerController.PlayerData.ChangeCurrentNodeNum(TargetNum, this);
-                playerController.RenewScreen();
-
-            }
+            ExplorerPlayerController.Instance.PlayerData.ChangeCurrentNodeNum(TargetNum, this);
             return UniTask.CompletedTask;
         }
 

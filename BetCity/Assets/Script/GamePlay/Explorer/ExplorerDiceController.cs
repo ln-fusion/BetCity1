@@ -41,6 +41,7 @@ namespace BetCity.GamePlay.Explorer {
                 GameObject dice = Instantiate(Resources.Load<GameObject>("Prefab/Dice"), Vector3.zero, Quaternion.Euler(Vector3.zero));
                 dice.SetActive(false);
                 Dice = dice.GetComponent<ExplorerDice>();
+
             }
             
         }
@@ -84,13 +85,13 @@ namespace BetCity.GamePlay.Explorer {
         /// </summary>
         public async UniTask DiceThrow(CancellationToken cancellationToken)
         {
-            Debug.LogWarning("DiceThrow");
             PlayerController.PlayerStatus = 2;
-            PlayerController.UseSanityChange(-1 * SANITY_COST);
+            await ActionManager.Instance.PerformChildActionAsync(new CurrentSanityChangeAction(new(this, this, null), -1 * SANITY_COST), 0,cancellationToken);
 
             int randomInt = await Dice.Throw(cancellationToken);
 
-            PlayerController.UseActionPointChange(randomInt);
+            await ActionManager.Instance.PerformChildActionAsync(new CurrentActionPointChangeAction(new(this, this, null), randomInt), 0, cancellationToken);
+
             PlayerController.PlayerStatus = 0;
             return;
         }

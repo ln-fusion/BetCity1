@@ -13,23 +13,15 @@ public class OnExitNodeAction : GameAction
     {
 
     }
-    public override UniTask Perform(CancellationToken cancellationToken)
+    public override async UniTask Perform(CancellationToken cancellationToken)
     {
         if (Context.Target is not Node || Context.Source is not Node)
         {
             Debug.LogError("OnExitNodeAction:Context.Target/Source不是一个节点！");
             IsValid = false;
-            return UniTask.CompletedTask;
+            return;
         }
-        ExplorerPlayerController.Instance.ExitNode((Node)Context.Target);
-        //if (!await ExplorerPlayerController.Instance.ExitNode((Node)Context.Target))
-        //{
-        //    IsValid = false;
-        //}
-        if (Context.Source != Context.Target)
-        {
-            ExplorerPlayerController.Instance.ExitNode((Node)Context.Target);
-        }
-        return UniTask.CompletedTask;
+        await ExplorerPlayerController.Instance.ExitNode((Node)Context.Target, cancellationToken);
+        return;
     }
 }

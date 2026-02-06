@@ -4,6 +4,7 @@ using BetCity.Data.ConfigModels;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.Diagnostics;
+using BetCity.Core.ActionSystem;
 
 namespace BetCity.GamePlay.Explorer
 {
@@ -84,7 +85,9 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void ToNode(int nodenum)
         {
-            PlayerController.UseNodeChange(MapNode[PlayerData.CurrentNodeNum] ,MapNode[nodenum]);
+            GameActionContext context = new(MapNode[PlayerData.CurrentNodeNum], MapNode[nodenum], null);
+            var currentNodeChange = new ExplorerNodeChangeAction(context);
+            ActionManager.Instance.Perform(currentNodeChange);
         }
         /// <summary>
         /// 检查结点是否可到达

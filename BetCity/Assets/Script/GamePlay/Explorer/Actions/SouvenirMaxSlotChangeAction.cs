@@ -13,7 +13,6 @@ namespace BetCity.GamePlay.Explorer
             if (Context.Target is ExplorerPlayerController playerController)
             {
                 playerController.PlayerData.ChangeSouvenirMaxSlot(TargetNum, this);
-                playerController.RenewScreen();
 
             }
             return UniTask.CompletedTask;
