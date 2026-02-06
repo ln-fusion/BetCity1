@@ -23,14 +23,14 @@ namespace BetCity.Data.Storage
         /// <summary>
         /// 当前任务阶段达成的数量
         /// </summary>
-        public int CurrentPhaseCurrentCount { get; }
+        public Dictionary<int, int> CurrentPhaseCurrentCounts { get; }
 
         [JsonConstructor]
-        public AcceptedTaskDTO(int id, int currentPhaseIndex, int currentPhaseCurrentCount)
+        public AcceptedTaskDTO(int id, int currentPhaseIndex, Dictionary<int, int> currentPhaseCurrentCounts)
         {
-            id = Id;
+            Id = id;
             CurrentPhaseIndex = currentPhaseIndex;
-            CurrentPhaseCurrentCount = currentPhaseCurrentCount;
+            CurrentPhaseCurrentCounts = currentPhaseCurrentCounts;
         }
     }
 }

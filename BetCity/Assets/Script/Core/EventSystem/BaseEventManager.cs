@@ -13,7 +13,9 @@ namespace BetCity.Core.EventSystem
     /// <summary>
     /// 任何对应的管理器需要继承的类
     /// </summary>
-    public abstract class BaseEventManager<T> : MonoSingleton<BaseEventManager<T>> where T : BaseEvent
+    public abstract class BaseEventManager<T, TSelf> : MonoSingleton<TSelf>
+        where T : BaseEvent
+        where TSelf : BaseEventManager<T, TSelf>
     {
         /// <summary>
         /// 当前事件
@@ -56,8 +58,7 @@ namespace BetCity.Core.EventSystem
         {
             if(CurrentEventState != "None" || CurrentEvent != null)
             {
-                Debug.LogWarning("[EventManager]在一个事件未结束时试图触发一个相同类型的事件!");
-                return UniTask.CompletedTask;
+                throw new Exception("[EventManager]在一个事件未结束时试图触发一个相同类型的事件!");
             }
             ProgressManager.Instance.EnterEvent(id);
             CurrentEventState = "Start";
@@ -71,8 +72,7 @@ namespace BetCity.Core.EventSystem
         {
             if (CurrentEventState == "None" || CurrentEvent == null)
             {
-                Debug.LogWarning("[EventManager]当前无事件需要被结束!");
-                return UniTask.CompletedTask;
+                throw new Exception("[EventManager]当前无事件需要被结束!");
             }
             CurrentEventState = "End";
             return UniTask.CompletedTask;
@@ -85,8 +85,7 @@ namespace BetCity.Core.EventSystem
         {
             if (CurrentEventState == "None" || CurrentEvent == null)
             {
-                Debug.LogWarning("[EventManager]当前无事件需要被结束!");
-                return UniTask.CompletedTask;
+                throw new Exception("[EventManager]当前无事件需要被结束!");
             }
             CurrentEvent = null;
             CurrentEventState = "None";

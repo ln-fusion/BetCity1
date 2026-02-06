@@ -15,6 +15,8 @@ namespace BetCity.Core.ProgressSystem
     {
         //事件Id-事件已触发次数
         private Dictionary<int, int> eventProgress;
+        //任务进度
+        private HashSet<int> taskProgress;
         //零散数据存储字典
         private Dictionary<string, object> keyValuePairs;
 
@@ -22,12 +24,17 @@ namespace BetCity.Core.ProgressSystem
         /// 事件Id-事件已触发次数
         /// </summary>
         public IReadOnlyDictionary<int, int> EventProgress => eventProgress;
+        /// <summary>
+        /// 任务进度
+        /// </summary>
+        public HashSet<int> TaskProgress => taskProgress;
 
         protected override void Awake()
         {
             base.Awake();
             ArchiveProgressDTO dto = StorageManager.Instance.ArchiveDataContainer.ArchiveProgressDTO;
             eventProgress = dto?.EventProgress == null ? new Dictionary<int, int>() : dto?.EventProgress;
+            taskProgress = dto?.TaskProgress == null ? new HashSet<int>() : dto?.TaskProgress;
             keyValuePairs = dto?.KeyValuePairs == null ? new Dictionary<string, object>() : dto?.KeyValuePairs;
         }
 
@@ -35,7 +42,7 @@ namespace BetCity.Core.ProgressSystem
         private void SaveArchive()
         {
             List<ArchiveProgressDTO> t = new List<ArchiveProgressDTO>();
-            ArchiveProgressDTO dto = new(eventProgress, keyValuePairs);
+            ArchiveProgressDTO dto = new(eventProgress, taskProgress, keyValuePairs);
             t.Add(dto);
             SubmitArchive(t);
         }

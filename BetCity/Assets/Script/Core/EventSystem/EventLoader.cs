@@ -16,6 +16,8 @@ namespace BetCity.Core.EventSystem
     {
         private Dictionary<int, BaseEvent> events = new Dictionary<int, BaseEvent>();
         private Dictionary<int, StoreEvent> storeEvents = new Dictionary<int, StoreEvent>();
+        private Dictionary<int, TaskEvent> taskEvents = new Dictionary<int, TaskEvent>();
+        ///<summary>
         /// 事件
         /// </summary>
         public IReadOnlyDictionary<int, BaseEvent> Events => events;
@@ -23,6 +25,10 @@ namespace BetCity.Core.EventSystem
         /// 商店事件
         /// </summary>
         public IReadOnlyDictionary<int, StoreEvent> StoreEvents => storeEvents;
+        /// <summary>
+        /// 任务板事件
+        /// </summary>
+        public IReadOnlyDictionary<int, TaskEvent> TaskEvents => taskEvents;
         /// <summary>
         /// 纪念品资源路径
         /// </summary>
@@ -51,6 +57,9 @@ namespace BetCity.Core.EventSystem
                     {
                         case TypeOfEvent.Store:
                             storeEvents[baseEvent.Id] = (StoreEvent)baseEvent;
+                            break;
+                        case TypeOfEvent.Task:
+                            taskEvents[baseEvent.Id] = (TaskEvent)baseEvent;
                             break;
                     }
                 }

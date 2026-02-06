@@ -32,9 +32,9 @@ namespace BetCity.Core.ActionSystem
         /// </summary>
         public int Depth {  get; set; }
         /// <summary>
-        /// 该行为的优先级，越低越优先，会影响该行为作为别的行为的前置或是后置连锁行为时的执行顺序
+        /// 该行为的优先级，越低越优先，会影响该行为作为别的行为的前置或是后置连锁行为时的执行顺序,默认优先级100
         /// </summary>
-        public int Priority { get; private set; }
+        public int Priority { get; private set; } = 100;
         /// <summary>
         /// 该行为是否有效
         /// </summary>
