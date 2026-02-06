@@ -26,7 +26,7 @@ namespace BetCity.Data.Storage
         /// <summary>
         /// 是否在背包中
         /// </summary>
-        public bool IsInBag { get; }
+        public bool IsInDeck { get; }
         /// <summary>
         /// 额外信息，注意序列化后的内容需要强转！
         /// </summary>
@@ -38,7 +38,7 @@ namespace BetCity.Data.Storage
             Id = id;
             Owner = owner;
             CustomPrice = customPrice;
-            IsInBag = isInBag;
+            IsInDeck = isInBag;
             ExtraData = extraData;
         }
     }

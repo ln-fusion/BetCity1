@@ -136,7 +136,9 @@ namespace BetCity.Data.ConfigModels
     /// </summary>
     public enum EffectCarrier
     {
-        Souvenir // 藏品
+        Souvenir, // 藏品
+        Card
+
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿using BetCity.Data.ConfigModels;
+﻿ using BetCity.Data.ConfigModels;
 using BetCity.GamePlay.CardOrg;
 using System;
 using System.Collections.Generic;
