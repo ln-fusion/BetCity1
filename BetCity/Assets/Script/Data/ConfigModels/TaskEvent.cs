@@ -12,6 +12,6 @@ namespace BetCity.Data.ConfigModels
         /// <summary>
         /// 存储任务
         /// </summary>
-        [field: SerializeField] public List<int> TaskConfigs { get; private set; }
+        [field: SerializeField] public List<int> TaskIds { get; private set; }
     }
 }

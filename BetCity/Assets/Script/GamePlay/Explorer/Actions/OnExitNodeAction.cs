@@ -1,4 +1,4 @@
-using BetCity.Core.ActionSystem;
+锘縰sing BetCity.Core.ActionSystem;
 using Cysharp.Threading.Tasks;
 using System.Threading;
 using UnityEngine;
@@ -9,15 +9,13 @@ using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 public class OnExitNodeAction : GameAction
 {
-    public OnExitNodeAction(GameActionContext context) : base(context)
-    {
+    public OnExitNodeAction(GameActionContext context) : base(context) { }
 
-    }
     public override async UniTask Perform(CancellationToken cancellationToken)
     {
         if (Context.Target is not Node || Context.Source is not Node)
         {
-            Debug.LogError("OnExitNodeAction:Context.Target/Source不是一个节点！");
+            Debug.LogError("OnExitNodeAction:Context.Target/Source涓嶆槸涓�涓妭鐐癸紒");
             IsValid = false;
             return;
         }

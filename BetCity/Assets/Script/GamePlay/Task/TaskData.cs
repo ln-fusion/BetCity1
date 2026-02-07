@@ -40,6 +40,10 @@ namespace BetCity.GamePlay.Task
         /// </summary>
         public List<TaskRewardData> Rewards => taskConfig.Rewards;
         /// <summary>
+        /// 完成任务时的奖励提示文本
+        /// </summary>
+        public string FinishTaskDescription => taskConfig.FinishTaskDescription;
+        /// <summary>
         /// 当前任务进行阶段索引
         /// </summary>
         public int CurrentPhaseIndex { get; private set; }

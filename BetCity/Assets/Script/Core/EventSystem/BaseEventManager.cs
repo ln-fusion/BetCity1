@@ -1,4 +1,5 @@
-﻿using BetCity.Core.ProgressSystem;
+﻿
+using BetCity.Core.ProgressSystem;
 using BetCity.Core.Tools;
 using BetCity.Data.ConfigModels;
 using Cysharp.Threading.Tasks;
@@ -42,7 +43,7 @@ namespace BetCity.Core.EventSystem
         /// <summary>
         /// 事件状态变化
         /// </summary>
-        public virtual void OnEventStateChange()
+        protected virtual void OnEventStateChange()
         {
             if (CurrentEvent.Dialogues.ContainsKey(CurrentEventState))
             {
@@ -52,11 +53,11 @@ namespace BetCity.Core.EventSystem
         }
 
         /// <summary>
-        /// 触发指定id的事件默认将事件状态转变为Start
+        /// （OnEnterXXNodeAction调用）触发指定id的事件默认将事件状态转变为Start
         /// </summary>
         public virtual UniTask EnterEvent(CancellationToken cancellationToken, int id)
         {
-            if(CurrentEventState != "None" || CurrentEvent != null)
+            if(CurrentEventState != "None")
             {
                 throw new Exception("[EventManager]在一个事件未结束时试图触发一个相同类型的事件!");
             }
@@ -66,7 +67,7 @@ namespace BetCity.Core.EventSystem
         }
 
         /// <summary>
-        /// 将当前事件状态转换为End
+        /// （OnEndXXEventAction调用）将当前事件状态转换为End
         /// </summary>
         public virtual UniTask EndEvent(CancellationToken cancellationToken)
         {
@@ -79,7 +80,7 @@ namespace BetCity.Core.EventSystem
         }
 
         /// <summary>
-        /// 离开当前事件,将状态转换为None
+        /// （OnExitXXNodeAction调用）离开当前事件,将状态转换为None
         /// </summary>
         public virtual UniTask ExitEvent(CancellationToken cancellationToken)
         {

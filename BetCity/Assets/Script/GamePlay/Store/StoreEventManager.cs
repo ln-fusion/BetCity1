@@ -1,4 +1,5 @@
 ﻿using BetCity.Card;
+using BetCity.Core.ActionSystem;
 using BetCity.Core.CheckSystem;
 using BetCity.Core.EventSystem;
 using BetCity.Core.ProgressSystem;
@@ -104,14 +105,14 @@ namespace BetCity.GamePlay.Store
         /// <param name="id">id</param>
         public override UniTask EnterEvent(CancellationToken cancellationToken, int id)
         {
-            base.EnterEvent(cancellationToken, id);
             if (storeEvents.TryGetValue(id, out StoreEvent storeEvent))
             {
+                base.EnterEvent(cancellationToken, id);
                 CurrentEvent = storeEvent;
             }
             else
             {
-                Debug.LogWarning($"[StoreEventManager]对应Id为{id}的商店事件不存在！");
+                Debug.LogError($"[StoreEventManager]对应Id为{id}的商店事件不存在！");
                 CurrentEventState = "None";
                 return UniTask.CompletedTask;
             }
@@ -120,26 +121,13 @@ namespace BetCity.GamePlay.Store
         }
 
         /// <summary>
-        /// 购买商品逻辑OnPurchase触发该函数，已扣除金币/理智,将CurrentEventState设置为Purchase
+        /// 创建购买商品动作，将状态设置为"Purchase"+ "Card/Souvenir" + id
         /// </summary>
-        public void OwnProduct(int index)
+        /// <param name="index"></param>
+        public void CreateOnPurchaseAction(int index)
         {
-            Product product = CurrentListedProducts[index];
-            switch (product.ItemType)
-            {
-                case ItemType.Souvenir:
-                    SouvenirManager.Instance.OwnSouvenirById(product.ProductId, out Souvenir.Souvenir souvenir, out string errorMsg);
-                    if (errorMsg != null)
-                        Debug.LogError("[StoreEventManager]购买商品时发生错误:" + errorMsg);
-                    break;
-                case ItemType.Card:
-                    CardManager.Instance.OwnCardById(product.ProductId, out Card.Card card, out errorMsg);
-                    if (errorMsg != null)
-                        Debug.LogError("[StoreEventManager]购买商品时发生错误:" + errorMsg);
-                    break;
-            }
-            CurrentListedProducts[index] = null;
-            CurrentEventState = "Purchase";
+            OnPurchaseAction onPurchaseAction = new(new GameActionContext(this, index, null), SanityPurchaseIndexs.Contains(index));
+            ActionManager.Instance.Perform(onPurchaseAction, () => { if (onPurchaseAction.IsValid) CurrentEventState = onPurchaseAction.State; });
         }
         #endregion
     }

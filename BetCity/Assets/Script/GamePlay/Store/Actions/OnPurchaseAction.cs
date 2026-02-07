@@ -19,6 +19,10 @@ namespace BetCity.GamePlay.Store
         /// 为true用金币否则用理智
         /// </summary>
         public bool UseCoin {  get;}
+        /// <summary>
+        /// 通知商店完成事件
+        /// </summary>
+        public string State = null;
 
         public OnPurchaseAction(GameActionContext context, bool useCoin) : base(context)
         {
@@ -35,7 +39,7 @@ namespace BetCity.GamePlay.Store
             }
 
             Product product;
-            if (index > StoreEventManager.Instance.CurrentListedProducts.Length || index < 0)
+            if (index >= StoreEventManager.Instance.CurrentListedProducts.Length || index < 0)
             {
                 Debug.LogError("[OnPurchaseAction]传入Target的值index为不合法值");
                 IsValid = false;
@@ -67,7 +71,7 @@ namespace BetCity.GamePlay.Store
             if (UseCoin)
             {
                 int price = souvenirData == null ? cardData.Price : souvenirData.Price;
-                GameActionContext context = new(null, ExplorerPlayerController.Instance.PlayerData, null);
+                GameActionContext context = new(this, ExplorerPlayerController.Instance.PlayerData, this);
                 CoinChangeAction coinChangeAction = new(context, price);
                 await ActionManager.Instance.PerformChildActionAsync(coinChangeAction, Depth, cancellationToken);
                 if (coinChangeAction.IsValid == false)
@@ -79,7 +83,7 @@ namespace BetCity.GamePlay.Store
             }
             else
             {
-                GameActionContext context = new(null, ExplorerPlayerController.Instance, null);
+                GameActionContext context = new(this, ExplorerPlayerController.Instance, this);
                 CurrentSanityChangeAction sanityChangeAction = new(context, product.SanityPrice);
                 await ActionManager.Instance.PerformChildActionAsync(sanityChangeAction, Depth, cancellationToken);
                 if (sanityChangeAction.IsValid == false)
@@ -87,6 +91,20 @@ namespace BetCity.GamePlay.Store
                     IsValid = false;
                     return;
                 }
+            }
+
+            switch (product.ItemType)
+            {
+                case ItemType.Souvenir:
+                    GameActionContext context = new(this, product.ProductId, this);
+                    OnOwnSouvenirAction onOwnSouvenirAction = new(context);
+                    //默认成功
+                    await ActionManager.Instance.PerformChildActionAsync(onOwnSouvenirAction, Depth, cancellationToken);
+                    State = "PurchaseSouvenir" + product.ProductId;
+                    break;
+                case ItemType.Card:
+                    ///待改动
+                    throw new System.NotImplementedException();
             }
         }
     }
