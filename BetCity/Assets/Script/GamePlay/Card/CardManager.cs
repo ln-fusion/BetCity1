@@ -218,7 +218,7 @@ namespace BetCity.Card
         }
         public GameObject SpawnCardView(int cardId, Vector3 position, Transform parent = null)
         {
-            // Guard against missing CardDataManager
+            // 防止CardDataManager报错
             var dataMgr = CardDataManager;
             if (dataMgr == null)
             {

@@ -62,6 +62,11 @@ namespace BetCity.Data.Storage
         private List<OwnedCardDTO> ownedCardDTOs = new List<OwnedCardDTO>();
 
         [JsonIgnore]
+        public IReadOnlyList<OwnedDialogueDTO> OwnedDialogueDTOs => ownedDialogueDTOs;
+        [SerializeField, JsonProperty("OwnedDialogueDTOs")]
+        private List<OwnedDialogueDTO> ownedDialogueDTOs = new List<OwnedDialogueDTO>();
+
+        [JsonIgnore]
         public IReadOnlyList<AcceptedTaskDTO> AcceptedTaskDTOs => acceptedTaskDTOs;
         [SerializeField, JsonProperty("AcceptedTaskDTOs")]
         private List<AcceptedTaskDTO> acceptedTaskDTOs = new List<AcceptedTaskDTO>();
@@ -103,6 +108,18 @@ namespace BetCity.Data.Storage
                 throw new InvalidOperationException("仅StorageManager类可修改存档信息");
             }
             this.ownedCardDTOs = ownedCardDTOs;
+        }
+
+        /// <summary>
+        /// 修改玩家已触发/已播放对话存档信息
+        /// </summary>
+        public void ModifyOwnedDialogue(List<OwnedDialogueDTO> ownedDialogueDTOs, IModifyArchive caller)
+        {
+            if (caller is not StorageManager)
+            {
+                throw new InvalidOperationException("仅StorageManager类可修改存档信息");
+            }
+            this.ownedDialogueDTOs = ownedDialogueDTOs;
         }
 
         /// <summary>

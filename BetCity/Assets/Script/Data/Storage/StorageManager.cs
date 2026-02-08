@@ -216,6 +216,17 @@ namespace BetCity.Data.Storage
                     throw new InvalidOperationException(caller + "传入错误类型信息" + typeof(T));
                 }
             }
+            else if (caller is BetCity.GamePlay.Plot.DialogueManager)
+            {
+                if (typeof(T) == typeof(OwnedDialogueDTO))
+                {
+                    ArchiveDataContainer.ModifyOwnedDialogue(t.Cast<OwnedDialogueDTO>().ToList(), this);
+                }
+                else
+                {
+                    throw new InvalidOperationException(caller + "传入错误类型信息" + typeof(T));
+                }
+            }
             else
             {
                 throw new InvalidOperationException("非法的ISubmitArchive接口继承者试图修改存档");

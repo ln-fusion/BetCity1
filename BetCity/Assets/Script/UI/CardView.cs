@@ -5,11 +5,15 @@ using BetCity.Card;
 public class CardView : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer artworkSpriteRenderer;
+    [SerializeField] private TMPro.TMP_Text nameText;
+    [SerializeField] private TMPro.TMP_Text descriptionText;
 
     public void Bind(Card card)
     {
         if (card == null) return;
         var s = card.Image;
         if (artworkSpriteRenderer != null) artworkSpriteRenderer.sprite = s;
+        if (nameText != null) nameText.text = card.CardName ?? string.Empty;
+        if (descriptionText != null) descriptionText.text = card.Description ?? string.Empty;
     }
 }
