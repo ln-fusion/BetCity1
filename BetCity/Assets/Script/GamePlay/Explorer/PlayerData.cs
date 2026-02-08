@@ -53,6 +53,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public bool ChangeCurrentSanity(int Sanity, CurrentSanityChangeAction currentSanityChangeAction)
         {
+
             if (CurrentSanity >= MaxSanity)
             {
                 //ÀíÖÇÖµÒÑÂú
@@ -74,6 +75,7 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public bool ChangeCoin(int coin, CoinChangeAction coinChangeAction)
         {
+
             CurrentCoin += coin;
             return true;
         }

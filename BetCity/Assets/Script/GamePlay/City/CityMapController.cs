@@ -3,42 +3,50 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-public class CityMapController : MonoSingleton<CityMapController>
+namespace BetCity.GamePlay.City
 {
-    [field:SerializeField]
-    public GameObject Back {  get; private set; }
-    private float ScreenWidth=>Screen.width;
-    private float ScreenHeight=>Screen.height;
-    [field: SerializeField]
-    public GameObject Street {  get; private set; }
-    //地图长度
-    private const float mapWidth=40;
-    // Start is called before the first frame update
-    protected override void Awake()
+    public class CityMapController : MonoSingleton<CityMapController>
     {
-        base.Awake();
-    }
-    void Start()
-    {
+        [field: SerializeField]
+        public CityCameraController CameraController { get; private set; }
+        [field: SerializeField]
+        public CityPlayerController PlayerController { get; private set; }
 
-        //背景填充屏幕
-        Back.GetComponent<RectTransform>().sizeDelta = new Vector2(ScreenWidth, ScreenHeight);
-        //主城图片位置
-        Vector3 viewportPos = new Vector3(0.5f, 0f, 0);
-        Vector3 worldPos = Camera.main.ViewportToWorldPoint(viewportPos);
-        Street.transform.position = new Vector3(transform.position.x, worldPos.y, transform.position.z);
-        //获取主城限制数值
-        
-    }
+        [field: SerializeField]
+        public GameObject Back { get; private set; }
+        private float ScreenWidth => Screen.width;
+        private float ScreenHeight => Screen.height;
+        //Player
+        [field: SerializeField]
+        public GameObject Player { get; private set; }
+        //主城数值
+        [field: SerializeField]
+        public GameObject Street { get; private set; }
+        public float StreetLength { get; private set; }
+        /// <summary>
+        /// 场景地图边缘数值保留量
+        /// </summary>
+        const float LENGTHOFFSET = 1;
+        //地图长度
+        private const float mapWidth = 40;
+        // Start is called before the first frame update
+        protected override void Awake()
+        {
+            base.Awake();
+        }
+        void Start()
+        {
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-    public void Renew(Vector3 move)
-    {
-        Street.transform.position -= move;
+            //背景填充屏幕
+            Back.GetComponent<RectTransform>().sizeDelta = new Vector2(ScreenWidth, ScreenHeight);
+            //player
+            Player.transform.localPosition = new Vector3(0, 1.2f, 0);
+            //主城图片位置
+            Street.transform.localPosition = new Vector3(0, 0, 0);
+            //获取主城限制数值
+            StreetLength = Street.GetComponent<SpriteRenderer>().sprite.rect.width / (Street.GetComponent<SpriteRenderer>().sprite.pixelsPerUnit * 2) - LENGTHOFFSET;
+            CameraController.Initial();
+            PlayerController.Initial();
+        }
     }
 }

@@ -60,7 +60,7 @@ namespace BetCity.GamePlay.Souvenir
         /// <summary>
         /// 没有的纪念品的id列表
         /// </summary>
-        public IReadOnlyList<int> NotOwnedSouvenirs => NotOwnedSouvenirs;
+        public IReadOnlyList<int> NotOwnedSouvenirs => notOwnedSouvenirs;
 
         protected override void Awake()
         {
@@ -189,9 +189,9 @@ namespace BetCity.GamePlay.Souvenir
         }
 
         /// <summary>
-        /// 根据纪念品的Id来获得对应的纪念品(获取后槽数不够会进入仓库)，如果是已拥有的纪念品会返回false但是会输出对应的纪念品
+        /// [OnOwnSouvenirAction]调用的函数，根据纪念品的Id来获得对应的纪念品获取藏品会直接进入仓库，如果是已拥有的纪念品会返回false但是会输出对应的纪念品
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">id</param>
         /// <param name="souvenir">返回纪念品</param>
         /// <param name="errorMsg">返回错误信息</param>
         /// <returns>操作成功与否</returns>
@@ -215,27 +215,21 @@ namespace BetCity.GamePlay.Souvenir
                 ownedSouvenirs[id] = souvenir;
                 specialSouvenirs.Add(id);
                 souvenir.SetIsInBag(true, this);
+                RegisterEffect(souvenir);
             }
             else
             {
                 ownedSouvenirs[id] = souvenir;
-                if (CurrentSlots + souvenir.Slot <= MaxSlots)
-                {
-                    bagSouvenirs.Add(id);
-                    CurrentSlots += souvenir.Slot;
-                    souvenir.SetIsInBag(true, this);
-                }
-                else warehouseSouvenirs.Add(id);
+                warehouseSouvenirs.Add(id);
             }
             notOwnedSouvenirs.Remove(id);
             souvenir.SetIsOwned(true, this);
-            RegisterEffect(souvenir);
             errorMsg = null;
             return true;
         }
 
         /// <summary>
-        /// 根据纪念品的Id来失去对应的纪念品(只能失去背包中的)
+        /// [OnLoseSouvenirAction]调用的函数根据纪念品的Id来失去对应的纪念品(只能失去背包中的)
         /// </summary>
         /// <param name="id"></param>
         /// <param name="souvenir">返回纪念品</param>
@@ -312,6 +306,8 @@ namespace BetCity.GamePlay.Souvenir
                 bagSouvenirs.Add(id);
                 warehouseSouvenirs.Remove(id);
                 CurrentSlots += slot;
+                Souvenir souvenir = ownedSouvenirs[id];
+                RegisterEffect(souvenir);
                 return true;
             }
             Debug.LogWarning($"[SouvenirManager]对应id为{id}的纪念品不在仓库中");
@@ -336,6 +332,7 @@ namespace BetCity.GamePlay.Souvenir
                 CurrentSlots -= ownedSouvenirs[id].Slot;
                 warehouseSouvenirs.Add(id);
                 bagSouvenirs.Remove(id);
+                UnregisterEffect(souvenir);
                 return true;
             }
             Debug.LogWarning($"[SouvenirManager]对应id为{id}的纪念品不在背包中");
@@ -349,6 +346,7 @@ namespace BetCity.GamePlay.Souvenir
         {
             StorageManager.ModifyArchive(dTOs, this);
         }
+
         #endregion
     }
 }

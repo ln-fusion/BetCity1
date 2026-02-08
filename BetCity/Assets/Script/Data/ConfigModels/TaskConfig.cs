@@ -37,6 +37,10 @@ namespace BetCity.Data.ConfigModels
         /// </summary>
         [field: SerializeField] public List<TaskPhaseData> Phases {  get; private set; }
         /// <summary>
+        /// 完成任务时的奖励提示文本
+        /// </summary>
+        [field: SerializeField] public string FinishTaskDescription {  get; private set; }
+        /// <summary>
         /// 任务奖励（任务完成后获得的所有奖励）
         /// </summary>
         [field: SerializeField] public List<TaskRewardData> Rewards { get; private set; }

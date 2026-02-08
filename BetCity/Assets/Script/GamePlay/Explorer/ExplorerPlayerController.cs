@@ -10,6 +10,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
 using System.Threading;
+using UnityEditor;
+using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 namespace BetCity.GamePlay.Explorer
 {
@@ -20,7 +22,6 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public GameObject Player {  get; private set; }
         private RectTransform playerTransform;
-        private bool _initial = false;
         private Animator animator;
         [Header("玩家状态")]
         /// <summary>
@@ -39,7 +40,10 @@ namespace BetCity.GamePlay.Explorer
         private ActionManager ActionManager=>ActionManager.Instance;
         public PlayerData PlayerData {  get; private set; }
 
-
+        Guid refreshPostSubGuid_1;
+        Guid refreshPostSubGuid_2;
+        Guid refreshPostSubGuid_3;
+        Guid refreshPostSubGuid_4;
         private const float MOVE_SPEED=300f;//玩家移动速度
         // 玩家显示点位
         Vector2 showPosition { get; set; } = new Vector2(-20, 20);
@@ -52,27 +56,24 @@ namespace BetCity.GamePlay.Explorer
         void Start()
         {
 
-            
-            if (!_initial)
-            {
-                //强制设置初值，不用事件系统
-                _initial = true;
-                
-            }
-            else
-            {
-                
-                //强制设置初值，不用事件系统
-                PlayerData.Load(StorageManager.ArchiveDataContainer.PlayerDataDTO);
-                ScreenController.printPlayerNature();
-                RefreshPlayerPosition();
-            }
-            
+            //强制设置初值，不用事件系统
+            //PlayerData.Load(StorageManager.ArchiveDataContainer.PlayerDataDTO);
+            //ScreenController.printPlayerNature();
+            //RefreshPlayerPosition();
+            //refreshPostSubGuid = ActionManager.SubscribeReaction<ExplorerNodeChangeAction>(Renew, ReactionTiming.POST, 0);
+
+
+
             MapController.MapCreate();
             playerTransform = Player.GetComponent<RectTransform>();
             animator = Player.GetComponent<Animator>();
             ToNodeInstant(MapController.MapNode[PlayerData.CurrentNodeNum]);
             SaveArchive();
+            refreshPostSubGuid_1 = ActionManager.SubscribeReaction<CurrentActionPointChangeAction>(Renew_1, ReactionTiming.POST, 0);
+            refreshPostSubGuid_2 = ActionManager.SubscribeReaction<CurrentSanityChangeAction>(Renew_2, ReactionTiming.POST, 0);
+            refreshPostSubGuid_3 = ActionManager.SubscribeReaction<CurrentNodeNumChangeAction>(Renew_3, ReactionTiming.POST, 0);
+            refreshPostSubGuid_4 = ActionManager.SubscribeReaction<CoinChangeAction>(Renew_4, ReactionTiming.POST, 0);
+
         }
         public void SetPlayer(GameObject player)
         {
@@ -86,6 +87,26 @@ namespace BetCity.GamePlay.Explorer
             PlayerData.Load(StorageManager.ArchiveDataContainer.PlayerDataDTO);
             ScreenController.printPlayerNature();
             RefreshPlayerPosition() ;
+        }
+        public void Renew_1(CurrentActionPointChangeAction display)
+        {
+            Debug.LogWarning("REFRESH");
+            RenewScreen();
+        }
+        public void Renew_2(CurrentSanityChangeAction display)
+        {
+            Debug.LogWarning("REFRESH");
+            RenewScreen();
+        }
+        public void Renew_3(CurrentNodeNumChangeAction display)
+        {
+            Debug.LogWarning("REFRESH");
+            RenewScreen();
+        }
+        public void Renew_4(CoinChangeAction display)
+        {
+            Debug.LogWarning("REFRESH");
+            RenewScreen();
         }
         /// <summary>
         /// 刷新面板显示
@@ -134,41 +155,34 @@ namespace BetCity.GamePlay.Explorer
             return true;
         }
         /// <summary>
-        /// 玩家移动Action的实际逻辑
+        /// 玩家移动Action的实际逻辑-离开结点，写成异步是因为我感觉之后会用到await
         /// </summary>
-        public  UniTask ExitNode(Node targetNode)
+        public async UniTask ExitNode(Node targetNode, CancellationToken cancellationToken)
         {
-            Debug.LogWarning("Exit");
             PlayerStatus = 1;
-            return UniTask.CompletedTask;
+            return;
 
         }
         /// <summary>
-        /// 玩家移动Action的实际逻辑
+        /// 玩家移动Action的实际逻辑-进入新结点，写成异步是因为我感觉之后会用到await
         /// </summary>
-        public UniTask EnterNode(Node targetnode)
+        public async UniTask EnterNode(Node targetnode, CancellationToken cancellationToken)
         {
-            Debug.LogWarning("Enter");
 
             ScreenController.ScreenFocus(targetnode);
 
-            UseActionPointChange(-1);
-            UseNodeNumChange(targetnode.Id.Id);
-            PlayerStatus = 1;
             animator.SetBool("move", true);
 
-            UseNodeNumChange(targetnode.Id.Id);
             PlayerStatus = 0;
-            return UniTask.CompletedTask;
+            return ;
 
         }
 
         /// <summary>
         /// 玩家移动Action的实际逻辑
         /// </summary>
-        public async UniTask Move(Node targetnode)
+        public async UniTask Move(Node targetnode, CancellationToken cancellationToken)
         {
-            Debug.LogWarning("move");
 
             animator.SetBool("move", true);
 
@@ -188,8 +202,6 @@ namespace BetCity.GamePlay.Explorer
             playerTransform.anchoredPosition = movetarget;
             animator.SetBool("move", false);
             
-
-            await UniTask.Yield(); // 替代yield return null，等待下一帧
             
         }
         /// <summary>
@@ -197,7 +209,12 @@ namespace BetCity.GamePlay.Explorer
         /// </summary>
         public void ToNodeInstant(Node targetnode)
         {
-            UseNodeNumChange(targetnode.Id.Id);
+            //此处不是Action，是load/作弊
+            GameActionContext context = new(this, this, null);
+            var currentNodeNumAction = new CurrentNodeNumChangeAction(context, targetnode.Id.Id);
+
+            ActionManager.Instance.Perform(currentNodeNumAction);
+
             playerTransform.anchoredPosition = new Vector2(targetnode.Xposition, targetnode.Yposition)+showPosition;
             ScreenController.ScreenFocusInstant(targetnode);
         }
@@ -239,7 +256,9 @@ namespace BetCity.GamePlay.Explorer
             StorageManager.ModifyArchive(dTOs, this);
         }
         #endregion
+        /*
         #region 调用接口函数
+
         /// <summary>
         /// 创建更改金币动作
         /// </summary>
@@ -299,6 +318,7 @@ namespace BetCity.GamePlay.Explorer
             ActionManager.Instance.Perform(soucenirMaxSlotAction);
         }
         #endregion
+        */
     }
 
 }

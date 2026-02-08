@@ -12,11 +12,7 @@ namespace BetCity.GamePlay.Explorer
     {
         public override UniTask Perform(CancellationToken cancellationToken)
         {
-            if (Context.Target is  ExplorerPlayerController playerController)
-            {
-                playerController.PlayerData.ChangeCurrentActionPoint(ChangeAmount, this);
-                playerController.RenewScreen();
-            }
+            ExplorerPlayerController.Instance.PlayerData.ChangeCurrentActionPoint(ChangeAmount, this);
             return UniTask.CompletedTask;
         }
 
