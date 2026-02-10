@@ -20,17 +20,12 @@ namespace BetCity.GamePlay.City
         }
         public void Initial()
         {
-            //float screenLength = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
-            //CameraMax = MapController.StreetLength - screenLength;
+
         }
         public void Renew(Vector3 moveDirection)
         {
             if (PlayerController.CameraStatic) return;
             MainCamera.transform.position += moveDirection;
-
-            //Vector3 targetPosition = moveDirection + MainCamera.transform.position;
-            //targetPosition.x = Mathf.Clamp(targetPosition.x, -CameraMax, CameraMax);
-            //MainCamera.transform.position =targetPosition;
         }
     }
 }

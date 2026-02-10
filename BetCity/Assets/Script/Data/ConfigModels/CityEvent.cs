@@ -7,6 +7,7 @@ namespace BetCity.Data.ConfigModels
     /// <summary>
     /// 城市事件
     /// </summary>
+    [CreateAssetMenu(fileName = "Event", menuName = "Event/CityEvent")]
     public class CityEvent : BaseEvent
     {
         /// <summary>

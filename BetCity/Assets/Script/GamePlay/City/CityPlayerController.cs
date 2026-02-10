@@ -1,13 +1,10 @@
 ﻿using BetCity.Core.Tools;
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 namespace BetCity.GamePlay.City
 {
     public class CityPlayerController : MonoBehaviour
     {
-        public GameObject Player;
         //脚本
         private CityMapController MapController => CityMapController.Instance;
         [field: SerializeField]
@@ -17,6 +14,8 @@ namespace BetCity.GamePlay.City
         public bool CameraStatic { get; private set; }
         public float CameraPositionMax { get; private set; }
         public float PlayerPositionMax { get; private set; }
+        private KeyCode moveLeftKey => KeyCode.A; // 默认值设为A
+        private KeyCode moveRightKey => KeyCode.D; // 默认值设为D
 
         // Start is called before the first frame update
         void Start()
@@ -33,11 +32,25 @@ namespace BetCity.GamePlay.City
         void Update()
         {
 
+            int horizontalInput = 0;
 
+            if (Input.GetKey(moveLeftKey))
+            {
+                horizontalInput = -1;
+            }
+            else if (Input.GetKey(moveRightKey))
+            {
+                horizontalInput = 1;
+            }
+            if (horizontalInput == 0)
+            {
+                return;
+            }
+            InputDeal(horizontalInput);
         }
-        public void Input(int horizontalInput)
+        public void InputDeal(int horizontalInput)
         {
-            if (Math.Abs(Player.transform.position.x) > CameraPositionMax)
+            if (Math.Abs(transform.position.x) > CameraPositionMax)
             {
                 CameraStatic = true;
             }
@@ -47,11 +60,20 @@ namespace BetCity.GamePlay.City
             }
 
             Vector3 moveDirection = new Vector3(horizontalInput, 0, 0) * PLAYERMOVESPEED * Time.deltaTime;
-            Vector3 movePosition = moveDirection + Player.transform.position;
+            Vector3 movePosition = moveDirection + transform.position;
             movePosition.x = Math.Clamp(movePosition.x, -PlayerPositionMax, PlayerPositionMax);
-            Player.transform.rotation = Quaternion.Euler(new Vector3(0, 90 - 90 * horizontalInput, 0));
-            Player.transform.position = movePosition;
+            transform.rotation = Quaternion.Euler(new Vector3(0, 90 - 90 * horizontalInput, 0));
+            transform.position = movePosition;
             CameraController.Renew(moveDirection);
+        }
+        private void OnTriggerStay2D(Collider2D other)
+        {
+            CityNPCController npcController = other.gameObject.GetComponent<CityNPCController>();
+            // 关键：通过Tag判断触发的物体类型（建议给触发体设置标签）
+            if (npcController!=null)
+            {
+                Debug.Log("1");
+            }
         }
     }
 }
