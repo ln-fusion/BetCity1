@@ -4,7 +4,7 @@ using BetCity.Card;
 
 public class CardView : MonoBehaviour
 {
-    [SerializeField] private SpriteRenderer artworkSpriteRenderer;
+    [SerializeField] private Image image;
     [SerializeField] private TMPro.TMP_Text nameText;
     [SerializeField] private TMPro.TMP_Text descriptionText;
 
@@ -12,7 +12,7 @@ public class CardView : MonoBehaviour
     {
         if (card == null) return;
         var s = card.Image;
-        if (artworkSpriteRenderer != null) artworkSpriteRenderer.sprite = s;
+        if (image != null) image.sprite = s;
         if (nameText != null) nameText.text = card.CardName ?? string.Empty;
         if (descriptionText != null) descriptionText.text = card.Description ?? string.Empty;
     }

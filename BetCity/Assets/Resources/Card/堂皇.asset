@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: "\u5802\u7687"
   m_EditorClassIdentifier: 
   <Id>k__BackingField: 0
-  <CardName>k__BackingField: "\u5802\u7687"
-  <Description>k__BackingField: "\u5237\u65B0\u62533"
+  <CardName>k__BackingField: Proud
+  <Description>k__BackingField: When DeckRefresh, add 3 Points to Enemy.
   <Price>k__BackingField: 10
   <ArtworkID>k__BackingField: 0
-  <Image>k__BackingField: {fileID: 21300000, guid: d87e5fd1580a091458f448faa248dd96, type: 3}
+  <Image>k__BackingField: {fileID: 21300000, guid: fec23111067f0774aa597bb65c22aa60, type: 3}
   <Series>k__BackingField: 0
   <Type>k__BackingField: 0
   <Effects>k__BackingField: []

@@ -58,31 +58,48 @@ namespace BetCity.GamePlay.Plot
             var valid = candidates.OrderBy(d => d.Priority).FirstOrDefault();
             if (valid == null) return false;
 
-            // 如果一次性且已播放则不触发
-            if (valid.IsOneTime && ownedDialogues.ContainsKey(valid.Id) && ownedDialogues[valid.Id].HasPlayed)
-                return false;
+            // 如果对话次数耗尽则不触发
+            if (ownedDialogues.TryGetValue(valid.Id, out var ownedRecord))
+            {
+                if (ownedRecord.Times <= 0)
+                    return false;
+            }
+            else
+            {
+                if (valid.Times <= 0)
+                    return false;
+            }
 
             // 创建action并交给ActionManager
             var context = new GameActionContext(source, target, null);
             var action = new DialogueAction(context, valid);
             ActionManager.Instance.Perform(action);
 
-            // 标记为已播放（如果是一次性或需要记录）
-            MarkPlayed(valid.Id);
+            // 标记为已播放
+            // 标记播放次数消耗
+            ConsumePlayTimes(valid.Id);
             return true;
         }
 
-        private void MarkPlayed(int id)
+        private void ConsumePlayTimes(int id)
         {
             if (ownedDialogues.ContainsKey(id))
             {
                 var old = ownedDialogues[id];
-                var updated = new OwnedDialogueDTO(old.Id, true, old.ExtraData);
+                int remaining = Math.Max(0, old.Times - 1);
+                var updated = new OwnedDialogueDTO(old.Id, remaining, old.ExtraData);
                 ownedDialogues[id] = updated;
             }
             else
             {
-                ownedDialogues[id] = new OwnedDialogueDTO(id, true, new Dictionary<string, object>());
+                // 默认新记录为 times-1 (DialogueData.Times 表示可播放次数，若未在 ownedDialogues 中则从原型读取并减一)
+                var proto = allDialogues.FirstOrDefault(d => d.Id == id);
+                int remaining = 0;
+                if (proto != null)
+                {
+                    remaining = Math.Max(0, proto.Times - 1);
+                }
+                ownedDialogues[id] = new OwnedDialogueDTO(id, remaining, new Dictionary<string, object>());
             }
             SaveArchive();
         }

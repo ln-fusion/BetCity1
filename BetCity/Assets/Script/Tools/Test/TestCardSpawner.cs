@@ -4,7 +4,7 @@ using BetCity.Card;
 namespace BetCity.Tools.Test
 {
     /// <summary>
-    /// 简单测试脚本：Play 时在指定位置生一张卡（调用 CardManager.SpawnCardView）
+    /// 简单测试脚本：Play时在指定位置生一张卡，调用CardManager.SpawnCardView
     /// </summary>
     public class TestCardSpawner : MonoBehaviour
     {

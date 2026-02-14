@@ -27,12 +27,18 @@ namespace BetCity.Card
         private List<int> notOwnedCards = new List<int>();
 
         [SerializeField]private GameObject cardViewPrefab;
+        private Canvas mainCanvas;
 
         protected override void Awake()
         {
             base.Awake();
             CacheOwnedCardInstances();
             LoadNotOwnedCards();
+            mainCanvas = FindObjectOfType<Canvas>();
+            if (mainCanvas == null)
+            {
+                UnityEngine.Debug.LogWarning("[CardManager] No Canvas found in scene. UI card views will not be parented to a Canvas.");
+            }
         }
         /// <summary>
         /// 取消注册
@@ -240,13 +246,40 @@ namespace BetCity.Card
                 return null;
             }
 
-            GameObject go = Instantiate(cardViewPrefab, parent);
+            // Determine actual parent: use provided parent, otherwise use the first Canvas in the scene if available
+            Transform actualParent = parent != null ? parent : (mainCanvas != null ? mainCanvas.transform : null);
+            GameObject go;
+            if (actualParent != null)
+            {
+                // Instantiate with worldPositionStays = false so local transform from prefab is preserved
+                go = Instantiate(cardViewPrefab, actualParent, false);
+            }
+            else
+            {
+                go = Instantiate(cardViewPrefab);
+            }
             if (go == null)
             {
                 UnityEngine.Debug.LogError("[CardManager] Instantiate returned null for cardViewPrefab.");
                 return null;
             }
-            go.transform.position = position;
+            // If the spawned object is parented under a Canvas (UI), set localPosition so it appears inside the Canvas
+            if (actualParent != null)
+            {
+                var rt = go.GetComponent<RectTransform>();
+                if (rt != null)
+                {
+                    rt.localPosition = position;
+                }
+                else
+                {
+                    go.transform.localPosition = position;
+                }
+            }
+            else
+            {
+                go.transform.position = position;
+            }
             var view = go.GetComponent<CardView>();
             view?.Bind(card);
 

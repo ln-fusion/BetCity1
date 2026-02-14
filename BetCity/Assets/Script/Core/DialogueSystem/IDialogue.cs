@@ -10,9 +10,9 @@ namespace BetCity.Core.DialogueSystem
     {
         int Id { get; }
         int Priority { get; }
-        SerializableDictionary<string, List<string>> Conditions { get; }
+        System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> Conditions { get; }
         string TriggerTiming { get; }
-        bool IsOneTime { get; }
+        int Times { get; }
         List<DialogueLine> Lines { get; }
     }
 }

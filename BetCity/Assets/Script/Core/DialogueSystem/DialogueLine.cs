@@ -17,6 +17,11 @@ namespace BetCity.Core.DialogueSystem
     {
         public int Id;
         public string Speaker;
+        // 角色id（用于从 PortraitDatabase 获取立绘）
+        public string CharacterId;
+        // 表情/差分（使用枚举）
+        public Expression Expression = Expression.Neutral;
+        //加差分图片
         [TextArea]
         public string Text;
         public List<DialogueChoice> Choices = new List<DialogueChoice>();

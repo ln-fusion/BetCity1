@@ -1,30 +1,27 @@
 using System.Collections.Generic;
 using UnityEngine;
 using BetCity.Core.Tools;
-using BetCity.Core.DialogueSystem; 
+using BetCity.Core.DialogueSystem;
 
+// 使用 JSON 存储对话数据：将 DialogueData 作为可序列化的普通类（非 ScriptableObject）
 namespace BetCity.Data.ConfigModels
 {
-    public class DialogueData : ScriptableObject, IDialogue
+    [System.Serializable]
+    public class DialogueData : BetCity.Core.DialogueSystem.IDialogue
     {
-        [SerializeField]
-        private int id;
-        [SerializeField]
-        private int priority = 100;//优先级，当多个对话满足触发条件时，系统会根据 priority 决定先执行哪个
-        [SerializeField]
-        private SerializableDictionary<string, List<string>> conditions;
-        [SerializeField]
-        private string triggerTiming;
-        [SerializeField]
-        private bool isOneTime = false;
-        [SerializeField]
-        private List<DialogueLine> lines = new List<DialogueLine>();
+        public int Id;
+        public int Priority = 100; // 优先级
+        public System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> Conditions;
+        public string TriggerTiming;
+        public int Times = 1;
+        public System.Collections.Generic.List<BetCity.Core.DialogueSystem.DialogueLine> Lines = new System.Collections.Generic.List<BetCity.Core.DialogueSystem.DialogueLine>();
 
-        public int Id => id;
-        public int Priority => priority;
-        public SerializableDictionary<string, List<string>> Conditions => conditions;
-        public string TriggerTiming => triggerTiming;
-        public bool IsOneTime => isOneTime;
-        public List<DialogueLine> Lines => lines;
+        // 显式接口实现适配
+        int BetCity.Core.DialogueSystem.IDialogue.Id => Id;
+        int BetCity.Core.DialogueSystem.IDialogue.Priority => Priority;
+        System.Collections.Generic.Dictionary<string, System.Collections.Generic.List<string>> BetCity.Core.DialogueSystem.IDialogue.Conditions => Conditions;
+        string BetCity.Core.DialogueSystem.IDialogue.TriggerTiming => TriggerTiming;
+        int BetCity.Core.DialogueSystem.IDialogue.Times => Times;
+        System.Collections.Generic.List<BetCity.Core.DialogueSystem.DialogueLine> BetCity.Core.DialogueSystem.IDialogue.Lines => Lines;
     }
 }
