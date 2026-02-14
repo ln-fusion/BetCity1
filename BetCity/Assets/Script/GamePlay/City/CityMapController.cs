@@ -1,33 +1,48 @@
-using BetCity.Core.Tools;
+ï»¿using BetCity.Core.Tools;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 namespace BetCity.GamePlay.City
 {
+    /// <summary>
+    /// åŸå¸‚åœ°å›¾æ§åˆ¶å™¨
+    /// </summary>
     public class CityMapController : MonoSingleton<CityMapController>
     {
+        /// <summary>
+        /// æ‘„åƒæœºæ§åˆ¶å™¨
+        /// </summary>
         [field: SerializeField]
         public CityCameraController CameraController { get; private set; }
+        /// <summary>
+        /// ç©å®¶æ§åˆ¶å™¨
+        /// </summary>
         [field: SerializeField]
         public CityPlayerController PlayerController { get; private set; }
-
+        /// <summary>
+        /// UIå›ºå®šèƒŒæ™¯å›¾ç‰‡
+        /// </summary>
         [field: SerializeField]
         public GameObject Back { get; private set; }
         private float ScreenWidth => Screen.width;
         private float ScreenHeight => Screen.height;
-        //Player
+        /// <summary>
+        /// ç©å®¶
+        /// </summary>
         [field: SerializeField]
         public GameObject Player { get; private set; }
-        //Ö÷³ÇÊıÖµ
+        /// <summary>
+        /// åŸå¸‚èƒŒæ™¯
+        /// </summary>
         [field: SerializeField]
         public GameObject Street { get; private set; }
         public float StreetLength { get; private set; }
         /// <summary>
-        /// ³¡¾°µØÍ¼±ßÔµÊıÖµ±£ÁôÁ¿
+        /// åœºæ™¯åœ°å›¾è¾¹ç¼˜æ•°å€¼ä¿ç•™é‡
         /// </summary>
         const float LENGTHOFFSET = 1;
-        //µØÍ¼³¤¶È
+        //åœ°å›¾é•¿åº¦
         private const float mapWidth = 40;
         // Start is called before the first frame update
         protected override void Awake()
@@ -37,13 +52,13 @@ namespace BetCity.GamePlay.City
         void Start()
         {
 
-            //±³¾°Ìî³äÆÁÄ»
+            //èƒŒæ™¯å¡«å……å±å¹•
             Back.GetComponent<RectTransform>().sizeDelta = new Vector2(ScreenWidth, ScreenHeight);
             //player
             Player.transform.localPosition = new Vector3(0, 1.2f, 0);
-            //Ö÷³ÇÍ¼Æ¬Î»ÖÃ
+            //ä¸»åŸå›¾ç‰‡ä½ç½®
             Street.transform.localPosition = new Vector3(0, 0, 0);
-            //»ñÈ¡Ö÷³ÇÏŞÖÆÊıÖµ
+            //è·å–ä¸»åŸé™åˆ¶æ•°å€¼
             StreetLength = Street.GetComponent<SpriteRenderer>().sprite.rect.width / (Street.GetComponent<SpriteRenderer>().sprite.pixelsPerUnit * 2) - LENGTHOFFSET;
             CameraController.Initial();
             PlayerController.Initial();

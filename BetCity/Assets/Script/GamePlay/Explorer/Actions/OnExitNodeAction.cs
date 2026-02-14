@@ -7,19 +7,23 @@ using BetCity.GamePlay.Explorer;
 using static UnityEditor.Timeline.TimelinePlaybackControls;
 
 
-public class OnExitNodeAction : GameAction
-{
-    public OnExitNodeAction(GameActionContext context) : base(context) { }
-
-    public override async UniTask Perform(CancellationToken cancellationToken)
+    /// <summary>
+    /// 进入结点动作,source随意，target是目标结点
+    /// </summary>
+    /// <param name="context"></param>
+    public class OnExitNodeAction : GameAction
     {
-        if (Context.Target is not Node || Context.Source is not Node)
+        public OnExitNodeAction(GameActionContext context) : base(context) { }
+
+        public override async UniTask Perform(CancellationToken cancellationToken)
         {
-            Debug.LogError("OnExitNodeAction:Context.Target/Source不是一个节点！");
-            IsValid = false;
+            if (Context.Target is not Node || Context.Source is not Node)
+            {
+                Debug.LogError("OnExitNodeAction:Context.Target/Source不是一个节点！");
+                IsValid = false;
+                return;
+            }
+            await ExplorerPlayerController.Instance.ExitNode((Node)Context.Target, cancellationToken);
             return;
         }
-        await ExplorerPlayerController.Instance.ExitNode((Node)Context.Target, cancellationToken);
-        return;
     }
-}

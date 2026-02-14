@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
-namespace BetCity.GamePlay.Store
+namespace BetCity.GamePlay.City
 {
     /// <summary>
     /// 创建城市NPC交流动作

@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace BetCity.GamePlay.Explorer
 {
+    /// <summary>
+    /// 更改当前理智值的动作，source和target均随意
+    /// </summary>
     public class CurrentSanityChangeAction : GameAction
     {
         public override UniTask Perform(CancellationToken cancellationToken)

@@ -6,6 +6,9 @@ using System.Threading;
 using UnityEngine;
 namespace BetCity.GamePlay.Explorer
 {
+    /// <summary>
+    /// 骰子面值更改动作，source随意，target是更改的骰子面num，传入的changenum是更改的数值
+    /// </summary>
     public class ChangeDiceAction : GameAction
     {
         public override UniTask Perform(CancellationToken cancellationToken)

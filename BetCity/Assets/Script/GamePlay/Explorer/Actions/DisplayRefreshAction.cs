@@ -7,6 +7,9 @@ using UnityEngine;
 
 namespace BetCity.GamePlay.Explorer
 {
+    /// <summary>
+    /// Ë¢ÐÂUIÃæ°åÏÔÊ¾
+    /// </summary>
     public class DisplayRefreshAction : GameAction
     {
         public override UniTask Perform(CancellationToken cancellationToken)
