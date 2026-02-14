@@ -7,6 +7,9 @@ using UnityEditor;
 using UnityEngine;
 namespace BetCity.GamePlay.Explorer
 {
+    /// <summary>
+    /// 当前结点变化动作，source和target均随意，传入的int是变化值
+    /// </summary>
     public class CurrentNodeNumChangeAction : GameAction
     {
         public override UniTask Perform(CancellationToken cancellationToken)

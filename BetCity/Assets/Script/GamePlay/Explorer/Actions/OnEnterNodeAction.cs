@@ -5,28 +5,32 @@ using BetCity.Data.ConfigModels;
 using System.Threading;
 using UnityEngine;
 
-public class OnEnterNodeAction :GameAction
-{
-
-    public OnEnterNodeAction(GameActionContext context) : base(context) { }
-
-    public override async UniTask Perform(CancellationToken cancellationToken)
+    public class OnEnterNodeAction : GameAction
     {
-        if (Context.Target is not Node targetnode)
+        /// <summary>
+        /// 进入结点动作,source随意，target是目标节点
+        /// </summary>
+        /// <param name="context"></param>
+        public OnEnterNodeAction(GameActionContext context) : base(context) { }
+
+        public override async UniTask Perform(CancellationToken cancellationToken)
         {
-            Debug.LogError("OnEnterNodeAction:Context.Target不是一个节点！");
-            IsValid = false;
+            if (Context.Target is not Node targetnode)
+            {
+                Debug.LogError("OnEnterNodeAction:Context.Target不是一个节点！");
+                IsValid = false;
+                return;
+            }
+
+
+            await ActionManager.Instance.PerformChildActionAsync(new CurrentActionPointChangeAction(new(this, this, null), -1), Depth, cancellationToken);
+
+
+            await ActionManager.Instance.PerformChildActionAsync(new CurrentNodeNumChangeAction(new(this, this, null), targetnode.Id.Id), Depth, cancellationToken);
+
+            await ExplorerPlayerController.Instance.EnterNode(targetnode, cancellationToken);
+
             return;
         }
-
-
-        await ActionManager.Instance.PerformChildActionAsync(new CurrentActionPointChangeAction(new(this, this, null), -1), Depth, cancellationToken);
-
-
-        await ActionManager.Instance.PerformChildActionAsync(new CurrentNodeNumChangeAction(new(this, this, null), targetnode.Id.Id), Depth, cancellationToken);
-
-        await ExplorerPlayerController.Instance.EnterNode(targetnode, cancellationToken);
-
-        return;
     }
-}
+

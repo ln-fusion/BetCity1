@@ -8,6 +8,9 @@ using UnityEngine;
 
 namespace BetCity.GamePlay.Explorer
 {
+    /// <summary>
+    /// 更改当前AP数值的动作，source和target均随意，传入的int是变化值
+    /// </summary>
     public class CurrentActionPointChangeAction : GameAction
     {
         public override UniTask Perform(CancellationToken cancellationToken)

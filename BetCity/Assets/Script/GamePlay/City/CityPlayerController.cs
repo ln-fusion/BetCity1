@@ -3,25 +3,37 @@ using System;
 using UnityEngine;
 namespace BetCity.GamePlay.City
 {
+    /// <summary>
+    /// 主角移动控制器
+    /// </summary>
     public class CityPlayerController : MonoBehaviour
     {
         //脚本
         private CityMapController MapController => CityMapController.Instance;
+        /// <summary>
+        /// 相机控制脚本
+        /// </summary>
         [field: SerializeField]
         public CityCameraController CameraController {  get; private set; }
         //主角属性
         private const float PLAYERMOVESPEED = 4f;
+        /// <summary>
+        /// 检测相机是否能移动
+        /// </summary>
         public bool CameraStatic { get; private set; }
+        /// <summary>
+        /// 限制相机移动距离限制
+        /// </summary>
         public float CameraPositionMax { get; private set; }
+        /// <summary>
+        /// 玩家移动距离限制
+        /// </summary>
         public float PlayerPositionMax { get; private set; }
         private KeyCode moveLeftKey => KeyCode.A; // 默认值设为A
         private KeyCode moveRightKey => KeyCode.D; // 默认值设为D
-
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
+        /// <summary>
+        /// 玩家控制器初始化
+        /// </summary>
         public void Initial()
         {
             float screenLength = Camera.main.ScreenToWorldPoint(new Vector3(Screen.width, 0, 0)).x;
@@ -48,7 +60,11 @@ namespace BetCity.GamePlay.City
             }
             InputDeal(horizontalInput);
         }
-        public void InputDeal(int horizontalInput)
+        /// <summary>
+        /// 玩家输入处理
+        /// </summary>
+        /// <param name="horizontalInput"></param>
+        private void InputDeal(int horizontalInput)
         {
             if (Math.Abs(transform.position.x) > CameraPositionMax)
             {

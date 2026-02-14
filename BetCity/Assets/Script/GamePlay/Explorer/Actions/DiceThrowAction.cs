@@ -4,7 +4,7 @@ using System.Collections;
 using System.Threading;
 namespace BetCity.GamePlay.Explorer
 {
-    /// <summary>
+    /// <summary>，source随意，target是dicecontroller
     /// 玩家投掷骰子动作
     /// </summary>
     public class DiceThrowAction : GameAction
