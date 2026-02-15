@@ -118,6 +118,16 @@ namespace BetCity.Core.ActionSystem
         }
 
         /// <summary>
+        /// 仅执行PreSub进行模拟
+        /// </summary>
+        public void ExecuteOnlyPreSub(GameAction action)
+        {
+            if (action == null || !action.IsValid) return;
+            // 只执行 PreSub 订阅（核心计算逻辑），跳过所有其他步骤
+            PerformSubscribers(action, preSubs, CancellationToken.None);
+        }
+
+        /// <summary>
         /// 行为演出
         /// </summary>
         /// <param name="action">行为</param>
@@ -195,7 +205,7 @@ namespace BetCity.Core.ActionSystem
                 return;
             }
 
-            await PerformSubscribers(action, preSubs, cancellationToken);
+            PerformSubscribers(action, preSubs, cancellationToken);
             reactions = action.PreReactions;
             GameAction reaction;
 
@@ -225,7 +235,7 @@ namespace BetCity.Core.ActionSystem
                 return;
             }
 
-            await PerformSubscribers(action, postSubs, cancellationToken);
+            PerformSubscribers(action, postSubs, cancellationToken);
             reactions = action.PostReactions;
 
             while (reactions.Count > 0 && action.IsValid && !cancellationToken.IsCancellationRequested)
@@ -252,7 +262,7 @@ namespace BetCity.Core.ActionSystem
             }
         }
 
-        private async UniTask PerformSubscribers(GameAction action, Dictionary<Type, List<DelegateWrapper>> subs, CancellationToken cancellationToken)
+        private void PerformSubscribers(GameAction action, Dictionary<Type, List<DelegateWrapper>> subs, CancellationToken cancellationToken)
         {
             //订阅删除其他订阅无法第一时间生效，只会在下一次生效
             List<Type> inheritChain = GetInheritChain(action.GetType());
@@ -270,7 +280,6 @@ namespace BetCity.Core.ActionSystem
             }
             while(delegateWrappers.Count > 0 && action.IsValid && !cancellationToken.IsCancellationRequested)
             {
-                await WaitIfPaused(cancellationToken);
                 var wrapper = delegateWrappers.Dequeue();
                 wrapper.WrappedAction?.Invoke(action, action.Context);
             }
