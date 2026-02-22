@@ -42,6 +42,6 @@ namespace BetCity.Data.ConfigModels
     /// </summary>
     public enum TypeOfEvent
     {
-        Store, City, Task
+        Store, City, Task, Chest
     }
 }

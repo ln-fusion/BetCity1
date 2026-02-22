@@ -1,7 +1,10 @@
 ﻿using BetCity.Core.ActionSystem;
+using BetCity.Core.CheckSystem;
 using BetCity.Core.EventSystem;
 using BetCity.Core.ProgressSystem;
+using BetCity.Core.Tools;
 using BetCity.Data.ConfigModels;
+using BetCity.GamePlay.Souvenir;
 using Cysharp.Threading.Tasks;
 using System;
 using System.Collections.Generic;
@@ -9,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 namespace BetCity.GamePlay.Chest
@@ -18,8 +22,15 @@ namespace BetCity.GamePlay.Chest
     /// </summary>
     public class ChestEventManager : BaseEventManager<ChestEvent, ChestEventManager>
     {
+        //商店系统中不会刷新已拥有纪念品，此条不用写在condition里
+        private IReadOnlyDictionary<int, Souvenir.Souvenir> ownedSouvenirs => SouvenirManager.Instance.OwnedSouvenirs;
+        private ConditionChecker conditionChecker => ConditionChecker.Instance;
+        /// <summary>
+        /// 商店事件
+        /// </summary>
+        public IReadOnlyDictionary<int, ChestEvent> chestEvents => EventLoader.Instance.ChestEvents;
         // 所有轮次的配置数据
-        private List<RoundData<object>> allRoundDatas;
+        private List<ChestOptionSet> chestOptionSet;
 
         //当前轮数
         private int currentRound=0;
@@ -51,33 +62,14 @@ namespace BetCity.GamePlay.Chest
                 Buttons[i].SetActive(false);
             }
         }
-
-
-
-
-        public void StartChest(List<IRoundConfig> roundConfigs)
-        {
-            allRoundDatas = new List<RoundData<object>>();
-            foreach (var config in roundConfigs)
-            {
-                // 从非泛型接口获取资源列表，限制每轮最多3个资源
-                var resList = config.ResourceList.Count > 3 ? config.ResourceList.GetRange(0, 3) : config.ResourceList;
-                allRoundDatas.Add(new RoundData<object>
-                {
-                    ResourceList = new List<object>(resList)
-                });
-            }
-            currentRound = 0;
-            Debug.Log($"总共{allRoundDatas.Count}轮");
-            NextChoose();
-        }
         public void NextChoose()
         {
-            if(currentRound < allRoundDatas.Count)
+            if(currentRound < chestOptionSet.Count)
             {
                 //清除
                 clickNum = -1;
                 Debug.Log($"第{currentRound+1}轮开始");
+                CurrentEventState = "Round"+(currentRound+1);
                 GameActionContext context = new(this, this, null);
                 var chooseChest = new ChooseChestAction(context);
                 ActionManager.Instance.Perform(chooseChest);
@@ -85,33 +77,34 @@ namespace BetCity.GamePlay.Chest
         }
         public async UniTask WaitChoose(CancellationToken cancellationToken)
         {
-            RoundData<object> roundData = allRoundDatas[currentRound];
-            List<object> objectList = roundData.ResourceList;
-            for(int i=0;i< objectList.Count; i++)
+            //绑定按钮事件
+            ChestOptionSet chestOption = chestOptionSet[currentRound];
+            for (int i = 0; i < chestOption.ChoiceOptions.Count; i++)
             {
                 Buttons[i].SetActive(true);
-                switch(objectList[i])
+                switch (chestOption.ChoiceOptions[i].ItemType)
                 {
-                    case A:
-                        A a = (A)objectList[i];
+                    case ItemType.Souvenir:
+
                         Texts[i].GetComponent<TextMeshProUGUI>().text = "A";
                         Buttons[i].GetComponent<Button>().onClick.AddListener(() =>
                         {
-                            a.Display();
+                            //内容
                             clickNum = i;
                         });
                         break;
-                    case B:
-                        B b = (B)objectList[i];
+                    case ItemType.Card:
                         Texts[i].GetComponent<TextMeshProUGUI>().text = "B";
                         Buttons[i].GetComponent<Button>().onClick.AddListener(() =>
                         {
-                            b.Display();
+                            //内容
                             clickNum = i;
                         });
 
                         break;
                 }
+
+
             }
 
             while (true)
@@ -133,39 +126,87 @@ namespace BetCity.GamePlay.Chest
                 await UniTask.Yield();
             }
         }
-
-        /// <summary>
-        /// 单轮选择的运行时数据，内部运行的时候调用
-        /// </summary>
-        private class RoundData<T>
+        private List<ChestOptionSet> CheckCondition()
         {
-            public List<T> ResourceList;
-        }
-    }
-    /// <summary>
-    /// 非泛型接口：统一所有RoundConfig的访问方式
-    /// </summary>
-    public interface IRoundConfig
-    {
-        // 非泛型的资源列表（所有类型都转为object）
-        List<object> ResourceList { get; }
-    }
-    /// <summary>
-    /// 单轮选择的配置，外部调用的时候传入
-    /// </summary>
-    [Serializable]
-    public class RoundConfig<T>:IRoundConfig
-    {
-        // 本轮的资源列表（A/B/C/D类）
-        public List<T> ResourceList;
-        List<object> IRoundConfig.ResourceList
-        {
-            get
+            List<ChestOptionSet> legalChestOptionSet = new List<ChestOptionSet>();
+            foreach (ChestOptionSet chestOptionSet in CurrentEvent.ChoiceOptionSets)
             {
-                // 把 List<T> 转成 List<object>，满足接口要求
-                return ResourceList.Cast<object>().ToList();
+                ChestOptionSet optionSet = new ChestOptionSet();
+                optionSet.ChoiceOptions = new List<ChestOption>();
+                int loadOptionNum = 0;//记录加载的选项数，保证不超过三个
+                foreach(ChestOption chestOption in chestOptionSet.ChoiceOptions)
+                {
+                    if (loadOptionNum >= 3)
+                    {
+                        break;
+                    }
+                    switch (chestOption.ItemType)
+                    {
+                        case ItemType.Souvenir:
+                            if (ownedSouvenirs.ContainsKey(chestOption.ChestId))
+                            {
+                                continue;
+                            }
+                            else if (conditionChecker.Check(chestOption.Conditions.Init()))
+                            {
+                                optionSet.ChoiceOptions.Add(chestOption);
+                                loadOptionNum++;
+                                continue;
+                            }
+                            else continue;
+                        //商店暂时不存卡牌
+                        case ItemType.Card:
+                            continue;
+                    }
+                }
+                if(optionSet.ChoiceOptions.Count > 0)
+                {
+                    legalChestOptionSet.Add(optionSet);
+                }
             }
+            return legalChestOptionSet;
         }
+        private void LoadChoice()
+        {
+            chestOptionSet = CheckCondition();
+            currentRound = 0;
+            Debug.Log($"总共{chestOptionSet.Count}轮");
+            CurrentEventState = "Start";
+            NextChoose();
+        }
+        #region 接口
+        /// <summary>
+        /// OnEnterChestNode触发该函数，将CurrentEventState设置为Start
+        /// </summary>
+        /// <param name="id">id</param>
+        public override UniTask EnterEvent(CancellationToken cancellationToken, int id)
+        {
+            if (chestEvents.TryGetValue(id, out ChestEvent chestEvent))
+            {
+                base.EnterEvent(cancellationToken, id);
+                CurrentEvent = chestEvent;
+            }
+            else
+            {
+                Debug.LogError($"[ChestEventManager]对应Id为{id}的宝箱事件不存在！");
+                CurrentEventState = "None";
+                return UniTask.CompletedTask;
+            }
+            LoadChoice();
+            NextChoose();
+            return UniTask.CompletedTask;
+        }
+        /// <summary>
+        /// OnEnterChestNode触发该函数，判断宝箱是否有可选项
+        /// </summary>
+        public bool CheckChestOption(CancellationToken cancellationToken)
+        {
+            if(chestOptionSet.Count > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+        #endregion
     }
-
 }

@@ -1,4 +1,5 @@
-﻿using BetCity.Core.Tools;
+﻿using BetCity.Core.Settings;
+using BetCity.Core.Tools;
 using System;
 using UnityEngine;
 namespace BetCity.GamePlay.City
@@ -10,6 +11,7 @@ namespace BetCity.GamePlay.City
     {
         //脚本
         private CityMapController MapController => CityMapController.Instance;
+        private InputManager inputManager=>InputManager.Instance;
         /// <summary>
         /// 相机控制脚本
         /// </summary>
@@ -29,8 +31,8 @@ namespace BetCity.GamePlay.City
         /// 玩家移动距离限制
         /// </summary>
         public float PlayerPositionMax { get; private set; }
-        private KeyCode moveLeftKey => KeyCode.A; // 默认值设为A
-        private KeyCode moveRightKey => KeyCode.D; // 默认值设为D
+        private bool moveLeft => inputManager.IsMoveLeft; // 默认值设为A
+        private bool moveRight => inputManager.IsMoveRight; // 默认值设为D
         /// <summary>
         /// 玩家控制器初始化
         /// </summary>
@@ -46,11 +48,11 @@ namespace BetCity.GamePlay.City
 
             int horizontalInput = 0;
 
-            if (Input.GetKey(moveLeftKey))
+            if (moveLeft)
             {
                 horizontalInput = -1;
             }
-            else if (Input.GetKey(moveRightKey))
+            else if (moveRight)
             {
                 horizontalInput = 1;
             }

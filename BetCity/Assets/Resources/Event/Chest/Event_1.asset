@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2bd5b9748f15c643a25f0c1534807b2, type: 3}
+  m_Name: Event_1
+  m_EditorClassIdentifier: 
+  <Id>k__BackingField: 1
+  <Name>k__BackingField: "\u5B9D\u7BB1"
+  Description: 
+  Type: 3
+  <Conditions>k__BackingField:
+    list: []
+  <Dialogues>k__BackingField:
+    list: []
+  ChoiceOptionSets:
+  - ChoiceOptions:
+    - <ChestId>k__BackingField: 0
+      <ItemType>k__BackingField: 1
+      <Conditions>k__BackingField:
+        list: []
+    - <ChestId>k__BackingField: 0
+      <ItemType>k__BackingField: 1
+      <Conditions>k__BackingField:
+        list: []
+  - ChoiceOptions:
+    - <ChestId>k__BackingField: 0
+      <ItemType>k__BackingField: 0
+      <Conditions>k__BackingField:
+        list: []
+    - <ChestId>k__BackingField: 0
+      <ItemType>k__BackingField: 0
+      <Conditions>k__BackingField:
+        list: []
+    - <ChestId>k__BackingField: 0
+      <ItemType>k__BackingField: 0
+      <Conditions>k__BackingField:
+        list: []

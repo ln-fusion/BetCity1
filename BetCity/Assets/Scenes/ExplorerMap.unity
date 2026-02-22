@@ -3953,7 +3953,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cf33e5f8ca47ec46b9e83660c140d56, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DiceTransform: {fileID: 2034249418}
 --- !u!1 &2031099415
 GameObject:
   m_ObjectHideFlags: 0
