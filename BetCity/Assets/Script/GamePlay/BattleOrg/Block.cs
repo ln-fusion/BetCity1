@@ -1,20 +1,47 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
-public class Block : MonoBehaviour,IPointerDownHandler
+public class Block : MonoBehaviour
 {
     public GameObject card;
     public GameObject SummonBlock;
 
-    void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
+    private void Awake()
     {
-        if(SummonBlock.activeInHierarchy)
+        if (SummonBlock == null || SummonBlock.transform.parent != transform)
         {
-             CombatManager.Instance.SummonConfirm(transform);
+            SummonBlock = ResolveSummonBlockChild();
+        }
+    }
+
+    public GameObject GetSummonBlockObject()
+    {
+        if (SummonBlock == null || SummonBlock.transform.parent != transform)
+        {
+            SummonBlock = ResolveSummonBlockChild();
         }
 
+        return SummonBlock;
+    }
+
+    private GameObject ResolveSummonBlockChild()
+    {
+        Transform direct = transform.Find("SummonBlock");
+        if (direct != null)
+        {
+            return direct.gameObject;
+        }
+
+        foreach (Transform child in transform)
+        {
+            if (child.name.Contains("Summon"))
+            {
+                return child.gameObject;
+            }
+        }
+
+        return null;
     }
 
     // Start is called before the first frame update
