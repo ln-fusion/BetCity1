@@ -93,9 +93,50 @@ namespace BetCity.GamePlay.Store
         private void LoadProducts()
         {
             List<Product> legalProducts = CheckCondition();
-            List<int> selectedIndexs = RandomTool.GetWeightRandomIndexNoRepeat(legalProducts.Select(l => l.Weight).ToList(), CurrentEvent.Amount);
-            CurrentListedProducts = selectedIndexs.Select(i => legalProducts[i]).ToArray();
-            SanityPurchaseIndexs = RandomTool.GetWeightRandomIndexNoRepeat(Enumerable.Repeat(1, CurrentEvent.Amount).ToList(), CurrentEvent.SanityPurchaseAmount).ToArray();
+            List<int> selectedCardIndexs = RandomTool.GetWeightRandomIndexNoRepeat(legalProducts.Where(p => p.ItemType == ItemType.Card)
+                .Select(l => l.Weight).ToList(), CurrentEvent.CardAmount);
+            List<int> selectedSouvenirIndexs = RandomTool.GetWeightRandomIndexNoRepeat(legalProducts.Where(p => p.ItemType == ItemType.Souvenir)
+                .Select(l => l.Weight).ToList(), CurrentEvent.SouvenirAmount);
+            List<Product> selectedCardProduct = selectedCardIndexs.Select(i => legalProducts[i]).ToList();
+            List<Product> selectedSouvenirProduct = selectedSouvenirIndexs.Select(i => legalProducts[i]).ToList();
+            CurrentListedProducts = selectedCardProduct.Concat(selectedSouvenirProduct).ToArray();
+            SanityPurchaseIndexs = RandomTool.GetWeightRandomIndexNoRepeat(Enumerable.Repeat(1, CurrentListedProducts.Length).ToList(), CurrentEvent.SanityPurchaseAmount).ToArray();
+        }
+
+        // 加载商品原始价格，-1即为出现错误
+        private int LoadOriginalPrice(int index)
+        {
+            if (index >= StoreEventManager.Instance.CurrentListedProducts.Length || index < 0)
+            {
+                Debug.LogError("[StoreEventManager]传入Target的值index为不合法值");
+                return -1;
+            }
+            Product product = StoreEventManager.Instance.CurrentListedProducts[index];
+            SouvenirData souvenirData = null;
+            CardData cardData = null;
+            switch (product.ItemType)
+            {
+                case ItemType.Souvenir:
+                    souvenirData = SouvenirDataManager.Instance.GetDataById(product.ProductId);
+                    break;
+                case ItemType.Card:
+                    cardData = CardDataManager.Instance.GetDataById(product.ProductId);
+                    break;
+            }
+            if (souvenirData == null && cardData == null)
+            {
+                Debug.LogError("[StoreEventManager]传入ProductId存在问题!");
+                return -1;
+            }
+
+            if (SanityPurchaseIndexs.Contains(index))
+            {
+                return product.SanityPrice;
+            }
+            else
+            {
+                return souvenirData == null ? cardData.Price : souvenirData.Price;
+            }
         }
 
         #region 接口
@@ -123,11 +164,39 @@ namespace BetCity.GamePlay.Store
         /// <summary>
         /// 创建购买商品动作，将状态设置为"Purchase"+ "Card/Souvenir" + id
         /// </summary>
-        /// <param name="index"></param>
+        /// <param name="index">第几个商品</param>
         public void CreateOnPurchaseAction(int index)
         {
-            OnPurchaseAction onPurchaseAction = new(new GameActionContext(this, index, null), SanityPurchaseIndexs.Contains(index));
+            int price = LoadOriginalPrice(index);
+            if (price == -1)
+            {
+                return;
+            }
+            Product product = CurrentListedProducts[index];
+
+            OnPurchaseAction onPurchaseAction = new(new GameActionContext(this, product, null), SanityPurchaseIndexs.Contains(index), price);
             ActionManager.Instance.Perform(onPurchaseAction, () => { if (onPurchaseAction.IsValid) CurrentEventState = onPurchaseAction.State; });
+        }
+
+        /// <summary>
+        /// 加载商品价格，-1即为出现错误
+        /// </summary>
+        /// <param name="index">第几个商品</param>
+        public int LoadPrice(int index)
+        {
+            int price = LoadOriginalPrice(index);
+            if (price == -1) return price;
+            OnPurchaseAction onPurchaseAction = new(new GameActionContext(this, index, null), SanityPurchaseIndexs.Contains(index), price);
+            ActionManager.Instance.ExecuteOnlyPreSub(onPurchaseAction);
+            return onPurchaseAction.Price;
+        }
+
+        /// <summary>
+        /// 【仅供OnStoreRefreshAction使用】刷新商品
+        /// </summary>
+        public void RefreshProducts()
+        {
+            LoadProducts();
         }
         #endregion
     }

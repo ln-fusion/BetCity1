@@ -19,11 +19,15 @@ namespace BetCity.Data.ConfigModels
         /// </summary>
         [field: SerializeField] public List<Product> Products { get; private set; }
         /// <summary>
-        /// 一次上架商品数量
+        /// 一次上架卡牌品数量
         /// </summary>
-        [field: SerializeField] public int Amount { get; private set; } 
+        [field: SerializeField] public int CardAmount { get; private set; }
         /// <summary>
-        /// 一次上架商品数量
+        /// 一次上架纪念品数量
+        /// </summary>
+        [field: SerializeField] public int SouvenirAmount { get; private set; }
+        /// <summary>
+        /// 理智购买商品数量
         /// </summary>
         [field: SerializeField] public int SanityPurchaseAmount {  get; private set; }
     }
