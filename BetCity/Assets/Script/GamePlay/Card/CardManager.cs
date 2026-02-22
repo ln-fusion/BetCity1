@@ -26,6 +26,23 @@ namespace BetCity.Card
         private List<int> libraryCards = new List<int>();
         private List<int> notOwnedCards = new List<int>();
 
+        /// <summary>
+        /// 所有已拥有卡牌只读字典
+        /// </summary>
+        public IReadOnlyDictionary<int, Card> OwnedCards => ownedCards;
+        /// <summary>
+        /// 牌组中的卡牌id只读列表
+        /// </summary>
+        public IReadOnlyList<int> DeckCards => deckCards;
+        /// <summary>
+        /// 图书馆中的卡牌id只读列表
+        /// </summary>
+        public IReadOnlyList<int> LibraryCards => libraryCards;
+        /// <summary>
+        /// 未拥有卡牌id只读列表
+        /// </summary>
+        public IReadOnlyList<int> NotOwnedCards => notOwnedCards;
+
         [SerializeField]private GameObject cardViewPrefab;
         private Canvas mainCanvas;
 
@@ -56,7 +73,6 @@ namespace BetCity.Card
         }
         private void LoadNotOwnedCards()
         {
-            // Guard against CardDataManager not initialized yet
             if (CardDataManager == null || CardDataManager.Data == null)
             {
                 UnityEngine.Debug.LogWarning("[CardManager] CardDataManager not ready when loading notOwnedCards.");
@@ -69,7 +85,6 @@ namespace BetCity.Card
         private void CacheOwnedCardInstances()
         {
             ownedCards.Clear();
-            // Guard against StorageManager or archive not ready
             var storage = StorageManager;
             if (storage == null || storage.ArchiveDataContainer == null)
             {
@@ -88,7 +103,7 @@ namespace BetCity.Card
                     continue;
                 }
 
-                // OwnedCardDTO 构造顺序: (id, owner, customPrice, isInBag, extraData)
+                // OwnedCardDTO 构造顺序: (id, owner, customPrice, isInDeck, extraData)
                 Card card = new Card(cardData, dto.ExtraData, dto.CustomPrice, dto.IsInDeck, true, dto.Owner);
 
                 ownedCards.Add(dto.Id, card);
@@ -132,7 +147,7 @@ namespace BetCity.Card
             }
         }
 
-        // 对外接口：以 id 拥有卡牌（遵循 IModifyCard 签名）
+        // 对外接口：以 id 拥有卡牌
         public void ManualSave()
         {
             SaveArchive();
@@ -160,7 +175,7 @@ namespace BetCity.Card
             card = new Card(cardData);
             ownedCards[id] = card;
 
-            // 默认放入仓库（或根据规则放入 deck）
+            // 默认放入仓库
             libraryCards.Add(id);
 
             // 标记为拥有
@@ -222,6 +237,58 @@ namespace BetCity.Card
         {
             StorageManager.ModifyArchive(t, this);
         }
+
+        /// <summary>
+        /// 将卡牌从图书馆放入牌组
+        /// </summary>
+        /// <param name="id">卡牌Id</param>
+        /// <returns>是否成功</returns>
+        public bool LibraryToDeck(int id)
+        {
+            if (!ownedCards.ContainsKey(id))
+            {
+                Debug.LogWarning($"[CardManager] Card id={id} not owned.");
+                return false;
+            }
+            if (!libraryCards.Contains(id))
+            {
+                Debug.LogWarning($"[CardManager] Card id={id} is not in library.");
+                return false;
+            }
+            libraryCards.Remove(id);
+            deckCards.Add(id);
+            var card = ownedCards[id];
+            RegisterEffect(card);
+            card.SetIsInDeck(true, this);
+            SubmitArchiveToStorage();
+            return true;
+        }
+
+        /// <summary>
+        /// 将卡牌从牌组移回图书馆
+        /// </summary>
+        /// <param name="id">卡牌Id</param>
+        /// <returns>是否成功</returns>
+        public bool DeckToLibrary(int id)
+        {
+            if (!ownedCards.ContainsKey(id))
+            {
+                Debug.LogWarning($"[CardManager] Card id={id} not owned.");
+                return false;
+            }
+            if (!deckCards.Contains(id))
+            {
+                Debug.LogWarning($"[CardManager] Card id={id} is not in deck.");
+                return false;
+            }
+            deckCards.Remove(id);
+            libraryCards.Add(id);
+            var card = ownedCards[id];
+            UnregisterEffect(card);
+            card.SetIsInDeck(false, this);
+            SubmitArchiveToStorage();
+            return true;
+        }
         public GameObject SpawnCardView(int cardId, Vector3 position, Transform parent = null)
         {
             // 防止CardDataManager报错
@@ -246,12 +313,10 @@ namespace BetCity.Card
                 return null;
             }
 
-            // Determine actual parent: use provided parent, otherwise use the first Canvas in the scene if available
             Transform actualParent = parent != null ? parent : (mainCanvas != null ? mainCanvas.transform : null);
             GameObject go;
             if (actualParent != null)
             {
-                // Instantiate with worldPositionStays = false so local transform from prefab is preserved
                 go = Instantiate(cardViewPrefab, actualParent, false);
             }
             else
@@ -263,7 +328,6 @@ namespace BetCity.Card
                 UnityEngine.Debug.LogError("[CardManager] Instantiate returned null for cardViewPrefab.");
                 return null;
             }
-            // If the spawned object is parented under a Canvas (UI), set localPosition so it appears inside the Canvas
             if (actualParent != null)
             {
                 var rt = go.GetComponent<RectTransform>();

@@ -33,12 +33,12 @@ namespace BetCity.Data.Storage
         public Dictionary<string, object> ExtraData { get; }
 
         [JsonConstructor]
-        public OwnedCardDTO(int id, CardOwner owner, int customPrice, bool isInBag, Dictionary<string, object> extraData)
+        public OwnedCardDTO(int id, CardOwner owner, int customPrice, bool isInDeck, Dictionary<string, object> extraData)
         {
             Id = id;
             Owner = owner;
             CustomPrice = customPrice;
-            IsInDeck = isInBag;
+            IsInDeck = isInDeck;
             ExtraData = extraData;
         }
     }
