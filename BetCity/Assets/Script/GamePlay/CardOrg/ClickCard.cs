@@ -15,7 +15,11 @@ public class ClickCard : MonoBehaviour,IPointerDownHandler
     // Start is called before the first frame update
     void Start()
     {
-        DeckManager = GameObject.Find("DeckManager").GetComponent<DeckManager>();
+        GameObject deckManagerObj = GameObject.Find("DeckManager");
+        if (deckManagerObj != null)
+        {
+            DeckManager = deckManagerObj.GetComponent<DeckManager>();
+        }
     }
 
     // Update is called once per frame
@@ -25,7 +29,18 @@ public class ClickCard : MonoBehaviour,IPointerDownHandler
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        int id = this.GetComponent<CardDisplay>().card.id;
+        if (DeckManager == null)
+        {
+            return;
+        }
+
+        CardDisplay display = GetComponent<CardDisplay>();
+        if (display == null || display.card == null)
+        {
+            return;
+        }
+
+        int id = display.card.id;
         DeckManager.UpdateCard(state, id);
 
     }

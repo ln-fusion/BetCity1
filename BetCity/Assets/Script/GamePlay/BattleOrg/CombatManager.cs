@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using DG.Tweening;
 using BetCity.GamePlay.CardOrg;
 using BetCity.Core.Tools;
 
@@ -38,6 +39,11 @@ public class CombatManager : MonoSingleton<CombatManager>
 
     [Header("抽出区")]
     public Transform temporaryBlock;           // 临时区域（用于存放抽到的牌）
+
+    [Header("手牌整理动画")]
+    [SerializeField] private bool enableHandArrangeTween = true;
+    [SerializeField] private float handArrangeDuration = 0.6f;
+    [SerializeField] private float newCardSpawnOffsetY = -80f;
 
     [Header("事件系统")]
     public UnityEvent<int> onDeckCountChanged = new UnityEvent<int>(); // 卡组数量变化事件
@@ -111,6 +117,83 @@ public class CombatManager : MonoSingleton<CombatManager>
     private void Awake()
     {
         Instance = this;
+        AutoWireSceneReferences();
+    }
+
+    private void AutoWireSceneReferences()
+    {
+        Transform canvasTransform = GameObject.Find("Canvas")?.transform;
+        if (canvasTransform == null)
+            return;
+
+        if (playerHand == null)
+        {
+            playerHand = canvasTransform.Find("PlayerHand");
+        }
+
+        if (enemyHand == null)
+        {
+            enemyHand = canvasTransform.Find("EnemyHand");
+        }
+
+        if (temporaryBlock == null)
+        {
+            temporaryBlock = canvasTransform.Find("TemporaryBlock");
+        }
+
+        bool needResolveBlocks = true;
+        try
+        {
+            needResolveBlocks = Blocks == null || Blocks.Length == 0;
+            if (!needResolveBlocks)
+            {
+                for (int i = 0; i < Blocks.Length; i++)
+                {
+                    if (Blocks[i] == null)
+                    {
+                        needResolveBlocks = true;
+                        break;
+                    }
+                }
+            }
+        }
+        catch (UnassignedReferenceException)
+        {
+            needResolveBlocks = true;
+        }
+
+        if (needResolveBlocks)
+        {
+            Transform blocksRoot = canvasTransform.Find("Blocks");
+            if (blocksRoot != null)
+            {
+                List<GameObject> blockList = new List<GameObject>();
+                foreach (Transform child in blocksRoot)
+                {
+                    if (child.GetComponent<Block>() != null)
+                    {
+                        blockList.Add(child.gameObject);
+                    }
+                }
+
+                Blocks = blockList.ToArray();
+            }
+        }
+    }
+
+    public GameObject[] GetBlocksSafe()
+    {
+        try
+        {
+            AutoWireSceneReferences();
+            return Blocks ?? System.Array.Empty<GameObject>();
+        }
+        catch (UnassignedReferenceException)
+        {
+            Blocks = null;
+            AutoWireSceneReferences();
+            return Blocks ?? System.Array.Empty<GameObject>();
+        }
     }
 
     void OnDestroy()
@@ -642,6 +725,7 @@ public class CombatManager : MonoSingleton<CombatManager>
         try
         {
             GameObject cardObj = Instantiate(cardPrefab, parentTransform);
+            RectTransform newCardRect = cardObj.GetComponent<RectTransform>();
 
             CardDisplay display = cardObj.GetComponent<CardDisplay>();
             if (display != null)
@@ -656,6 +740,14 @@ public class CombatManager : MonoSingleton<CombatManager>
 
             // 统一设置BattleCard组件
             BattleCard battleCard = cardObj.GetComponent<BattleCard>();
+            if (battleCard == null)
+            {
+                battleCard = cardObj.AddComponent<BattleCard>();
+                Debug.LogWarning($"卡牌 {drawnCard.cardName} 缺少 BattleCard 组件，已在运行时自动补齐");
+            }
+
+            ClickCard clickCard = cardObj.GetComponent<ClickCard>();
+
             if (battleCard != null)
             {
                 // 始终使用卡牌的原始所有者
@@ -665,38 +757,36 @@ public class CombatManager : MonoSingleton<CombatManager>
                 if (parentTransform == temporaryBlock)
                 {
                     battleCard.state = BattleCardState.inTemp;
+                    battleCard.SetInteractionMode(CardInteractionMode.Drag);
+                    if (clickCard != null) clickCard.enabled = false;
                     Debug.Log($"卡牌 {drawnCard.cardName} 状态设置为临时区");
                 }
                 else if (parentTransform == playerHand)
                 {
                     battleCard.state = BattleCardState.inHand;
+                    battleCard.SetInteractionMode(CardInteractionMode.Drag);
+                    if (clickCard != null) clickCard.enabled = false;
                     Debug.Log($"卡牌 {drawnCard.cardName} 状态设置为玩家手牌");
                 }
                 else if (parentTransform == enemyHand)
                 {
                     battleCard.state = BattleCardState.inHand;
+                    battleCard.SetInteractionMode(CardInteractionMode.Drag);
+                    if (clickCard != null) clickCard.enabled = false;
                     Debug.Log($"卡牌 {drawnCard.cardName} 状态设置为敌人手牌");
                 }
                 else
                 {
                     battleCard.state = BattleCardState.inHand;
+                    battleCard.SetInteractionMode(CardInteractionMode.Drag);
+                    if (clickCard != null) clickCard.enabled = false;
                 }
-            }
-            else
-            {
-                Debug.LogWarning($"卡牌 {drawnCard.cardName} 缺少 BattleCard 组件");
             }
 
             // 强制刷新布局
             if (parentTransform.GetComponent<RectTransform>() != null)
             {
-                LayoutRebuilder.ForceRebuildLayoutImmediate(parentTransform.GetComponent<RectTransform>());
-
-                GridLayoutGroup gridLayout = parentTransform.GetComponent<GridLayoutGroup>();
-                if (gridLayout != null)
-                {
-                    Canvas.ForceUpdateCanvases();
-                }
+                RefreshLayoutWithTween(parentTransform, newCardRect, true, handArrangeDuration);
             }
             
             return cardObj;
@@ -706,6 +796,156 @@ public class CombatManager : MonoSingleton<CombatManager>
             Debug.LogError($"实例化卡牌失败: {e.Message}");
             return null;
         }
+    }
+
+    private void RefreshLayoutWithTween(Transform container, RectTransform focusCardRect, bool useSpawnOffset, float duration)
+    {
+        RectTransform containerRect = container as RectTransform;
+        if (containerRect == null)
+            return;
+
+        Dictionary<RectTransform, Vector2> oldPositions = new Dictionary<RectTransform, Vector2>();
+        Dictionary<RectTransform, Vector3> baseScales = new Dictionary<RectTransform, Vector3>();
+        foreach (Transform child in container)
+        {
+            RectTransform childRect = child as RectTransform;
+            if (childRect != null)
+            {
+                oldPositions[childRect] = childRect.anchoredPosition;
+                baseScales[childRect] = childRect.localScale;
+            }
+        }
+
+        GridLayoutGroup gridLayout = container.GetComponent<GridLayoutGroup>();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
+        Canvas.ForceUpdateCanvases();
+
+        Dictionary<RectTransform, Vector2> targetPositions = new Dictionary<RectTransform, Vector2>();
+        foreach (Transform child in container)
+        {
+            RectTransform childRect = child as RectTransform;
+            if (childRect != null)
+            {
+                targetPositions[childRect] = childRect.anchoredPosition;
+            }
+        }
+
+        if (!enableHandArrangeTween)
+            return;
+
+        if (gridLayout != null && gridLayout.enabled)
+        {
+            gridLayout.enabled = false;
+        }
+
+        int pendingTweens = 0;
+
+        System.Action finalizeLayout = () =>
+        {
+            if (gridLayout != null && containerRect != null)
+            {
+                gridLayout.enabled = true;
+                LayoutRebuilder.ForceRebuildLayoutImmediate(containerRect);
+            }
+        };
+
+        foreach (Transform child in container)
+        {
+            RectTransform childRect = child as RectTransform;
+            if (childRect == null)
+                continue;
+
+            Vector2 targetPos;
+            if (!targetPositions.TryGetValue(childRect, out targetPos))
+            {
+                targetPos = childRect.anchoredPosition;
+            }
+
+            Vector2 startPos;
+
+            if (useSpawnOffset && childRect == focusCardRect)
+            {
+                startPos = targetPos + new Vector2(0f, newCardSpawnOffsetY);
+            }
+            else if (!oldPositions.TryGetValue(childRect, out startPos))
+            {
+                startPos = targetPos;
+            }
+
+            childRect.DOKill();
+            if (childRect == null || childRect.gameObject == null)
+            {
+                continue;
+            }
+
+            childRect.anchoredPosition = startPos;
+
+            pendingTweens++;
+            bool settled = false;
+
+            childRect.DOAnchorPos(targetPos, duration)
+                .SetEase(Ease.OutQuad)
+                .SetLink(childRect.gameObject, LinkBehaviour.KillOnDestroy)
+                .OnComplete(() =>
+                {
+                    if (settled) return;
+                    settled = true;
+                    pendingTweens--;
+                    if (pendingTweens <= 0)
+                    {
+                        finalizeLayout();
+                    }
+                })
+                .OnKill(() =>
+                {
+                    if (settled) return;
+                    settled = true;
+                    pendingTweens--;
+                    if (pendingTweens <= 0)
+                    {
+                        finalizeLayout();
+                    }
+                });
+
+            Vector3 baseScale;
+            if (!baseScales.TryGetValue(childRect, out baseScale))
+            {
+                baseScale = childRect.localScale;
+            }
+
+            childRect.localScale = baseScale * 0.96f;
+            childRect.DOScale(baseScale, duration)
+                .SetEase(Ease.OutQuad)
+                .SetLink(childRect.gameObject, LinkBehaviour.KillOnDestroy);
+        }
+
+        if (pendingTweens == 0)
+        {
+            finalizeLayout();
+        }
+        else
+        {
+            DOVirtual.DelayedCall(duration + 0.1f, () =>
+            {
+                finalizeLayout();
+            }).SetLink(container.gameObject, LinkBehaviour.KillOnDestroy);
+        }
+    }
+
+    public void RearrangeHandAfterReturn(Transform handContainer, RectTransform returnedCardRect, int siblingIndex, float durationOverride = -1f)
+    {
+        if (handContainer == null || returnedCardRect == null)
+            return;
+
+        if (siblingIndex >= 0)
+        {
+            int maxIndex = Mathf.Max(0, handContainer.childCount - 1);
+            returnedCardRect.SetSiblingIndex(Mathf.Clamp(siblingIndex, 0, maxIndex));
+        }
+
+        float duration = durationOverride > 0f ? durationOverride : handArrangeDuration;
+        RefreshLayoutWithTween(handContainer, returnedCardRect, false, duration);
     }
 
     // 重置牌库方法（添加参数控制是否抽初始卡）
